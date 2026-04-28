@@ -1173,24 +1173,31 @@
         const modal = document.getElementById('qrModal');
         const guestName = document.getElementById('guest-name').innerText; 
         const qrTarget = document.getElementById('qrcode');
+        const qrGuestNameElement = document.getElementById('qr-guest-name');
         
-        // 1. AMBIL STATUS DARI URL (?s=VIP atau default Reguler)
+        // 1. AMBIL STATUS DARI URL
         const urlParams = new URLSearchParams(window.location.search);
         const guestStatus = urlParams.get('s') || 'Reguler'; 
 
-        // 2. SET NAMA DI KARTU (Visual saja)
-        document.getElementById('qr-guest-name').innerText = guestName;
-        
-        // 3. TAMBAHKAN PENANDA VIP DI KARTU (Opsional agar tamu senang)
+        // Pastikan container nama di kartu memiliki text-align center
+        qrGuestNameElement.style.textAlign = 'center';
+        qrGuestNameElement.style.display = 'block';
+
+        // 2. SET NAMA & PENANDA (Posisinya Otomatis Tengah)
         if (guestStatus.toUpperCase() === 'VIP') {
-            document.getElementById('qr-guest-name').innerHTML = guestName + " <br><span style='color:#d4af37; font-size:10px;'>TAMU KEHORMATAN</span>";
+            qrGuestNameElement.innerHTML = `
+                ${guestName} <br>
+                <span style="color:#d4af37; font-size:10px; font-weight:bold; display:block; margin-top:2px;">
+                    VIP GUEST
+                </span>`;
+        } else {
+            qrGuestNameElement.innerText = guestName;
         }
 
         // Bersihkan QR lama
         qrTarget.innerHTML = "";
         
-        // 4. GENERATE QR DENGAN FORMAT: "Nama | Status"
-        // Format ini yang akan dibaca oleh scanner.html kita tadi
+        // 3. GENERATE QR DENGAN FORMAT: "Nama | Status"
         const qrContent = `${guestName} | ${guestStatus}`;
 
         new QRCode(qrTarget, {
