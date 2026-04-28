@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekap Kehadiran - Fadil & Aisyah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #f4f1ee; }
+        .bg-stone-green { background-color: #4a5d4a; }
+    </style>
+</head>
+<body class="min-h-screen pb-10">
+
+    <div class="w-full bg-stone-green p-6 text-white text-center shadow-lg sticky top-0 z-50">
+        <div class="flex justify-between items-center max-w-2xl mx-auto">
+            <a href="scanner.html" class="text-white text-sm">← Kembali</a>
+            <h1 class="text-lg font-bold tracking-widest uppercase">Rekap Tamu</h1>
+            <button onclick="loadRekap()" class="text-white opacity-70 hover:opacity-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="max-w-2xl mx-auto p-4">
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-stone-200 mb-6 flex justify-between items-center">
+            <div>
+                <p class="text-xs text-gray-500 uppercase tracking-widest">Total Hadir</p>
+                <h2 class="text-3xl font-bold text-stone-900"><span id="count-hadir">0</span> <span class="text-sm font-normal text-gray-400">Tamu</span></h2>
+            </div>
+            <div class="p-3 bg-stone-100 rounded-2xl">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-stone-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-sm border border-stone-200 overflow-hidden">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-stone-50 border-b border-stone-100">
+                        <th class="p-4 text-xs font-bold text-stone-600 uppercase">Nama Tamu</th>
+                        <th class="p-4 text-xs font-bold text-stone-600 uppercase text-right">Jam Hadir</th>
+                    </tr>
+                </thead>
+                <tbody id="rekap-list">
+                    <tr>
+                        <td colspan="2" class="p-10 text-center text-gray-400 text-sm italic">Memuat data...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // GANTI DENGAN URL GOOGLE SCRIPT KAMU
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyuLyXVEaiHQMjzR-xzycRi69bYNXHY8J_cXMVrk6Og15lYjwYNDnIx3D8t0PqlpB0K3g/exec';
+
+        function loadRekap() {
+            fetch(`${scriptURL}?type=get_absen`)
+            .then(res => res.json())
+            .then(data => {
+                const list = document.getElementById('rekap-list');
+                const countHadir = document.getElementById('count-hadir');
+                
+                countHadir.innerText = data.length;
+
+                if (data.length > 0) {
+                    list.innerHTML = data.map(item => `
+                        <tr class="border-b border-stone-50 last:border-0">
+                            <td class="p-4">
+                                <p class="text-sm font-semibold text-stone-800">${item.nama}</p>
+                            </td>
+                            <td class="p-4 text-right">
+                                <p class="text-xs text-gray-500">${item.waktu} WITA</p>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    list.innerHTML = `
+                        <tr>
+                            <td colspan="2" class="p-10 text-center text-gray-400 text-sm italic">Belum ada tamu yang hadir.</td>
+                        </tr>
+                    `;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('rekap-list').innerHTML = `
+                    <tr>
+                        <td colspan="2" class="p-10 text-center text-red-400 text-sm italic">Gagal mengambil data.</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Jalankan saat halaman dibuka
+        document.addEventListener('DOMContentLoaded', loadRekap);
+    </script>
+
+</body>
+</html>
