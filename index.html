@@ -718,6 +718,10 @@
 </head>
 
 <body>
+    <div id="loader" class="fixed inset-0 z-[10001] bg-white flex items-center justify-center transition-opacity duration-500">
+        <div class="w-10 h-10 border-4 border-stone-200 border-t-stone-800 rounded-full animate-spin"></div>
+    </div>
+
     <audio id="weddingMusic" loop>
         <source src="musik.mp3" type="audio/mpeg">
     </audio>
@@ -788,8 +792,11 @@
     </div>
 
     <section class="p-0 m-0 relative overflow-hidden" style="height: 100dvh; width: 100%;">
-        <img src="Halaman 2.jpg" class="absolute inset-0 w-full h-full object-cover opacity-70">
-        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="relative w-full h-[100dvh] overflow-hidden">
+        <img src="Halaman 2.jpg" 
+            class="absolute inset-0 w-full h-full object-cover" 
+            loading="lazy" 
+            width="500" height="900"> </div>
 
         <div class="absolute left-0 w-full px-10 z-20" style="bottom: 160px;">
             <div id="typing-effect" class="font-accent text-white text-3xl md:text-4xl leading-relaxed text-left drop-shadow-lg" style="font-family: 'Great Vibes', cursive;">
@@ -804,9 +811,11 @@
     </section>
 
     <section class="p-0 m-0 min-h-screen relative flex items-center justify-center overflow-hidden">
-        <div class="absolute inset-0 w-full h-full">
-            <img src="Halaman 3.jpg" alt="Background Ayat" class="w-full h-full object-cover opacity-60">
-            <div class="absolute inset-0 bg-black/30"></div>
+        <<div class="relative w-full h-[100dvh] overflow-hidden">
+        <img src="Halaman 3.jpg" 
+            class="absolute inset-0 w-full h-full object-cover" 
+            loading="lazy" 
+            width="500" height="900"> </div>
         </div>
         <div class="relative z-10 max-w-md mx-auto text-center px-6" data-aos="fade-up">
             <h2 class="font-serif text-3xl mb-6 italic text-white">QS. Ar-Rum: 21</h2>
