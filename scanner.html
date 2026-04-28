@@ -69,48 +69,48 @@
 
     <script>
         // URL SUDAH DIPERBAIKI (Menghapus 'c' berlebih di ujung)
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzTfqzrUqWfS-0obNRX32-fYRf2tt5EEeFQgL4JyEm9qMdyjJLUpWGB2bl76QIBNgGpQQ/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwnRB4BflhUxY_BVKWWTRtnvFdmX8mq2KVGfF9bPXFjbhGZOxeSvzY8esXzwXajlSkQxA/exec';
         let isProcessing = false;
 
         function onScanSuccess(decodedText, decodedResult) {
-            if (isProcessing) return; 
-            isProcessing = true;
+        if (isProcessing) return; 
+        isProcessing = true;
 
-            // 1. BEDAH DATA QR (Format: "Nama | Status")
-            const data = decodedText.split(" | ");
-            const namaTamu = data[0];
-            const statusTamu = data[1] || "Reguler"; // Default ke Reguler jika tidak ada tanda |
+        // 1. BEDAH DATA QR (Format: "Nama | Status")
+        const data = decodedText.split(" | ");
+        const namaTamu = data[0];
+        const statusTamu = data[1] || "Reguler"; // Default ke Reguler jika tidak ada tanda |
 
-            const successBox = document.getElementById('success-msg');
-            const guestName = document.getElementById('guest-name-result');
-            const idleMsg = document.getElementById('idle-msg');
+        const successBox = document.getElementById('success-msg');
+        const guestName = document.getElementById('guest-name-result');
+        const idleMsg = document.getElementById('idle-msg');
 
-            // 2. TAMPILKAN HASILNYA
+        // 2. LOGIKA VISUAL: Ganti warna & teks jika VIP
+        if (statusTamu.toUpperCase() === "VIP") {
+            successBox.style.backgroundColor = "#d4af37"; // Warna EMAS
+            guestName.innerHTML = `${namaTamu} <br><span style="font-size:12px; opacity:0.9; font-weight:normal;">VIP GUEST</span>`;
+        } else {
+            successBox.style.backgroundColor = "#16a34a"; // Warna HIJAU Standard
             guestName.innerText = namaTamu;
-            idleMsg.classList.add('hidden');
-            successBox.classList.remove('hidden');
-
-            // 3. LOGIKA VISUAL: Ganti warna jika VIP
-            if (statusTamu.toUpperCase() === "VIP") {
-                successBox.style.backgroundColor = "#d4af37"; // Warna EMAS (VIP)
-                guestName.innerHTML = namaTamu + " <br><span style='font-size:12px; opacity:0.8;'>TAMU KEHORMATAN</span>";
-            } else {
-                successBox.style.backgroundColor = "#16a34a"; // Warna HIJAU (Reguler)
-            }
-
-            // 4. KIRIM KE GOOGLE SHEETS (Nama & Status terpisah)
-            const finalURL = `${scriptURL}?nama=${encodeURIComponent(namaTamu)}&status=${encodeURIComponent(statusTamu)}&type=absen`;
-            fetch(finalURL, { mode: 'no-cors' });
-
-            // 5. RESET SCANNER (3 detik)
-            setTimeout(() => {
-                successBox.classList.add('hidden');
-                idleMsg.classList.remove('hidden');
-                // Kembalikan warna ke hijau agar tidak nyangkut warna emas di scan berikutnya
-                successBox.style.backgroundColor = "#16a34a"; 
-                isProcessing = false;
-            }, 3000);
         }
+
+        // Munculkan Box Sukses
+        idleMsg.classList.add('hidden');
+        successBox.classList.remove('hidden');
+
+        // 3. KIRIM DATA KE GOOGLE SHEETS (Nama & Status)
+        const finalURL = `${scriptURL}?nama=${encodeURIComponent(namaTamu)}&status=${encodeURIComponent(statusTamu)}&type=absen`;
+        fetch(finalURL, { mode: 'no-cors' });
+
+        // 4. RESET SCANNER (Setelah 3 detik)
+        setTimeout(() => {
+            successBox.classList.add('hidden');
+            idleMsg.classList.remove('hidden');
+            // Reset warna ke hijau agar tidak nyangkut untuk scan berikutnya
+            successBox.style.backgroundColor = "#16a34a"; 
+            isProcessing = false;
+        }, 3000);
+    }
     </script>
 </body>
 </html>
