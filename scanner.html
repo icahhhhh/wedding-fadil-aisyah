@@ -69,43 +69,48 @@
 
     <script>
         // URL SUDAH DIPERBAIKI (Menghapus 'c' berlebih di ujung)
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwnRB4BflhUxY_BVKWWTRtnvFdmX8mq2KVGfF9bPXFjbhGZOxeSvzY8esXzwXajlSkQxA/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzTfqzrUqWfS-0obNRX32-fYRf2tt5EEeFQgL4JyEm9qMdyjJLUpWGB2bl76QIBNgGpQQ/exec';
         let isProcessing = false;
 
         function onScanSuccess(decodedText, decodedResult) {
             if (isProcessing) return; 
             isProcessing = true;
 
-            // --- TEKNIK INSTAN (Optimistic) ---
-            // Langsung munculkan sukses tanpa nunggu respon server
-            document.getElementById('idle-msg').classList.add('hidden');
+            // 1. BEDAH DATA QR (Format: "Nama | Status")
+            const data = decodedText.split(" | ");
+            const namaTamu = data[0];
+            const statusTamu = data[1] || "Reguler"; // Default ke Reguler jika tidak ada tanda |
+
             const successBox = document.getElementById('success-msg');
             const guestName = document.getElementById('guest-name-result');
-            
-            guestName.innerText = decodedText;
+            const idleMsg = document.getElementById('idle-msg');
+
+            // 2. TAMPILKAN HASILNYA
+            guestName.innerText = namaTamu;
+            idleMsg.classList.add('hidden');
             successBox.classList.remove('hidden');
 
-            // Kirim data di latar belakang
-            fetch(`${scriptURL}?nama=${encodeURIComponent(decodedText)}&type=absen`, { mode: 'no-cors' });
+            // 3. LOGIKA VISUAL: Ganti warna jika VIP
+            if (statusTamu.toUpperCase() === "VIP") {
+                successBox.style.backgroundColor = "#d4af37"; // Warna EMAS (VIP)
+                guestName.innerHTML = namaTamu + " <br><span style='font-size:12px; opacity:0.8;'>TAMU KEHORMATAN</span>";
+            } else {
+                successBox.style.backgroundColor = "#16a34a"; // Warna HIJAU (Reguler)
+            }
 
-            // Reset scanner setelah 3 detik agar bisa scan tamu berikutnya
+            // 4. KIRIM KE GOOGLE SHEETS (Nama & Status terpisah)
+            const finalURL = `${scriptURL}?nama=${encodeURIComponent(namaTamu)}&status=${encodeURIComponent(statusTamu)}&type=absen`;
+            fetch(finalURL, { mode: 'no-cors' });
+
+            // 5. RESET SCANNER (3 detik)
             setTimeout(() => {
                 successBox.classList.add('hidden');
-                document.getElementById('idle-msg').classList.remove('hidden');
+                idleMsg.classList.remove('hidden');
+                // Kembalikan warna ke hijau agar tidak nyangkut warna emas di scan berikutnya
+                successBox.style.backgroundColor = "#16a34a"; 
                 isProcessing = false;
             }, 3000);
         }
-
-        function onScanFailure(error) {}
-
-        let html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", { 
-                fps: 20, // Dinaikkan agar lebih responsif
-                qrbox: { width: 250, height: 250 },
-                aspectRatio: 1.0 
-            }
-        );
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
     </script>
 </body>
 </html>
