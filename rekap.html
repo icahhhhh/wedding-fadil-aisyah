@@ -60,15 +60,18 @@
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwnRB4BflhUxY_BVKWWTRtnvFdmX8mq2KVGfF9bPXFjbhGZOxeSvzY8esXzwXajlSkQxA/exec';
 
         function loadRekap() {
+            // Kita panggil Google Script dengan parameter type=get_absen
             fetch(`${scriptURL}?type=get_absen`)
             .then(res => res.json())
             .then(data => {
                 const list = document.getElementById('rekap-list');
                 const countHadir = document.getElementById('count-hadir');
                 
+                // Update jumlah total tamu
                 countHadir.innerText = data.length;
 
                 if (data.length > 0) {
+                    // Masukkan data ke dalam tabel secara otomatis
                     list.innerHTML = data.map(item => `
                         <tr class="border-b border-stone-50 last:border-0">
                             <td class="p-4">
@@ -97,8 +100,11 @@
             });
         }
 
-        // Jalankan saat halaman dibuka
+        // Jalankan fungsi loadRekap setiap kali halaman dibuka
         document.addEventListener('DOMContentLoaded', loadRekap);
+        
+        // Opsional: Refresh otomatis setiap 30 detik agar data selalu up-to-date
+        setInterval(loadRekap, 30000);
     </script>
 
 </body>
