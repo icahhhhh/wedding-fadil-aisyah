@@ -1322,54 +1322,75 @@
         }
 
         // Fungsi Mengambil Doa dari Google Sheets
-        function loadWishes() {
-            fetch(scriptURL)
-            .then(res => res.json())
-            .then(data => {
-                const wishBox = document.getElementById('wishBox');
-                
-                // BAGIAN INI DIHAPUS ATAU DIUBAH:
-                // Cukup pastikan jika data ada, maka tampilkan. Jika tidak ada, biarkan kosong.
-                if (!data || data.length === 0) {
-                    wishBox.innerHTML = ''; // Ubah jadi kosong saja, jangan kasih teks
-                    return;
+        let isFetchingWishes = false;
+
+       function loadWishes() {
+        if (isFetchingWishes) return; 
+        isFetchingWishes = true;
+
+        fetch(scriptURL)
+        .then(res => res.json())
+        .then(data => {
+            const wishBox = document.getElementById('wishBox');
+            
+            if (!data || data.length === 0) {
+                wishBox.innerHTML = '';
+                return;
+            }
+
+            const newWishesHTML = data.map(item => {
+                // --- LOGIKA MEMBERSIHKAN WAKTU ---
+                let waktuTampil = "";
+                if (item.waktu) {
+                    // Jika formatnya ISO (ada huruf T), kita ambil jam:menit saja
+                    if (item.waktu.includes('T')) {
+                        const d = new Date(item.waktu);
+                        const jam = String(d.getHours()).padStart(2, '0');
+                        const menit = String(d.getMinutes()).padStart(2, '0');
+                        waktuTampil = jam + ":" + menit + " WITA";
+                    } else {
+                        // Jika sudah rapi (HH:mm), tinggal tambah WITA
+                        // Kita ambil 5 karakter pertama untuk jaga-jaga ada detik (HH:mm:ss)
+                        waktuTampil = item.waktu.toString().substring(0, 5) + " WITA";
+                    }
                 }
 
-                wishBox.innerHTML = data.map(item => `
-                    <div class="text-left p-4 bg-stone-50 rounded-xl mb-3 border border-stone-100">
+                return `
+                    <div class="text-left p-4 bg-stone-50 rounded-xl mb-3 border border-stone-100 shadow-sm animate-fade-in">
                         <div class="flex justify-between items-center mb-1">
                             <p class="font-bold text-[10px] text-stone-600">${item.nama}</p>
-                            <span class="text-[8px] text-stone-400 font-medium">${item.waktu || ''}</span>
+                            <span class="text-[8px] text-stone-400 font-medium">${waktuTampil}</span>
                         </div>
                         <p class="text-gray-500 italic text-[11px]">"${item.pesan || item.ucapan}"</p>
                     </div>
-                `).join('');
-            })
-            .catch(err => {
-                console.error("Gagal memuat doa:", err);
-                // Bisa dikosongkan juga jika error agar tidak merusak tampilan
-                document.getElementById('wishBox').innerHTML = ''; 
-            });
-        }
+                `;
+            }).join('');
 
-        // Fungsi Menambah Doa ke Google Sheets
+            if (wishBox.innerHTML !== newWishesHTML) {
+                wishBox.innerHTML = newWishesHTML;
+            }
+        })
+        .catch(err => {
+            console.error("Gagal memuat doa:", err);
+        })
+        .finally(() => {
+            isFetchingWishes = false;
+        });
+    }
+
+        // Fungsi Menambah Doa (Sudah dioptimasi agar langsung muncul)
         function addWish() {
             const n = document.getElementById('name').value;
             const w = document.getElementById('wish').value;
             
             if(!n || !w) return alert("Isi nama dan ucapan.");
 
-            // Animasi Loading pada tombol (Opsional)
             const btn = event.target;
             const originalText = btn.innerText;
             btn.innerText = "MENGIRIM...";
             btn.disabled = true;
 
-            // Data yang dikirim ke Apps Script
-            const payload = {
-                nama: n,
-                pesan: w
-            };
+            const payload = { nama: n, pesan: w };
 
             fetch(scriptURL, { 
                 method: 'POST', 
@@ -1380,14 +1401,16 @@
                 if(result.result === 'success') {
                     document.getElementById('name').value = '';
                     document.getElementById('wish').value = '';
-                    loadWishes(); // Refresh daftar doa setelah berhasil kirim
+                    
+                    // LANGSUNG panggil loadWishes agar ucapan pengirim langsung muncul
+                    loadWishes(); 
                 } else {
                     alert("Terjadi kesalahan saat menyimpan.");
                 }
             })
             .catch(err => {
-                console.error("Error saat mengirim:", err);
-                alert("Gagal mengirim ucapan. Pastikan Web App sudah di-deploy dengan akses 'Anyone'.");
+                console.error("Error:", err);
+                alert("Gagal mengirim ucapan.");
             })
             .finally(() => {
                 btn.innerText = originalText;
@@ -1395,8 +1418,12 @@
             });
         }
 
-        // Panggil fungsi loadWishes saat halaman pertama kali dibuka
+        // LOGIKA AUTO-REFRESH (POLLING)
+        // Jalankan loadWishes pertama kali
         document.addEventListener('DOMContentLoaded', loadWishes);
+
+        // Cek data baru setiap 5 detik secara otomatis tanpa refresh halaman
+        setInterval(loadWishes, 5000);
 
         // 10. Countdown Timer
         const targetDate = new Date("May 24, 2026 08:00:00").getTime();
