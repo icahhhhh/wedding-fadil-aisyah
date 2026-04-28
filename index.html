@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
     <meta charset="UTF-8">
     <title>The Wedding of Fadil & Aisyah</title>
 
@@ -31,28 +34,45 @@
             --secondary: #f4f1ee;
             --dark: #2d241d;
         }
-        /* Ini untuk background paling luar (yang kelihatan di desktop) */
+        
+        /* 1. Background Luar */
         html {
             background: url('BG luar.jpg') no-repeat center center fixed;
             background-size: cover;
-            /* Pastikan tidak ada flex yang mengganggu di level html */
-            display: block !important; 
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Mencegah geser kanan-kiri */
         }
-
-        /* 2. Paksa Body ke Kanan */
+        
+        /* 2. Logika Body */
         body {
-            max-width: 500px !important;
-            /* margin-left: auto dan margin-right: 0 adalah kunci ke kanan */
-            margin-left: auto !important; 
-            margin-right: 0 !important;
-            
             background-color: var(--secondary);
             box-shadow: -10px 0 50px rgba(0,0,0,0.5);
             position: relative;
             min-height: 100vh;
-            display: block !important; /* Ubah dari flex ke block agar margin auto bekerja */
+            margin: 0; /* Reset margin default */
+            padding: 0;
         }
-
+        
+        /* 3. SETTING KHUSUS LAYAR LEBAR (LAPTOP/TABLET) */
+        @media (min-width: 501px) {
+            body {
+                max-width: 500px !important;
+                margin-left: auto !important; 
+                margin-right: 0 !important;
+                display: block !important;
+            }
+        }
+        
+        /* 4. SETTING KHUSUS HP (Full Layar) */
+        @media (max-width: 500px) {
+            body {
+                max-width: 100% !important; /* Paksa 100% di HP */
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                box-shadow: none; /* Hilangkan bayangan di HP agar lebih ringan */
+            }
+        }
         .font-serif { font-family: 'Playfair Display', serif; }
         .font-accent { font-family: 'Great Vibes', cursive; }
 
