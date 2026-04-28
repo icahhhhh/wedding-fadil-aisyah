@@ -27,7 +27,26 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-    <style>
+<style>
+        /* Efek Fade Out saat loading selesai */
+    .loader-hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* Mengunci scroll saat loading berlangsung agar user tidak scroll duluan */
+    body.loading-active {
+        overflow: hidden;
+    }
+
+    /* Animasi Spin yang halus */
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    .animate-spin {
+        animation: spin 1s linear infinite;
+    }
+
         :root {
             --primary: #8e735b;
             --secondary: #f4f1ee;
@@ -718,6 +737,14 @@
 </head>
 
 <body>
+    <div id="loader-wrapper" class="fixed inset-0 z-[10001] bg-[#f4f1ee] flex flex-col items-center justify-center transition-opacity duration-700">
+        <div class="relative flex items-center justify-center">
+            <div class="w-16 h-16 border-4 border-stone-200 border-t-[#8e735b] rounded-full animate-spin"></div>
+            <span class="absolute font-serif text-[10px] text-[#8e735b] font-bold">F & A</span>
+        </div>
+        <p class="mt-4 font-serif italic text-stone-500 text-xs tracking-[0.2em] animate-pulse">Mohon Tunggu...</p>
+    </div>
+
     <audio id="weddingMusic" loop>
         <source src="musik.mp3" type="audio/mpeg">
     </audio>
@@ -1516,6 +1543,24 @@
             checkScroll();
             checkScrollPage4();
             checkScrollPage5();
+        });
+
+        // Tambahkan class lock scroll saat baru dibuka
+        document.body.classList.add('loading-active');
+
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader-wrapper');
+            
+            // Memberikan sedikit delay 500ms agar transisi tidak terlalu kaget
+            setTimeout(() => {
+                loader.classList.add('loader-hidden'); // Hilangkan loading
+                document.body.classList.remove('loading-active'); // Aktifkan scroll kembali
+                
+                // Refresh AOS agar animasi muncul tepat waktu setelah loading hilang
+                if (typeof AOS !== 'undefined') {
+                    AOS.refresh();
+                }
+            }, 800); 
         });
     </script>
 </body>
