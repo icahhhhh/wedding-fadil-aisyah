@@ -9,12 +9,12 @@
     <meta property="og:title" content="THE WEDDING OF FADIL & AISYAH">
     <meta property="og:description" content="MINGGU, 03 MEI 2026">
     
-    <meta property="og:image" content="https://wedding-fadil-aisyah.vercel.app/preview.jpg">
-    <meta property="og:image:secure_url" content="https://wedding-fadil-aisyah.vercel.app/preview.jpg">
+    <meta property="og:image" content="https://wedding-fadil-aisyah.infinityfree.me/preview.jpg">
+    <meta property="og:image:secure_url" content="https://wedding-fadil-aisyah.infinityfree.me/preview.jpg">
     <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:url" content="https://wedding-fadil-aisyah.vercel.app/">
+    <meta property="og:url" content="https://wedding-fadil-aisyah.infinityfree.me/">
     <meta property="og:type" content="website">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -604,6 +604,40 @@
         .btn-send-glass:active {
             transform: scale(0.95);
             background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* --- Aesthetic Scrollbar untuk WishBox --- */
+        #wishBox {
+            max-height: 400px; /* Batasi tinggi kotak ucapan */
+            overflow-y: auto;
+            padding-right: 8px; /* Ruang agar teks tidak mepet ke garis scroll */
+        }
+
+        /* Ukuran garis scroll (Sangat Tipis) */
+        #wishBox::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        /* Jalur Scroll (Dibuat Transparan) */
+        #wishBox::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        /* Batang Scroll (Garis Putih Tipis Khas Glassmorphism) */
+        #wishBox::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3); /* Putih transparan senada dengan kartu */
+            border-radius: 10px;
+        }
+
+        /* Efek saat disentuh */
+        #wishBox::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Solusi untuk Firefox */
+        #wishBox {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
         }
 
         .section-thankyou {
