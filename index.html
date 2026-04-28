@@ -1329,7 +1329,7 @@
             .then(data => {
                 const wishBox = document.getElementById('wishBox');
                 if (!data || data.length === 0) {
-                    wishBox.innerHTML = '';
+                    wishBox.innerHTML = '<p class="text-center text-gray-400 text-[10px]">Belum ada ucapan.</p>';
                     return;
                 }
 
