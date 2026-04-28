@@ -1285,6 +1285,9 @@
         });
 
         // 9. Utility Functions
+        const scriptURL = 'https://script.google.com/macros/s/AKfycby5AG-s71JFyWLLojkuTFeqx1IFy9npTAGP3wk2CHrKHSYAqWIdAJgF9kvQVXPxrFsxpg/exec';
+
+        // Fungsi Copy Number (tetap sama)
         function copyNumber(text, btn) {
             navigator.clipboard.writeText(text).then(() => {
                 const originalText = btn.innerText;
@@ -1299,53 +1302,78 @@
             });
         }
 
+        // Fungsi Mengambil Doa dari Google Sheets
         function loadWishes() {
-            fetch('ambil_doa.php')
+            fetch(scriptURL)
             .then(res => res.json())
             .then(data => {
                 const wishBox = document.getElementById('wishBox');
+                if (!data || data.length === 0) {
+                    wishBox.innerHTML = '<p class="text-center text-gray-400 text-[10px]">Belum ada ucapan.</p>';
+                    return;
+                }
+
                 wishBox.innerHTML = data.map(item => `
                     <div class="text-left p-4 bg-stone-50 rounded-xl mb-3 border border-stone-100">
                         <div class="flex justify-between items-center mb-1">
                             <p class="font-bold text-[10px] text-stone-600">${item.nama}</p>
                             <span class="text-[8px] text-stone-400 font-medium">${item.waktu || ''}</span>
                         </div>
-                        <p class="text-gray-500 italic text-[11px]">"${item.pesan}"</p>
+                        <p class="text-gray-500 italic text-[11px]">"${item.pesan || item.ucapan}"</p>
                     </div>
                 `).join('');
-            }).catch(err => {});
+            })
+            .catch(err => {
+                console.error("Gagal memuat doa:", err);
+                document.getElementById('wishBox').innerHTML = '<p class="text-center text-red-300 text-[10px]">Gagal memuat ucapan.</p>';
+            });
         }
 
+        // Fungsi Menambah Doa ke Google Sheets
         function addWish() {
             const n = document.getElementById('name').value;
             const w = document.getElementById('wish').value;
+            
             if(!n || !w) return alert("Isi nama dan ucapan.");
 
-            // Ambil waktu saat ini
-            const sekarang = new Date();
-            const tanggalJam = sekarang.toLocaleString('id-ID', { 
-                day: '2-digit', 
-                month: 'short', 
-                year: 'numeric', 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
+            // Animasi Loading pada tombol (Opsional)
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = "MENGIRIM...";
+            btn.disabled = true;
 
-            const formData = new FormData();
-            formData.append('nama', n);
-            formData.append('pesan', w);
-            formData.append('waktu', tanggalJam); // Menambahkan data waktu ke PHP
+            // Data yang dikirim ke Apps Script
+            const payload = {
+                nama: n,
+                pesan: w
+            };
 
-            fetch('simpan_doa.php', { method: 'POST', body: formData })
-            .then(res => res.text())
+            fetch(scriptURL, { 
+                method: 'POST', 
+                body: JSON.stringify(payload) 
+            })
+            .then(res => res.json())
             .then(result => {
-                if(result.trim() === 'success') {
+                if(result.result === 'success') {
                     document.getElementById('name').value = '';
                     document.getElementById('wish').value = '';
-                    loadWishes();
+                    loadWishes(); // Refresh daftar doa setelah berhasil kirim
+                } else {
+                    alert("Terjadi kesalahan saat menyimpan.");
                 }
+            })
+            .catch(err => {
+                console.error("Error saat mengirim:", err);
+                alert("Gagal mengirim ucapan. Pastikan Web App sudah di-deploy dengan akses 'Anyone'.");
+            })
+            .finally(() => {
+                btn.innerText = originalText;
+                btn.disabled = false;
             });
-}
+        }
+
+        // Panggil fungsi loadWishes saat halaman pertama kali dibuka
+        document.addEventListener('DOMContentLoaded', loadWishes);
 
         // 10. Countdown Timer
         const targetDate = new Date("May 24, 2026 08:00:00").getTime();
