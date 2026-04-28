@@ -1324,7 +1324,7 @@
         // Fungsi Mengambil Doa dari Google Sheets
         let isFetchingWishes = false;
 
-       function loadWishes() {
+        function loadWishes() {
         if (isFetchingWishes) return; 
         isFetchingWishes = true;
 
@@ -1339,19 +1339,20 @@
             }
 
             const newWishesHTML = data.map(item => {
-                // --- LOGIKA MEMBERSIHKAN WAKTU ---
+                // --- LOGIKA MENAMPILKAN TANGGAL DAN JAM ---
                 let waktuTampil = "";
                 if (item.waktu) {
-                    // Jika formatnya ISO (ada huruf T), kita ambil jam:menit saja
+                    // Jika formatnya ISO (dari Google), kita konversi ke format lokal
                     if (item.waktu.includes('T')) {
                         const d = new Date(item.waktu);
+                        const tgl = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
                         const jam = String(d.getHours()).padStart(2, '0');
                         const menit = String(d.getMinutes()).padStart(2, '0');
-                        waktuTampil = jam + ":" + menit + " WITA";
+                        waktuTampil = `${tgl}, ${jam}:${menit} WITA`;
                     } else {
-                        // Jika sudah rapi (HH:mm), tinggal tambah WITA
-                        // Kita ambil 5 karakter pertama untuk jaga-jaga ada detik (HH:mm:ss)
-                        waktuTampil = item.waktu.toString().substring(0, 5) + " WITA";
+                        // Jika sudah format rapi dari Apps Script (dd MMM yyyy, HH:mm)
+                        // Kita pastikan ada tulisan WITA di belakangnya
+                        waktuTampil = item.waktu.includes("WITA") ? item.waktu : item.waktu + " WITA";
                     }
                 }
 
@@ -1370,9 +1371,7 @@
                 wishBox.innerHTML = newWishesHTML;
             }
         })
-        .catch(err => {
-            console.error("Gagal memuat doa:", err);
-        })
+        .catch(err => console.error("Gagal memuat doa:", err))
         .finally(() => {
             isFetchingWishes = false;
         });
