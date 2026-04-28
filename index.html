@@ -625,8 +625,12 @@
 
         /* Batang Scroll (Garis Putih Tipis Khas Glassmorphism) */
         #wishBox::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3); /* Putih transparan senada dengan kartu */
-            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.4); /* Warna putih transparan */
+            border-radius: 20px; /* Membuat ujungnya sangat bulat */
+            
+            /* TRICK: Memberikan border transparan tebal agar garis terlihat lebih pendek & ramping */
+            border: 4px solid transparent; 
+            background-clip: padding-box; 
         }
 
         /* Efek saat disentuh */
