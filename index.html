@@ -1170,33 +1170,40 @@
 
         // 3. QR code
         function showQR() {
-            const modal = document.getElementById('qrModal');
-            const guestName = document.getElementById('guest-name').innerText; // Mengambil nama tamu dari welcome screen
-            const qrTarget = document.getElementById('qrcode');
-            
-            // Set Nama di Kartu
-            document.getElementById('qr-guest-name').innerText = guestName;
-            
-            // Bersihkan QR lama jika ada
-            qrTarget.innerHTML = "";
-            
-            // Generate QR Baru
-            new QRCode(qrTarget, {
-                text: guestName, // Isi QR adalah nama tamu
-                width: 180,
-                height: 180,
-                colorDark : "#2d241d",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
+        const modal = document.getElementById('qrModal');
+        const guestName = document.getElementById('guest-name').innerText; 
+        const qrTarget = document.getElementById('qrcode');
+        
+        // 1. AMBIL STATUS DARI URL (?s=VIP atau default Reguler)
+        const urlParams = new URLSearchParams(window.location.search);
+        const guestStatus = urlParams.get('s') || 'Reguler'; 
 
-            modal.style.display = 'flex';
+        // 2. SET NAMA DI KARTU (Visual saja)
+        document.getElementById('qr-guest-name').innerText = guestName;
+        
+        // 3. TAMBAHKAN PENANDA VIP DI KARTU (Opsional agar tamu senang)
+        if (guestStatus.toUpperCase() === 'VIP') {
+            document.getElementById('qr-guest-name').innerHTML = guestName + " <br><span style='color:#d4af37; font-size:10px;'>TAMU KEHORMATAN</span>";
         }
 
-        function closeQR() {
-            document.getElementById('qrModal').style.display = 'none';
-        }
+        // Bersihkan QR lama
+        qrTarget.innerHTML = "";
+        
+        // 4. GENERATE QR DENGAN FORMAT: "Nama | Status"
+        // Format ini yang akan dibaca oleh scanner.html kita tadi
+        const qrContent = `${guestName} | ${guestStatus}`;
 
+        new QRCode(qrTarget, {
+            text: qrContent, 
+            width: 180,
+            height: 180,
+            colorDark : "#2d241d",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+
+        modal.style.display = 'flex';
+    }
         // 4. Inisialisasi AOS
         AOS.init({ duration: 800, once: true, disable: false });
 
@@ -1370,7 +1377,7 @@
         });
 
         // 9. Utility Functions
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwnRB4BflhUxY_BVKWWTRtnvFdmX8mq2KVGfF9bPXFjbhGZOxeSvzY8esXzwXajlSkQxA/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzTfqzrUqWfS-0obNRX32-fYRf2tt5EEeFQgL4JyEm9qMdyjJLUpWGB2bl76QIBNgGpQQ/exec';
 
         // Fungsi Copy Number (tetap sama)
         function copyNumber(text, btn) {
