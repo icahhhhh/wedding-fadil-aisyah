@@ -56,55 +56,52 @@
     </div>
 
     <script>
-        // GANTI DENGAN URL GOOGLE SCRIPT KAMU
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwnRB4BflhUxY_BVKWWTRtnvFdmX8mq2KVGfF9bPXFjbhGZOxeSvzY8esXzwXajlSkQxA/exec';
 
+        // Fungsi Helper untuk merender data agar instan
+        function renderTamu(data) {
+            const list = document.getElementById('rekap-list');
+            const countHadir = document.getElementById('count-hadir');
+            countHadir.innerText = data.length;
+
+            if (data.length > 0) {
+                list.innerHTML = data.map(item => `
+                    <tr class="border-b border-stone-50 last:border-0">
+                        <td class="p-4">
+                            <p class="text-sm font-semibold text-stone-800">${item.nama}</p>
+                        </td>
+                        <td class="p-4 text-right">
+                            <p class="text-xs text-gray-500">${item.waktu} WITA</p>
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                list.innerHTML = '<tr><td colspan="2" class="p-10 text-center text-gray-400 text-sm italic">Belum ada tamu yang hadir.</td></tr>';
+            }
+        }
+
         function loadRekap() {
-            // Kita panggil Google Script dengan parameter type=get_absen
+            // CEPAT: Cek memori browser (cache)
+            const cache = localStorage.getItem('rekap_tamu');
+            if (cache) { renderTamu(JSON.parse(cache)); }
+
+            // LATAR BELAKANG: Ambil data terbaru dari Google
             fetch(`${scriptURL}?type=get_absen`)
             .then(res => res.json())
             .then(data => {
-                const list = document.getElementById('rekap-list');
-                const countHadir = document.getElementById('count-hadir');
-                
-                // Update jumlah total tamu
-                countHadir.innerText = data.length;
-
-                if (data.length > 0) {
-                    // Masukkan data ke dalam tabel secara otomatis
-                    list.innerHTML = data.map(item => `
-                        <tr class="border-b border-stone-50 last:border-0">
-                            <td class="p-4">
-                                <p class="text-sm font-semibold text-stone-800">${item.nama}</p>
-                            </td>
-                            <td class="p-4 text-right">
-                                <p class="text-xs text-gray-500">${item.waktu} WITA</p>
-                            </td>
-                        </tr>
-                    `).join('');
-                } else {
-                    list.innerHTML = `
-                        <tr>
-                            <td colspan="2" class="p-10 text-center text-gray-400 text-sm italic">Belum ada tamu yang hadir.</td>
-                        </tr>
-                    `;
-                }
+                localStorage.setItem('rekap_tamu', JSON.stringify(data));
+                renderTamu(data);
             })
             .catch(err => {
                 console.error(err);
-                document.getElementById('rekap-list').innerHTML = `
-                    <tr>
-                        <td colspan="2" class="p-10 text-center text-red-400 text-sm italic">Gagal mengambil data.</td>
-                    </tr>
-                `;
+                if (!localStorage.getItem('rekap_tamu')) {
+                    document.getElementById('rekap-list').innerHTML = '<tr><td colspan="2" class="p-10 text-center text-red-400 text-sm italic">Gagal mengambil data.</td></tr>';
+                }
             });
         }
 
-        // Jalankan fungsi loadRekap setiap kali halaman dibuka
         document.addEventListener('DOMContentLoaded', loadRekap);
-        
-        // Opsional: Refresh otomatis setiap 30 detik agar data selalu up-to-date
-        setInterval(loadRekap, 30000);
+        setInterval(loadRekap, 10000); // Cek data baru setiap 10 detik tanpa refresh
     </script>
 
 </body>
