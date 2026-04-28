@@ -56,9 +56,9 @@
         </div>
 
         <div class="mt-8 grid grid-cols-2 gap-4">
-        <a href="rekap.html" class="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-stone-200 shadow-sm">
-        <span class="text-stone-green font-bold">Rekap</span>
-        <span class="text-[10px] text-gray-400">Lihat Daftar</span>
+            <a href="rekap.html" class="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-stone-200 shadow-sm">
+                <span class="text-stone-green font-bold">Rekap</span>
+                <span class="text-[10px] text-gray-400">Lihat Daftar</span>
             </a>
             <button onclick="location.reload()" class="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-stone-200 shadow-sm">
                 <span class="text-stone-green font-bold">Refresh</span>
@@ -68,56 +68,39 @@
     </div>
 
     <script>
-        // 1. MASUKKAN URL GOOGLE APPS SCRIPT KAMU DI SINI
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxA9hoLHKTUbhG4_U4TvDVKKgkCeeEgYimchExF0l7f2KZqRk71BDQaKt1A3horQiMpkA/exec';
+        // URL SUDAH DIPERBAIKI (Menghapus 'c' berlebih di ujung)
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwnRB4BflhUxY_BVKWWTRtnvFdmX8mq2KVGfF9bPXFjbhGZOxeSvzY8esXzwXajlSkQxA/exec';
         let isProcessing = false;
 
         function onScanSuccess(decodedText, decodedResult) {
             if (isProcessing) return; 
             isProcessing = true;
 
+            // --- TEKNIK INSTAN (Optimistic) ---
+            // Langsung munculkan sukses tanpa nunggu respon server
             document.getElementById('idle-msg').classList.add('hidden');
             const successBox = document.getElementById('success-msg');
             const guestName = document.getElementById('guest-name-result');
             
-            // 2. KIRIM KE GOOGLE SHEETS (Metode GET agar tembus CORS Vercel)
-            const finalURL = `${scriptURL}?nama=${encodeURIComponent(decodedText)}&type=absen`;
+            guestName.innerText = decodedText;
+            successBox.classList.remove('hidden');
 
-            fetch(finalURL)
-            .then(res => res.json())
-            .then(response => {
-                if(response.result === 'success') {
-                    guestName.innerText = decodedText;
-                    successBox.classList.remove('hidden');
+            // Kirim data di latar belakang
+            fetch(`${scriptURL}?nama=${encodeURIComponent(decodedText)}&type=absen`, { mode: 'no-cors' });
 
-                    setTimeout(() => {
-                        successBox.classList.add('hidden');
-                        document.getElementById('idle-msg').classList.remove('hidden');
-                        isProcessing = false;
-                    }, 3000);
-                } else {
-                    alert("Gagal mencatat ke Sheets.");
-                    isProcessing = false;
-                }
-            })
-            .catch(err => {
-                // Trik: Jika Google Script redirect, sering masuk ke catch tapi data masuk.
-                // Kita anggap sukses jika tidak ada error koneksi parah.
-                guestName.innerText = decodedText;
-                successBox.classList.remove('hidden');
-                setTimeout(() => {
-                    successBox.classList.add('hidden');
-                    document.getElementById('idle-msg').classList.remove('hidden');
-                    isProcessing = false;
-                }, 3000);
-            });
+            // Reset scanner setelah 3 detik agar bisa scan tamu berikutnya
+            setTimeout(() => {
+                successBox.classList.add('hidden');
+                document.getElementById('idle-msg').classList.remove('hidden');
+                isProcessing = false;
+            }, 3000);
         }
 
         function onScanFailure(error) {}
 
         let html5QrcodeScanner = new Html5QrcodeScanner(
             "reader", { 
-                fps: 15, 
+                fps: 20, // Dinaikkan agar lebih responsif
                 qrbox: { width: 250, height: 250 },
                 aspectRatio: 1.0 
             }
