@@ -1327,8 +1327,11 @@
             .then(res => res.json())
             .then(data => {
                 const wishBox = document.getElementById('wishBox');
+                
+                // BAGIAN INI DIHAPUS ATAU DIUBAH:
+                // Cukup pastikan jika data ada, maka tampilkan. Jika tidak ada, biarkan kosong.
                 if (!data || data.length === 0) {
-                    wishBox.innerHTML = '<p class="text-center text-gray-400 text-[10px]">Belum ada ucapan.</p>';
+                    wishBox.innerHTML = ''; // Ubah jadi kosong saja, jangan kasih teks
                     return;
                 }
 
@@ -1344,7 +1347,8 @@
             })
             .catch(err => {
                 console.error("Gagal memuat doa:", err);
-                document.getElementById('wishBox').innerHTML = '<p class="text-center text-red-300 text-[10px]">Gagal memuat ucapan.</p>';
+                // Bisa dikosongkan juga jika error agar tidak merusak tampilan
+                document.getElementById('wishBox').innerHTML = ''; 
             });
         }
 
