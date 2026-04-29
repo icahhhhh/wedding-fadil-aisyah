@@ -97,23 +97,30 @@
             }
 
             function loadRekap() {
-                // 1. Ambil dari cache dulu (Sangat Cepat/Instan)
-                const cache = localStorage.getItem('rekap_tamu');
-                if (cache) { 
-                    renderTamu(JSON.parse(cache)); 
-                }
-
-                // 2. Ambil dari server di latar belakang (Background Sync)
-                fetch(`${scriptURL}?type=get_absen`)
-                .then(res => res.json())
-                .then(data => {
-                    // Urutkan data terbaru dari server di atas
-                    const sortedData = data.reverse(); 
-                    localStorage.setItem('rekap_tamu', JSON.stringify(sortedData));
-                    renderTamu(sortedData);
-                })
-                .catch(err => console.error("Gagal update data server:", err));
+            // 1. Ambil dari cache dulu (Sangat Cepat/Instan)
+            const cache = localStorage.getItem('rekap_tamu');
+            if (cache) { 
+                renderTamu(JSON.parse(cache)); 
             }
+
+            // 2. Ambil dari server di latar belakang (Background Sync)
+            fetch(`${scriptURL}?type=get_absen`)
+            .then(res => res.json())
+            .then(data => {
+                // --- BAGIAN YANG DIUBAH MULAI DARI SINI ---
+                
+                // Mengurutkan data: Jam terbaru (besar) ke jam lama (kecil)
+                const sortedData = data.sort((a, b) => {
+                    return b.waktu.localeCompare(a.waktu);
+                });
+                
+                localStorage.setItem('rekap_tamu', JSON.stringify(sortedData));
+                renderTamu(sortedData);
+                
+                // --- BAGIAN YANG DIUBAH SELESAI ---
+            })
+            .catch(err => console.error("Gagal update data server:", err));
+        }
 
             // Jalankan load pertama kali
             document.addEventListener('DOMContentLoaded', loadRekap);
