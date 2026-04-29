@@ -514,6 +514,24 @@
             font-size: 18px !important;
         }
 
+        .color-dot {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .glass-dresscode {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
         .glass-gift-card {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(12px);
@@ -966,6 +984,7 @@
                     <div class="swiper-slide"><img src="Foto 6.jpg"></div>
                     <div class="swiper-slide"><img src="Foto 7.jpg"></div>
                     <div class="swiper-slide"><img src="Foto 8.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 9.jpg"></div>
                 </div>
                 <div class="swiper-button-next"></div>
                 <div class="swiper-button-prev"></div>
@@ -984,8 +1003,86 @@
                     <div class="swiper-slide"><img src="Foto 6.jpg"></div>
                     <div class="swiper-slide"><img src="Foto 7.jpg"></div>
                     <div class="swiper-slide"><img src="Foto 8.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 9.jpg"></div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <section class="p-0 m-0 min-h-screen relative flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="Foto 9.jpg" alt="Background Dresscode" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-black/50"></div>
+        </div>
+
+        <div class="relative z-10 w-full max-w-md px-6 text-center" data-aos="fade-up">
+            <div class="mb-6">
+                <h2 class="font-accent text-4xl text-white mb-2">Dresscode</h2>
+                <div class="w-12 h-[1px] bg-white/40 mx-auto mb-4"></div>
+                <p class="text-[10px] uppercase tracking-[0.2em] text-white/80 mb-6 italic">
+                    Your presence is our greatest gift, but if you'd like to match our theme, here is our color palette:
+                </p>
+            </div>
+
+            <div class="glass-dresscode space-y-6">
+                <div class="flex flex-col items-center">
+                    <p class="text-[11px] font-serif tracking-widest mb-3 opacity-90 uppercase">Romantic Palette</p>
+                    <div class="flex gap-4">
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="color-dot" style="background-color: #DCAE96;"></span>
+                            <span class="text-[8px] opacity-70">Dusty Rose</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="color-dot" style="background-color: #A38F85;"></span>
+                            <span class="text-[8px] opacity-70">Mauve</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="color-dot" style="background-color: #D1D1D1;"></span>
+                            <span class="text-[8px] opacity-70">Silver</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center">
+                    <p class="text-[11px] font-serif tracking-widest mb-3 opacity-90 uppercase border-t border-white/10 pt-4 w-full text-center">Earthy Palette</p>
+                    <div class="flex gap-4">
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="color-dot" style="background-color: #B2AC88;"></span>
+                            <span class="text-[8px] opacity-70">Sage</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="color-dot" style="background-color: #F5F5DC;"></span>
+                            <span class="text-[8px] opacity-70">Beige</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="color-dot" style="background-color: #E3DAC9;"></span>
+                            <span class="text-[8px] opacity-70">Cream</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center">
+                    <p class="text-[11px] font-serif tracking-widest mb-3 opacity-90 uppercase border-t border-white/10 pt-4 w-full text-center">Neutral Palette</p>
+                    <div class="flex gap-4">
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="color-dot" style="background-color: #D2B48C;"></span>
+                            <span class="text-[8px] opacity-70">Tan</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="color-dot" style="background-color: #F2E7D5;"></span>
+                            <span class="text-[8px] opacity-70">Sand</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="color-dot" style="background-color: #FFFFFF;"></span>
+                            <span class="text-[8px] opacity-70">White</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-[9px] italic text-white/60 tracking-wider">
+                *This is only a recommendation, not an obligation.
+            </p>
         </div>
     </section>
 
