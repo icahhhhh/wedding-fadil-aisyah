@@ -74,59 +74,72 @@
 
         // 2. LOGIKA SAAT SCAN BERHASIL
         function onScanSuccess(decodedText, decodedResult) {
-            if (isProcessing) return; 
-            isProcessing = true;
+        if (isProcessing) return; 
+        isProcessing = true;
 
-            // Bedah data QR (Format: "Nama | Status")
-            const data = decodedText.split(" | ");
-            const namaTamu = data[0];
-            const statusTamu = data[1] || "Reguler";
+        // 1. Bedah data QR (Format: "Nama | Status")
+        const data = decodedText.split(" | ");
+        const namaTamu = data[0].trim();
+        const statusTamu = data[1] ? data[1].trim() : "Reguler";
 
-            const successBox = document.getElementById('success-msg');
-            const guestName = document.getElementById('guest-name-result');
-            const idleMsg = document.getElementById('idle-msg');
+        const successBox = document.getElementById('success-msg');
+        const guestName = document.getElementById('guest-name-result');
+        const idleMsg = document.getElementById('idle-msg');
 
-            // Set tampilan Nama & Warna (Gold untuk VIP)
-            if (statusTamu.toUpperCase() === "VIP") {
-                successBox.style.backgroundColor = "#d4af37"; 
-                guestName.innerHTML = `${namaTamu} <br><span style="font-size:12px; opacity:0.9; font-weight:normal;">VIP GUEST</span>`;
-            } else {
-                successBox.style.backgroundColor = "#16a34a"; 
-                guestName.innerText = namaTamu;
-            }
-
-            // Tampilkan Pesan Sukses
-            idleMsg.classList.add('hidden');
-            successBox.classList.remove('hidden');
-
-            // Kirim data ke Google Sheets (Background)
-            const finalURL = `${scriptURL}?nama=${encodeURIComponent(namaTamu)}&status=${encodeURIComponent(statusTamu)}&type=absen`;
-            fetch(finalURL, { mode: 'no-cors' });
-
-            // Reset scanner setelah 3 detik
-            setTimeout(() => {
-                successBox.classList.add('hidden');
-                idleMsg.classList.remove('hidden');
-                successBox.style.backgroundColor = "#16a34a"; 
-                isProcessing = false;
-            }, 3000);
+        // 2. Set tampilan Nama & Warna (Gold untuk VIP)
+        if (statusTamu.toUpperCase() === "VIP") {
+            successBox.style.backgroundColor = "#d4af37"; 
+            guestName.innerHTML = `${namaTamu} <br><span style="font-size:12px; opacity:0.9; font-weight:normal;">VIP GUEST</span>`;
+        } else {
+            successBox.style.backgroundColor = "#16a34a"; 
+            guestName.innerText = namaTamu;
         }
 
-        function onScanFailure(error) {
-            // Kita abaikan error kecil saat kamera mencari kode
-        }
+        // 3. Tampilkan Pesan Sukses (Langsung muncul di layar scanner)
+        idleMsg.classList.add('hidden');
+        successBox.classList.remove('hidden');
 
-        // 3. MENJALANKAN KAMERA (PASTIKAN BAGIAN INI TIDAK TERHAPUS)
-        let html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", { 
-                fps: 20, 
-                qrbox: { width: 250, height: 250 },
-                aspectRatio: 1.0 
-            }
-        );
-        
-        // Render kamera ke elemen <div id="reader">
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        // 4. LOGIKA PERCEPAT REKAP (Smart Cache)
+        // Kita buat objek tamu baru untuk disimpan di memori lokal HP
+        const newEntry = {
+            nama: namaTamu,
+            status: statusTamu,
+            waktu: new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
+        };
+
+        // Ambil data rekap lama dari memori, tambah yang baru di paling atas
+        let localData = JSON.parse(localStorage.getItem('rekap_tamu') || '[]');
+        localData.unshift(newEntry); 
+        localStorage.setItem('rekap_tamu', JSON.stringify(localData));
+
+        // 5. Kirim data ke Google Sheets (Berjalan di latar belakang)
+        const finalURL = `${scriptURL}?nama=${encodeURIComponent(namaTamu)}&status=${encodeURIComponent(statusTamu)}&type=absen`;
+        fetch(finalURL, { mode: 'no-cors' })
+        .catch(err => console.error("Gagal kirim ke server, tapi data lokal aman:", err));
+
+        // 6. Reset scanner setelah 3 detik
+        setTimeout(() => {
+            successBox.classList.add('hidden');
+            idleMsg.classList.remove('hidden');
+            successBox.style.backgroundColor = "#16a34a"; 
+            isProcessing = false;
+        }, 3000);
+    }
+
+    function onScanFailure(error) {
+        // Abaikan error saat mencari kode
+    }
+
+    // 7. MENJALANKAN KAMERA
+    let html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader", { 
+            fps: 20, 
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0 
+        }
+    );
+
+    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
     </script>
 </body>
 </html>
