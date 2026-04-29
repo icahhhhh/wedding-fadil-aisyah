@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
         /* Efek Fade Out saat loading selesai */
@@ -816,7 +817,7 @@
     </button>
 
     <div id="qrModal" onclick="closeQR()">
-    <div class="qr-card" onclick="event.stopPropagation()">
+    <div id="capture-area"class="qr-card" onclick="event.stopPropagation()">
         <div class="qr-header">
             <p class="text-[10px] uppercase tracking-[0.2em] opacity-80">E-Invitation Entry Pass</p>
             <h3 class="font-accent text-3xl mt-1">Fadil & Aisyah</h3>
@@ -1555,32 +1556,35 @@
         }
 
         function downloadQR() {
-        // Cari elemen gambar di dalam div qrcode
-        const qrImg = document.querySelector('#qrcode img');
-        const guestName = document.getElementById('qr-guest-name').innerText;
+        const area = document.getElementById('capture-area');
+        const nama = document.getElementById('qr-guest-name').innerText;
 
-        if (qrImg) {
-            const link = document.createElement('a');
-            link.href = qrImg.src; // Ambil data Base64 gambar
-            link.download = `QR_Undangan_${guestName}.png`; // Nama file saat didownload
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } else {
-            // Jika qrcode.js menggunakan Canvas (tergantung versi library)
-            const qrCanvas = document.querySelector('#qrcode canvas');
-            if (qrCanvas) {
+        if (!area) {
+            console.error("Elemen capture-area tidak ditemukan!");
+            return;
+        }
+
+        html2canvas(area, { 
+            scale: 3, 
+            backgroundColor: "#ffffff",
+            useCORS: true,
+            allowTaint: true
+        }).then(canvas => {
+            try {
+                const imageData = canvas.toDataURL("image/png");
                 const link = document.createElement('a');
-                link.href = qrCanvas.toDataURL("image/png");
-                link.download = `QR_Undangan_${guestName}.png`;
+                link.href = imageData;
+                link.download = `QR_Undangan_${nama.replace(/\s+/g, '_')}.png`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-            } else {
-                alert("Gagal mengunduh gambar. Silakan coba screenshot layar Anda.");
+            } catch (error) {
+                console.error("Gagal mendownload:", error);
+                alert("Gagal mendownload otomatis. Silakan tekan lama pada gambar QR dan pilih 'Simpan Gambar'.");
             }
-        }
+        });
     }
+            
 
         // 2. Fungsi untuk Menutup QR Code (Ini yang membuat tombol tutup berfungsi)
         function closeQR() {
