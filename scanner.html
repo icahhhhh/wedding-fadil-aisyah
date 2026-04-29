@@ -1,130 +1,1957 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Buku Tamu Digital - Fadil & Aisyah</title>
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+    <meta charset="UTF-8">
+    <title>The Wedding of Fadil & Aisyah</title>
+
+    <meta property="og:title" content="THE WEDDING OF FADIL & AISYAH">
+    <meta property="og:description" content="MINGGU, 03 MEI 2026">
     
-    <style>
-        body { font-family: 'Montserrat', sans-serif; background-color: #f4f1ee; }
-        .bg-stone-green { background-color: #4a5d4a; }
-        .text-stone-green { color: #4a5d4a; }
-        
-        #reader {
-            border: none !important;
-            border-radius: 20px;
-            overflow: hidden;
-        }
-        #reader__dashboard_section_csr button {
-            background-color: #4a5d4a !important;
-            color: white !important;
-            padding: 10px 20px !important;
-            border-radius: 50px !important;
-            text-transform: uppercase;
-            font-size: 12px;
-            font-weight: bold;
-            border: none !important;
-            margin-top: 10px !important;
-        }
-        video { border-radius: 15px; }
-    </style>
-</head>
-<body class="min-h-screen flex flex-col items-center">
+    <meta property="og:image" content="https://wedding-fadil-aisyah.infinityfree.me/preview.jpg">
+    <meta property="og:image:secure_url" content="https://wedding-fadil-aisyah.infinityfree.me/preview.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://wedding-fadil-aisyah.infinityfree.me/">
+    <meta property="og:type" content="website">
 
-    <div class="w-full bg-stone-green p-6 text-white text-center shadow-lg">
-        <h1 class="text-lg font-bold tracking-widest uppercase">Digital Guest Book</h1>
-        <p class="text-xs opacity-80 mt-1">Fadil & Aisyah Wedding</p>
-    </div>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Dancing+Script&family=Great+Vibes&family=Parisienne&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Pinyon+Script&family=Tangerine:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-    <div class="w-full max-w-md p-6">
-        <div class="bg-white rounded-3xl shadow-xl p-4 border border-stone-200">
-            <div id="reader" class="w-full"></div>
-        </div>
-
-        <div id="status-container" class="mt-6">
-            <div id="idle-msg" class="text-center p-4 bg-stone-200 rounded-2xl text-stone-600 text-sm italic">
-                Arahkan kamera ke QR Code tamu...
-            </div>
-            
-            <div id="success-msg" class="hidden text-center p-5 bg-green-600 text-white rounded-2xl shadow-lg animate-bounce">
-                <p class="text-xs uppercase tracking-widest opacity-80">Berhasil Dicatat</p>
-                <h2 id="guest-name-result" class="text-xl font-bold mt-1">Nama Tamu</h2>
-            </div>
-        </div>
-
-        <div class="mt-8 grid grid-cols-2 gap-4">
-            <a href="rekap.html" class="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-stone-200 shadow-sm">
-                <span class="text-stone-green font-bold">Rekap</span>
-                <span class="text-[10px] text-gray-400">Lihat Daftar</span>
-            </a>
-            <button onclick="location.reload()" class="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-stone-200 shadow-sm">
-                <span class="text-stone-green font-bold">Refresh</span>
-                <span class="text-[10px] text-gray-400">Reset Kamera</span>
-            </button>
-        </div>
-    </div>
-
-    <script>
-    // 1. URL GOOGLE APPS SCRIPT
-const scriptURL = 'https://script.google.com/macros/s/AKfycbzafTyat2cxVwfeNref5R-oBGX5ITy0pLy-tbEGhHvpAJ_f2rnXS9U1pFDfXj3jpGDtIw/exec';
-let isProcessing = false;
-
-function onScanSuccess(decodedText, decodedResult) {
-    if (isProcessing) return; 
-    isProcessing = true;
-
-    // 1. Bedah data QR (Nama | Status | ID)
-    const data = decodedText.split("|");
-    const namaTamu = data[0] ? data[0].trim() : "Tanpa Nama";
-    const statusTamu = data[1] ? data[1].trim() : "Reguler";
-    const kodeUnik = data[2] ? data[2].trim() : "-"; // Tetap diambil untuk database
-
-    const successBox = document.getElementById('success-msg');
-    const guestName = document.getElementById('guest-name-result');
-    const idleMsg = document.getElementById('idle-msg');
-
-    // 2. Set tampilan (Hanya Nama saja yang muncul)
-    if (statusTamu.toUpperCase() === "VIP") {
-        successBox.style.backgroundColor = "#FFD700"; // Kuning Emas
-        successBox.style.color = "#000"; 
-        guestName.innerHTML = `
-            <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">🌟 VIP GUEST</div>
-            <div style="font-size: 28px; font-weight: bold; line-height: 1.2;">${namaTamu}</div>
-        `;
-    } else {
-        successBox.style.backgroundColor = "#16a34a"; // Hijau
-        successBox.style.color = "#fff";
-        guestName.innerHTML = `
-            <div style="font-size: 28px; font-weight: bold;">${namaTamu}</div>
-        `;
+<style>
+        /* Efek Fade Out saat loading selesai */
+    .loader-hidden {
+        opacity: 0;
+        pointer-events: none;
     }
 
-    // 3. Munculkan pesan sukses
-    idleMsg.classList.add('hidden');
-    successBox.classList.remove('hidden');
+    /* Mengunci scroll saat loading berlangsung agar user tidak scroll duluan */
+    body.loading-active {
+        overflow: hidden;
+    }
 
-    // 4. Kirim data lengkap ke Google Sheets (ID tetap dikirim agar rekap lengkap)
-    const finalURL = `${scriptURL}?nama=${encodeURIComponent(namaTamu)}&status=${encodeURIComponent(statusTamu)}&kode=${encodeURIComponent(kodeUnik)}&type=absen`;
+    /* Animasi Spin yang halus */
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    .animate-spin {
+        animation: spin 1s linear infinite;
+    }
+
+        :root {
+            --primary: #8e735b;
+            --secondary: #f4f1ee;
+            --dark: #2d241d;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* 1. Background Luar */
+        html {
+            background: url('BG luar.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Mencegah geser kanan-kiri */
+        }
+
+        /* 2. Logika Body */
+        body {
+            background-color: var(--secondary);
+            box-shadow: -10px 0 50px rgba(0,0,0,0.5);
+            position: relative;
+            min-height: 100vh;
+            margin: 0; /* Reset margin default */
+            padding: 0;
+        }
+
+        /* 3. SETTING KHUSUS LAYAR LEBAR (LAPTOP/TABLET) */
+        @media (min-width: 501px) {
+            body {
+                max-width: 500px !important;
+                margin-left: auto !important; 
+                margin-right: 0 !important;
+                display: block !important;
+            }
+        }
+
+        /* 4. SETTING KHUSUS HP (Full Layar) */
+        @media (max-width: 500px) {
+            body {
+                max-width: 100% !important; /* Paksa 100% di HP */
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                box-shadow: none; /* Hilangkan bayangan di HP agar lebih ringan */
+            }
+        }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-accent { font-family: 'Great Vibes', cursive; }
+
+        /* Performance Boost */
+        img { will-change: transform; }
+
+        /* Style untuk Cover Luar */
+              #wedding-cover {
+            position: fixed;
+            top: 0;
+            right: 0 !important; /* Paksa nempel kanan layar */
+            left: auto !important; 
+            width: 100% !important;
+            max-width: 500px !important;
+            height: 100%;
+            z-index: 9999;
+            transition: transform 1s ease-in-out;
+        }
+
+        /* Pastikan section halaman 2 benar-benar pas layar HP */
+        .section-full {
+            height: 100vh; /* Fallback */
+            height: 100dvh; /* Ukuran dinamis mengikuti layar HP asli */
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #langMenu {
+        transition: all 0.3s ease;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .knot-section-fixed {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .knot-image-cover {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Foto tidak akan gepeng */
+            object-position: center;
+        }
+
+        /* Styling Modal QR */
+        #qrModal {
+            display: none;
+            position: fixed;
+            z-index: 10001;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .qr-card {
+            background: #fdfbf7; /* Warna kertas cream */
+            width: 100%;
+            max-width: 350px;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border: 8px solid #4a5d4a; /* Frame Hijau sesuai tema footer */
+        }
+
+        .qr-header {
+            background: #4a5d4a;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .qr-body {
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+        }
+
+        #qrcode {
+            padding: 15px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+
+        .qr-footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 10px;
+            color: #888;
+            border-top: 1px dashed #ccc;
+        }
+
+        .btn-qr-aesthetic {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.15); /* Transparan Putih */
+            backdrop-filter: blur(10px); /* Efek Blur Kaca */
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            text-transform: none;
+            letter-spacing: 2px;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .btn-qr-aesthetic:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .btn-qr-aesthetic:active {
+            transform: scale(0.95);
+        }
+
+        /* Memastikan knot-text tidak tertutup tombol di layar kecil */
+        .knot-text {
+            position: absolute;
+            top: 50%; /* Letakkan di tengah dulu */
+            left: 50%;
+            transform: translate(-50%, -50%); /* Geser ke tengah sempurna */
+            width: 85%;
+            color: white;
+            font-size: 1.6rem;
+            font-family: 'Great Vibes', cursive;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+            z-index: 10;
+            text-align: left;
+            margin-top: -20px; /* Sedikit ke atas agar tidak kena tombol */
+        }
+        /* 4. Perbaikan Tombol Musik */
+        #musicButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px !important;
+            z-index: 10000;
+        }
+
+        /* 5. Efek Buka Undangan */
+        .cover-opened {
+            transform: translateY(-100%) !important;
+        }
+
+        /* 6. Otomatis Tengah jika dibuka di HP */
+        @media (max-width: 500px) {
+            body {
+                margin: 0 auto !important;
+            }
+            #wedding-cover {
+                left: 50% !important;
+                right: auto !important;
+                transform: translateX(-50%);
+            }
+            .cover-opened {
+                transform: translate(-50%, -100%) !important;
+            }
+        }
+
+        .cover-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: white;
+            width: 100%;
+            height: 100%;
+            padding: 60px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; 
+        }
+
+        .btn-open {
+            background: rgba(255, 255, 255, 0.25); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            padding: 12px 22px;
+            border-radius: 50px;
+            font-family: 'serif';
+            font-weight: 600;
+            letter-spacing: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            cursor: pointer;
+        }
+
+        .btn-open:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .cover-opened {
+            transform: translateY(-100%);
+        }
+
+        .hero-section {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+        }
+
+        .knot-section {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #000;
+        }
+
+        .knot-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+            z-index: 1;
+        }
+
+        .knot-text {
+            position: absolute;
+            z-index: 20;
+            color: #ffffff;
+            font-size: 1.8rem;
+            line-height: 1.4;
+            text-align: left;
+            width: 85%;
+            /* Letakkan di tengah layar secara vertikal */
+            top: 45%; 
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-shadow: 2px 2px 12px rgba(0,0,0,0.9);
+            font-family: 'Great Vibes', cursive;
+            pointer-events: none; /* Supaya tidak menghalangi klik tombol */
+        }
+
+        /* Pastikan section pembungkusnya punya tinggi yang benar */
+        .section-full-screen {
+            position: relative;
+            height: 100vh;
+            height: 100dvh;
+            width: 100%;
+            overflow: hidden;
+            background: black;
+        }
+
+        .text-right-align {
+            display: block;
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .name-label {
+            position: absolute;
+            z-index: 20;
+            color: white;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
+            font-family: serif;
+            pointer-events: none;
+        }
+
+        .label-bride { top: 65%; left: 9%; font-size: 0.7rem; }
+        .label-groom { top: 60%; right: 5%; font-size: 0.75rem; }
+
+        .parent-label {
+            position: absolute;
+            z-index: 20;
+            font-family: serif;
+            font-style: italic;
+            font-weight: bold;
+            font-size: 0.7rem;
+            line-height: 1.5;
+            pointer-events: none;
+        }
+
+        .label-parents-bride {
+            top: 43%;
+            left: 19.8%;
+            text-align: left;
+            max-width: 60%;
+            color: #3d342d; 
+            transform: rotate(30deg);
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        .label-parents-groom {
+            bottom: 28%;
+            right: 4%;
+            text-align: right;
+            max-width: 45%;
+            color: #fcfaf7;
+            transform: rotate(-4deg);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2rem;
+        }
+        
+        .timer-box-trans {
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--dark);
+            padding: 10px;
+            border-radius: 12px;
+            min-width: 65px;
+        }
+        
+        .timer-box {
+            background: white;
+            color: var(--primary);
+            padding: 10px;
+            border-radius: 12px;
+            min-width: 65px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .bg-portrait {
+            position: relative;
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .glass-title {
+            padding: 10px 20px;
+            color: white !important;
+        }
+
+        .swiper-main {
+            width: 100%;
+            height: 70vh; 
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .swiper-thumbs {
+            margin-top: 12px;
+            height: 12vh;
+            box-sizing: border-box;
+            padding: 4px 0;
+        }
+        
+        .swiper-thumbs .swiper-slide {
+            width: 25%;
+            height: 100%;
+            opacity: 0.5;
+            cursor: pointer;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: opacity 0.3s ease;
+        }
+        
+        .swiper-thumbs .swiper-slide-thumb-active {
+            opacity: 1;
+            border: 2px solid var(--primary);
+        }
+
+        .swiper-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .swiper-button-next, .swiper-button-prev {
+            color: white !important;
+            background: rgba(0,0,0,0.25);
+            backdrop-filter: blur(4px);
+            width: 40px !important;
+            height: 40px !important;
+            border-radius: 50%;
+        }
+        
+        .swiper-button-next:after, .swiper-button-prev:after {
+            font-size: 18px !important;
+        }
+
+        .color-dot {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .glass-dresscode {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .glass-gift-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            width: 85%;
+            max-width: 320px;
+            color: white;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .account-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-copy {
+            background: white;
+            color: #8e735b;
+            font-size: 9px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-copy:active { transform: scale(0.9); }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: transform 0.2s active;
+        }
+        
+        .btn-primary:active { transform: scale(0.95); }
+
+        section { 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            padding: 3rem 1.2rem; 
+        }
+
+        .wishes-title-frame {
+            position: relative;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .line1, .line2 {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2rem;
+            color: white;
+            transform: rotate(-3deg) translateX(-15px);
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+        }
+
+        .glass-wishes-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2.5rem;
+            padding: 2rem;
+            color: white;
+        }
+
+        .input-wishes-glass {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            background: rgba(255, 255, 255, 0.15); 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            outline: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .input-wishes-glass::placeholder { color: rgba(255, 255, 255, 0.7); }
+        .input-wishes-glass:focus {
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-send-glass {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .btn-send-glass:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* --- Aesthetic Scrollbar untuk WishBox --- */
+        #wishBox {
+            max-height: 400px; /* Batasi tinggi kotak ucapan */
+            overflow-y: auto;
+            padding-right: 8px; /* Ruang agar teks tidak mepet ke garis scroll */
+        }
+
+        /* Ukuran garis scroll (Sangat Tipis) */
+        #wishBox::-webkit-scrollbar {
+            width: 1px;
+        }
+
+        /* Jalur Scroll (Dibuat Transparan) */
+        #wishBox::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        /* Batang Scroll (Garis Putih Tipis Khas Glassmorphism) */
+        #wishBox::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3); /* Putih transparan senada dengan kartu */
+            border-radius: 10px;
+        }
+
+        /* Efek saat disentuh */
+        #wishBox::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Solusi untuk Firefox */
+        #wishBox {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+        }
+
+        .section-thankyou {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: right;
+            justify-content: flex;
+            overflow: hidden;
+            background-color: #f6dfdf;
+        }
+
+        .thankyou-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .thankyou-text {
+            font-family: 'Great Vibes', cursive;
+            position: absolute;
+            top: 18%;
+            right: 11%;
+            text-align: right;
+            opacity: 0;
+            color: #354732;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            transform: rotate(-10deg);
+            animation: tyPopUp 1.8s ease-out forwards;
+        }
+
+        .text-thank {
+            display: block;
+            font-size: 3rem !important;
+            line-height: 1.4;
+        }
+
+        .text-you {
+            display: block;
+            font-size: 3rem !important;
+            line-height: 0.8;
+            margin-top: -10px;
+        }
+
+        @keyframes tyPopUp {
+            0% { opacity: 0; transform: rotate(-30deg) scale(0.2); }
+            40% { opacity: 1; transform: rotate(5deg) scale(1.1); }
+            60% { transform: rotate(-2deg) scale(0.98); }
+            100% { opacity: 1; transform: rotate(-10deg) scale(1); }
+        }
+
+        @media (max-width: 480px) {
+            .text-thank { font-size: 3.5rem; }
+            .text-you { font-size: 5.5rem; }
+            .thankyou-wrapper { padding-right: 10%; }
+        }
+
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .animate-spin-slow {
+            animation: spin-slow 4s linear infinite;
+        }
+
+        .paused {
+            animation-play-state: paused;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loader-wrapper" class="fixed inset-0 z-[10001] bg-[#f4f1ee] flex flex-col items-center justify-center transition-opacity duration-700">
+        <div class="relative flex items-center justify-center">
+            <div class="w-16 h-16 border-4 border-stone-200 border-t-[#8e735b] rounded-full animate-spin"></div>
+            <span class="absolute font-serif text-[10px] text-[#8e735b] font-bold">F & A</span>
+        </div>
+        <p class="mt-4 font-serif italic text-stone-500 text-xs tracking-[0.2em] animate-pulse">Loading...</p>
+    </div>
+
+            <div id="langContainer" class="fixed bottom-16 right-5 z-[10000] flex flex-col items-center gap-2">
+    <div id="langMenu" class="hidden flex-col gap-2 mb-2 animate-fade-in">
+        <button onclick="switchLang('id')" class="w-8 h-8 bg-white/90 rounded-full shadow-lg border border-stone-200 overflow-hidden flex items-center justify-center transition-transform active:scale-90">
+            <img src="https://flagcdn.com/w40/id.png" class="w-full h-full object-cover" alt="Indonesia">
+        </button>
+        <button onclick="switchLang('en')" class="w-8 h-8 bg-white/90 rounded-full shadow-lg border border-stone-200 overflow-hidden flex items-center justify-center transition-transform active:scale-90">
+            <img src="https://flagcdn.com/w40/gb.png" class="w-full h-full object-cover" alt="English">
+        </button>
+    </div>
     
-    fetch(finalURL, { mode: 'no-cors' }).catch(err => console.error("Error:", err));
+    <button onclick="toggleLangMenu()" class="bg-white/80 p-2 rounded-full shadow-lg border border-stone-200 transition-all active:scale-95">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8e735b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+    </button>
+</div>
+        
+        <button onclick="toggleLangMenu()" class="bg-white/80 p-2 rounded-full shadow-lg border border-stone-200 transition-all active:scale-95">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8e735b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+        </button>
+    </div>
 
-    // 5. Reset tampilan setelah 3 detik
-    setTimeout(() => {
-        successBox.classList.add('hidden');
-        idleMsg.classList.remove('hidden');
-        isProcessing = false;
-    }, 3000);
-}
+    <audio id="weddingMusic" loop>
+        <source src="musik.mp3" type="audio/mpeg">
+    </audio>
 
-function onScanFailure(error) { /* Abaikan error */ }
+    <button id="musicButton" onclick="toggleMusic()" class="fixed bottom-5 right-5 z-[100] bg-white/80 p-2 rounded-full shadow-lg border border-stone-200">
+        <div id="musicIcon" class="animate-spin-slow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8e735b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18V5l12-2v13"></path>
+                <circle cx="6" cy="18" r="3"></circle>
+                <circle cx="18" cy="16" r="3"></circle>
+            </svg>
+        </div>
+    </button>
 
-let html5QrcodeScanner = new Html5QrcodeScanner(
-    "reader", { fps: 20, qrbox: { width: 250, height: 250 } }
-);
-html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+    <div id="qrModal" onclick="closeQR()">
+    <div class="qr-card" onclick="event.stopPropagation()">
+        <div class="qr-header">
+            <p class="text-[10px] uppercase tracking-[0.2em] opacity-80">E-Invitation Entry Pass</p>
+            <h3 class="font-accent text-3xl mt-1">Fadil & Aisyah</h3>
+        </div>
+        
+        <div class="qr-body">
+            <h4 id="qr-guest-name" class="font-serif text-xl mb-6 text-stone-800 italic">Nama Tamu</h4>
+            
+            <div id="qrcode"></div>
+            
+            <p class="mt-6 text-[11px] text-stone-500 text-center leading-relaxed">
+                Silakan tunjukkan QR Code ini kepada petugas <br> untuk akses masuk & buku tamu digital.
+            </p>
+        </div>
+
+        <div class="qr-footer">
+            24 . 05 . 2026 | Gambut, Kalsel
+        </div>
+        
+        <button onclick="closeQR()" class="w-full py-3 bg-stone-200 text-stone-600 font-bold text-xs uppercase tracking-widest">Tutup</button>
+    </div>
+</div>
+
+    <div id="wedding-cover">
+    <div class="absolute inset-0">
+        <img src="Cover.jpg" alt="Cover" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80"></div>
+    </div>
+
+    <div class="cover-content">
+        <div data-aos="fade-down" data-aos-delay="200">
+            <p id="lang-invitation-label" class="uppercase tracking-[0.3em] text-[10px] mb-2 opacity-80">Wedding Invitation</p>
+            
+            <h1 class="font-accent text-5xl mb-3">Fadil & Aisyah</h1>
+            </div>
+
+        <div data-aos="fade-up" data-aos-delay="400" class="mb-1">
+            <div class="mb-1">
+                <p id="lang-to" class="text-xs italic opacity-70 mb-2">To our dear guests:</p>
+                <h2 id="guest-name" class="text-2xl font-serif italic tracking-wide">[Nama Tamu]</h2>
+            </div>
+            
+            <button id="btn-open" onclick="openInvitation()" class="btn-open uppercase text-sm">
+                Open Invitation
+            </button>
+            
+            <p id="lang-tap-to-enter" class="text-[9px] mt-4 opacity-50 tracking-widest uppercase">Tap to enter</p>
+        </div>
+    </div>
+</div>
+
+    <section class="p-0 m-0 relative overflow-hidden" style="height: 100dvh; width: 100%;">
+        <img src="Halaman 2.jpg" class="absolute inset-0 w-full h-full object-cover opacity-70">
+        <div class="absolute inset-0 bg-black/40"></div>
+
+        <div class="absolute left-0 w-full px-10 z-20" style="bottom: 160px;">
+            <div id="typing-effect" class="font-accent text-white text-3xl md:text-4xl leading-relaxed text-left drop-shadow-lg" style="font-family: 'Great Vibes', cursive;">
+                </div>
+        </div>
+
+            <div class="absolute bottom-20 left-0 w-full flex justify-center z-[30]">
+        <button onclick="showQR()" class="btn-qr-aesthetic">
+            Your Invitation QR
+        </button>
+        </div>
+    </section>
+
+    <section class="p-0 m-0 min-h-screen relative flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 w-full h-full">
+            <img src="Halaman 3.jpg" alt="Background Ayat" class="w-full h-full object-cover opacity-60">
+            <div class="absolute inset-0 bg-black/30"></div>
+        </div>
+        <div class="relative z-10 max-w-md mx-auto text-center px-6" data-aos="fade-up">
+            <h2 class="font-serif text-3xl mb-6 italic text-white">QS. Ar-Rum: 21</h2>
+            <div class="w-12 h-[1px] bg-white/50 mx-auto mb-6"></div>
+            <p class="text-sm leading-relaxed text-white italic font-light tracking-wide">
+                "Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya..."
+            </p>
+        </div>
+    </section>
+
+   <section id="halaman-4" class="p-0 m-0 min-h-screen relative flex flex-col justify-end overflow-hidden bg-black">
+    <img src="Halaman 4.jpg" alt="Fadil & Aisyah" class="absolute inset-0 w-full h-full object-cover opacity-80 z-0">
+    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-1"></div>
+    
+    <div class="absolute z-10 flex flex-col items-center text-center w-[40%]" style="top: 60%; left: 10%;">
+    <div id="name-aisyah" class="text-white text-base md:text-2xl font-serif" 
+         style="font-family: 'Times New Roman', Times, serif; font-weight: 600; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); line-height: 1.0; min-height: 1.2em; letter-spacing: 0.05em;">
+    </div>
+    
+    <a id="ig-aisyah" href="https://www.instagram.com/ahanadiya" target="_blank" class="opacity-0 flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 transition-all duration-1000">
+        <span class="text-[8px] lowercase tracking-widest text-white">@ahanadiya</span>
+    </a>
+</div>
+
+<div class="absolute z-10 flex flex-col items-center text-center w-[40%]" style="top: 60%; right: 8%;">
+    <div id="name-fadil" class="text-white text-base md:text-2xl font-serif" 
+         style="font-family: 'Times New Roman', Times, serif; font-weight: 600; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); line-height: 1.0; min-height: 1.2em; letter-spacing: 0.05em;">
+    </div>
+    
+    <a id="ig-fadil" href="https://www.instagram.com/s.ahmadfadil" target="_blank" class="opacity-0 flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 transition-all duration-1000">
+        <span class="text-[8px] lowercase tracking-widest text-white">@s.ahmadfadil</span>
+    </a>
+</div>
+
+    <div class="relative z-10 text-center mb-16" data-aos="fade-up">
+        <p id="lang-bride-groom" style="font-family: serif; color: white; opacity: 0.8; letter-spacing: 0.1em;">Bride & Groom</p>
+        <div class="w-8 h-[1px] bg-white/40 mx-auto mt-2"></div>
+    </div>
+</section>
+
+    <section id="halaman-5" class="p-0 m-0 relative h-[100dvh] w-full overflow-hidden bg-black">
+    
+    <img src="Halaman 5.jpg" alt="Fadil & Aisyah Keluarga" 
+         class="absolute inset-0 w-full h-full object-cover z-0" 
+         style="object-position: center 20%;"> <div class="absolute inset-0 bg-black/20 via-transparent to-transparent z-1"></div>
+         
+        <div id="parents-bride" class="parent-label label-parents-bride color-parents-bride writing-dark"></div>
+        <div id="parents-groom" class="parent-label label-parents-groom color-parents-groom writing-dark"></div>
+    </section>
+
+        <section class="p-0 m-0 min-h-screen relative flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 w-full h-full">
+            <img src="Halaman 6.jpg" alt="Background Acara" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-black/40"></div>
+        </div>
+
+        <div class="relative z-10 max-w-md mx-auto px-6 py-12 w-full" data-aos="fade-up">
+            
+            <div class="text-center mb-10">
+                <h2 id="lang-save-date" class="font-accent text-5xl text-white mb-2">Save the Date</h2>
+                <p id="lang-main-date" class="font-serif italic text-white/90 text-lg mb-6">Sunday, 24 May 2026</p>
+                
+                <div id="countdown" class="flex justify-center gap-2">
+                    <div class="timer-box-trans"><span id="days" class="block font-bold text-xl">0</span><small id="lang-days" class="text-[9px] uppercase">Days</small></div>
+                    <div class="timer-box-trans"><span id="hours" class="block font-bold text-xl">0</span><small id="lang-hours" class="text-[9px] uppercase">Hours</small></div>
+                    <div class="timer-box-trans"><span id="minutes" class="block font-bold text-xl">0</span><small id="lang-mins" class="text-[9px] uppercase">minutes</small></div>
+                    <div class="timer-box-trans"><span id="seconds" class="block font-bold text-xl">0</span><small id="lang-secs" class="text-[9px] uppercase">seconds</small></div>
+                </div>
+
+                <div class="mt-8" data-aos="fade-up" data-aos-delay="200">
+                    <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Pernikahan+Fadil+%26+Aisyah&dates=20260524T080000/20260524T130000&details=Mohon+doa+restu+atas+pernikahan+kami.+Terima+kasih.&location=Jl.+A.+Yani+Km.12.200+Komp.+Citra+Permai+Blok+A+No.115+Gambut&trp=true" 
+                    target="_blank" 
+                    class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/20 border border-white/40 text-white text-xs font-semibold tracking-wider hover:bg-white/40 transition-all backdrop-blur-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                            <path d="M12 14v4"></path>
+                            <path d="M10 16h4"></path>
+                        </svg>
+                        <span id="lang-add-cal">Add To Calendar</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="glass-card p-6 space-y-6 text-white text-center">
+                <div class="border-b border-white/20 pb-4">
+                    <h3 id="lang-akad-title" class="font-serif text-xl mb-1 italic">Wedding Covenant</h3>
+                    <p class="text-sm opacity-90">08.00 - 10.00 WITA</p>
+                </div>
+                
+                <div class="border-b border-white/20 pb-4">
+                    <h3 id="lang-reception-title" class="font-serif text-xl mb-1 italic">Wedding Reception</h3>
+                    <p id="lang-reception-time" class="text-sm opacity-90">10.00 WITA - Finish</p>
+                </div>
+
+                <div class="pt-2">
+                    <p id="lang-location-label" class="text-xs italic mb-4 opacity-90 leading-relaxed">
+                        The Bride's Residence:<br>
+                        Jl. A. Yani Km.12.200 Komp. Citra Permai Blok A No.115 Kel. Gambut Barat Kec. Gambut
+                    </p>
+                    
+                    <div class="w-full h-[200px] rounded-2xl overflow-hidden shadow-inner border border-white/20 mb-6">
+                        <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=-3.393083,114.655389&z=15&output=embed"></iframe>
+                    </div>
+
+                    <a id="lang-btn-map" href="https://www.google.com/maps?q=-3.393083,114.655389" target="_blank" class="btn-primary inline-block text-sm bg-white !text-stone-800 shadow-xl px-8 py-3 rounded-full font-bold uppercase tracking-wider transition-all active:scale-95">
+                        OPEN GOOGLE MAPS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+    <section class="bg-portrait py-10">
+        <div class="absolute inset-0 z-0">
+            <img src="Halaman 7.jpg" alt="Background Portrait" class="w-full h-full object-cover opacity-90">
+            <div class="absolute inset-0 bg-black/30"></div>
+        </div>
+        <div class="relative z-10 max-w-md mx-auto px-4 w-full text-center" data-aos="fade-up">
+            <div class="mb-8">
+                <h2 id="lang-gallery-title" class="font-serif text-2xl glass-title">Potrait of Us</h2>
+            </div>
+            <div class="swiper swiper-main shadow-lg">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide"><img src="Halaman 2.jpg"></div>
+                    <div class="swiper-slide"><img src="Halaman 4.jpg"></div>
+                    <div class="swiper-slide"><img src="Halaman 5.jpg"></div>
+                    <div class="swiper-slide"><img src="Halaman 6.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 1.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 2.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 3.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 4.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 5.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 6.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 7.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 8.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 9.jpg"></div>
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+            <div class="swiper swiper-thumbs">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide"><img src="Halaman 2.jpg"></div>
+                    <div class="swiper-slide"><img src="Halaman 4.jpg"></div>
+                    <div class="swiper-slide"><img src="Halaman 5.jpg"></div>
+                    <div class="swiper-slide"><img src="Halaman 6.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 1.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 2.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 3.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 4.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 5.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 6.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 7.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 8.jpg"></div>
+                    <div class="swiper-slide"><img src="Foto 9.jpg"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+            <section class="p-0 m-0 min-h-screen relative flex items-center justify-center overflow-hidden">
+            <div class="absolute inset-0 z-0">
+                <img src="Foto 9.jpg" alt="Background Dresscode" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-black/50"></div>
+            </div>
+
+            <div class="relative z-10 w-full max-w-md px-6 text-center" data-aos="fade-up">
+                <div class="mb-6">
+                    <h2 id="lang-dresscode-title" class="font-accent text-4xl text-white mb-2">Dresscode</h2>
+                    <div class="w-12 h-[1px] bg-white/40 mx-auto mb-4"></div>
+                    <p id="lang-dresscode-desc" class="text-[10px] uppercase tracking-[0.2em] text-white/80 mb-6 italic">
+                        Your presence is our greatest gift, but if you'd like to match our theme, here is our color palette:
+                    </p>
+                </div>
+
+                <div class="glass-dresscode space-y-6">
+                    <div class="flex flex-col items-center">
+                        <p id="lang-palette-romantic" class="text-[11px] font-serif tracking-widest mb-3 opacity-90 uppercase">Romantic Palette</p>
+                        <div class="flex gap-4">
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="color-dot" style="background-color: #DCAE96;"></span>
+                                <span class="text-[8px] opacity-70">Dusty Rose</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="color-dot" style="background-color: #A38F85;"></span>
+                                <span class="text-[8px] opacity-70">Mauve</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="color-dot" style="background-color: #D1D1D1;"></span>
+                                <span id="lang-color-silver" class="text-[8px] opacity-70">Silver</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <p id="lang-palette-earthy" class="text-[11px] font-serif tracking-widest mb-3 opacity-90 uppercase border-t border-white/10 pt-4 w-full text-center">Earthy Palette</p>
+                        <div class="flex gap-4">
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="color-dot" style="background-color: #B2AC88;"></span>
+                                <span class="text-[8px] opacity-70">Sage</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="color-dot" style="background-color: #F5F5DC;"></span>
+                                <span class="text-[8px] opacity-70">Beige</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="color-dot" style="background-color: #E3DAC9;"></span>
+                                <span id="lang-color-cream" class="text-[8px] opacity-70">Cream</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <p id="lang-palette-neutral" class="text-[11px] font-serif tracking-widest mb-3 opacity-90 uppercase border-t border-white/10 pt-4 w-full text-center">Neutral Palette</p>
+                        <div class="flex gap-4">
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="color-dot" style="background-color: #D2B48C;"></span>
+                                <span class="text-[8px] opacity-70">Tan</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="color-dot" style="background-color: #F2E7D5;"></span>
+                                <span class="text-[8px] opacity-70">Sand</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="color-dot" style="background-color: #FFFFFF;"></span>
+                                <span id="lang-color-white" class="text-[8px] opacity-70">White</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p id="lang-dresscode-note" class="text-[9px] italic text-white/60 tracking-wider" style="transform: translateY(-20px);">
+                    *This is only a recommendation, not an obligation.
+                </p>
+            </div>
+        </section>
+
+        <section class="p-0 m-0 min-h-screen relative flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="Foto 3.jpg" alt="Background Memories" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-black/50"></div>
+        </div>
+
+        <div class="relative z-10 w-full max-w-md px-6 flex flex-col gap-6" data-aos="fade-up">
+            
+            <div class="glass-gift-card !w-full !max-w-none !p-6 text-center">
+                <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3 backdrop-blur-md border border-white/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                </div>
+                <h3 id="lang-filter-title" class="font-serif text-xl mb-2 tracking-wide text-white">Wedding Filter</h3>
+                <p id="lang-filter-desc" class="text-[9px] leading-relaxed mb-4 italic text-white/80 px-2">
+                    "Capture the love and share the joy through our lens. We've created a special filter for our special day."
+                </p>
+                <a href="https://www.instagram.com/s/aGlnaGxpZ2h0OjE3OTc1MDMwNjkwMjkxMjQ1?igsh=eHEwNjhjcWRzd250" target="_blank" 
+                class="inline-block w-full py-2.5 rounded-full bg-white text-stone-800 text-[10px] font-bold tracking-widest uppercase transition-all active:scale-95">
+                    <span id="lang-btn-filter">Use Wedding Filter</span>
+                </a>
+            </div>
+
+            <div class="glass-gift-card !w-full !max-w-none !p-6 text-center">
+                <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3 backdrop-blur-md border border-white/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                </div>
+                <h3 id="lang-share-title" class="font-serif text-xl mb-2 tracking-wide text-white">Sharing Memories</h3>
+                <p id="lang-share-desc" class="text-[9px] leading-relaxed mb-4 italic text-white/80 px-2">
+                    "Help us preserve these beautiful moments. Please share the photos and videos you captured during our celebration."
+                </p>
+                <a href="https://drive.google.com/drive/folders/1HzAW8lQavSHL23JPQ9fwnOC8eiRfVGze" target="_blank" 
+                class="inline-block w-full py-2.5 rounded-full bg-white text-stone-800 text-[10px] font-bold tracking-widest uppercase transition-all active:scale-95">
+                    <span id="lang-btn-share">Upload Your Memories</span>
+                </a>
+            </div>
+            <p class="text-[10px] opacity-70 text-center font-bold tracking-[0.2em] text-white mb-4">Dont' Forget To Tag Us and Use This #AIfinallyFAundlove</p>
+        </div>
+    </section>
+
+        <section class="p-0 m-0 min-h-screen relative flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="Halaman 8.jpg" alt="Background Wedding Gift" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-black/40"></div>
+        </div>
+        <div class="text-center relative z-10" data-aos="zoom-in">
+            <h3 id="lang-gift-title" class="font-serif text-xl mb-3 tracking-wide text-white">Wedding Gift</h3>
+            
+            <p id="lang-gift-desc" class="text-[10px] leading-relaxed mb-6 italic opacity-90 px-2 text-white">
+                "Your present is truly the best gift, but if you'd like to send a little something, we provide a digital envelope to make it easier for you to share your blessings and love with us as we start our new journey together."
+            </p>
+
+            <div class="max-w-[280px] mx-auto text-left"> 
+                <div class="account-box">
+                    <p class="text-[10px] uppercase tracking-widest opacity-80 mb-2 text-white">Bank BRI</p>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-bold text-xs tracking-wider opacity-80 text-white">000301077824506</span>
+                        <button id="lang-copy-1" onclick="copyNumber('000301077824506', this)" class="btn-copy uppercase">Copy</button>
+                    </div>
+                    <p class="text-[11px] font-medium opacity-80 text-white">a.n Sayid Akhmad Fadhil</p>
+                </div>
+
+                <div class="account-box">
+                    <p class="text-[10px] uppercase tracking-widest opacity-80 mb-2 text-white">Dana</p>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-bold text-xs tracking-wider text-white opacity-80">082354527749</span>
+                        <button id="lang-copy-2" onclick="copyNumber('082354527749', this)" class="btn-copy uppercase">Copy</button>
+                    </div>
+                    <p class="text-[11px] font-medium opacity-80 text-white">a.n Aisyah Hanadiya Taisir</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        <section class="p-0 m-0 min-h-screen relative flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="Halaman 9.jpg" alt="Background Send Wishes" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-black/40"></div>
+        </div>
+
+        <div class="relative z-10 max-w-md mx-auto px-8 py-12 w-full" data-aos="fade-up">
+            <div class="wishes-title-frame">
+                <span id="lang-wish-line1" class="line1">Send</span>
+                <span id="lang-wish-line2" class="line2">Your Wish</span>
+            </div>
+            <div class="space-y-4 mb-4 text-sm text-center">
+                <input type="text" id="name" placeholder="Name" class="input-wishes-glass">
+                <textarea id="wish" placeholder="Give your wish" class="input-wishes-glass h-28 resize-none"></textarea>
+            </div>
+            <div class="text-center pt-2">
+                <button id="lang-btn-send" onclick="addWish()" class="btn-send-glass sentencecase text-sm shadow-xl">
+                    Send
+                </button>
+            </div>
+            <div id="wishBox" class="mt-8 space-y-4 overflow-y-auto max-h-48 px-2"></div>
+        </div>
+    </section>
+
+    <section class="section-thankyou p-0 m-0 overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="Halaman 10.jpg" alt="Thank You Background" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-black/10"></div>
+        </div>
+        <div class="thankyou-wrapper" data-aos="fade">
+            <div class="thankyou-text">
+                <span class="text-thank">Thank</span>
+                <span class="text-you">You</span>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-6 text-center m-0" style="background-color: #4a5d4a; border: none;"> 
+    <p class="text-white text-sm font-serif tracking-widest mb-2">#AIfinallyFAundlove</p>
+    <p class="text-[9px] tracking-[0.3em] uppercase text-white/60">With love Fadil & Aisyah © 2026</p>
+</footer>
+
+    
+
+    <script>
+        // 1. Logika Nama Tamu Dinamis
+        const urlParams = new URLSearchParams(window.location.search);
+        const guestName = urlParams.get('to');
+        if (guestName) {
+            document.getElementById('guest-name').innerText = decodeURIComponent(guestName);
+        }
+
+        // 2. Logika Buka Undangan & Putar Musik
+        const audio = document.getElementById("weddingMusic");
+        const musicIcon = document.getElementById("musicIcon");
+        let isPlaying = false;
+
+        function openInvitation() {
+            // Paksa play musik
+            if (audio) {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    musicIcon.classList.remove('paused');
+                }).catch(error => {
+                    console.log("Playback failed:", error);
+                    // Jika gagal, kita coba play lagi di interaksi berikutnya
+                });
+            }
+
+            const cover = document.getElementById("wedding-cover");
+            if (cover) {
+                cover.classList.add('cover-opened');
+                setTimeout(() => {
+                    cover.style.display = 'none';
+                    // Pastikan AOS dan pengetikan nama direset posisinya
+                    AOS.refresh();
+                    if (typeof startTypewriter === "function") startTypewriter();
+                }, 1000);
+            }
+        }
+
+        function toggleMusic() {
+            if (audio) {
+                if (isPlaying) {
+                    audio.pause();
+                    musicIcon.classList.add('paused');
+                } else {
+                    audio.play().catch(e => console.log(e));
+                    musicIcon.classList.remove('paused');
+                }
+                isPlaying = !isPlaying;
+            }
+        }
+
+        // Tambahan pemicu agar audio jalan saat ada sentuhan pertama di layar
+        const playAudioOnInteraction = () => {
+            if (audio && !isPlaying) {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    musicIcon.classList.remove('paused');
+                }).catch(e => console.log(e));
+            }
+            // Hapus listener setelah interaksi pertama berhasil
+            window.removeEventListener('click', playAudioOnInteraction);
+            window.removeEventListener('touchstart', playAudioOnInteraction);
+        };
+
+        window.addEventListener('click', playAudioOnInteraction);
+        window.addEventListener('touchstart', playAudioOnInteraction);
+
+     // 1. Pindahkan "translations" ke luar agar bisa dibaca semua fungsi
+        const translations = {
+            id: {
+                "lang-wish-line1": "Kirim",
+                "lang-wish-line2": "Doa Restu",
+                "placeholder-name": "Nama",
+                "placeholder-wish": "Tulis ucapan atau doa Anda...",
+                "lang-btn-send": "Kirim",
+                "lang-gift-title": "Kado Pernikahan",
+                "lang-gift-desc": "\"Doa restu Anda adalah kado terbaik, namun jika Anda ingin mengirimkan tanda kasih, kami menyediakan amplop digital untuk memudahkan Anda berbagi berkat dan cinta saat kami memulai perjalanan baru bersama.\"",
+                "lang-copy-1": "Salin",
+                "lang-copy-2": "Salin",
+                "lang-filter-title": "Filter Pernikahan",
+                "lang-filter-desc": "\"Abadikan cinta dan bagikan kebahagiaan melalui lensa kami. Kami telah membuat filter khusus untuk hari istimewa kami.\"",
+                "lang-btn-filter": "Gunakan Filter Pernikahan",
+                "lang-share-title": "Berbagi Momen",
+                "lang-share-desc": "\"Bantu kami mengabadikan momen indah ini. Silakan bagikan foto dan video yang Anda ambil selama perayaan kami.\"",
+                "lang-btn-share": "Unggah Momen Anda",
+                "lang-dresscode-title": "Tema Busana",
+                "lang-dresscode-desc": "Kehadiran Anda adalah hadiah terindah bagi kami, namun jika Anda ingin menyesuaikan dengan tema kami, berikut adalah palet warnanya:",
+                "lang-palette-romantic": "Palet Romantis",
+                "lang-palette-earthy": "Palet Warna Bumi",
+                "lang-palette-neutral": "Palet Netral",
+                "lang-color-silver": "Perak",
+                "lang-color-cream": "Krem",
+                "lang-color-white": "Putih",
+                "lang-dresscode-note": "*Ini hanya referensi, bukan suatu kewajiban.",
+                "lang-save-date": "Simpan Tanggalnya",
+                "lang-main-date": "Minggu, 24 Mei 2026",
+                "lang-days": "Hari",
+                "lang-hours": "Jam",
+                "lang-mins": "Menit",
+                "lang-secs": "Detik",
+                "lang-add-cal": "Tambah ke Kalender",
+                "lang-akad-title": "Akad Nikah",
+                "lang-reception-title": "Resepsi",
+                "lang-reception-time": "10.00 WITA - Selesai",
+                "lang-location-label": "Kediaman Mempelai Wanita:<br>Jl. A. Yani Km.12.200 Komp. Citra Permai Blok A No.115 Kel. Gambut Barat Kec. Gambut",
+                "lang-btn-map": "BUKA PETUNJUK LOKASI",
+                "parents-label-bride": "Putri dari",
+                "parents-label-groom": "Putra dari",
+                "lang-invitation-label": "Undangan Pernikahan",
+                "lang-to": "Kepada Bapak/Ibu/Saudara/i:",
+                "btn-open": "Buka Undangan",
+                "lang-tap-to-enter": "Ketuk untuk masuk",
+                "typing-content": "Kami akan mengikat janji suci dan Anda ada dalam |Daftar Tamu!",
+                "lang-bride-groom": "Mempelai Wanita & Mempelai Pria",
+                "lang-dresscode-title": "Tema Busana",
+                "lang-dresscode-note": "*Ini hanya referensi, bukan suatu kewajiban.",
+                "lang-gift-title": "Kado Pernikahan",
+                "lang-gallery-title": "Galeri Kami"
+            },
+            en: {
+                "lang-wish-line1": "Send",
+                "lang-wish-line2": "Your Wish",
+                "placeholder-name": "Name",
+                "placeholder-wish": "Give your wish...",
+                "lang-btn-send": "Send",
+                "lang-gift-title": "Wedding Gift",
+                "lang-gift-desc": "\"Your present is truly the best gift, but if you'd like to send a little something, we provide a digital envelope to make it easier for you to share your blessings and love with us as we start our new journey together.\"",
+                "lang-copy-1": "Copy",
+                "lang-copy-2": "Copy",
+                "lang-filter-title": "Wedding Filter",
+                "lang-filter-desc": "\"Capture the love and share the joy through our lens. We've created a special filter for our special day.\"",
+                "lang-btn-filter": "Use Wedding Filter",
+                "lang-share-title": "Sharing Memories",
+                "lang-share-desc": "\"Help us preserve these beautiful moments. Please share the photos and videos you captured during our celebration.\"",
+                "lang-btn-share": "Upload Your Memories",
+                "lang-dresscode-title": "Dresscode",
+                "lang-dresscode-desc": "Your presence is our greatest gift, but if you'd like to match our theme, here is our color palette:",
+                "lang-palette-romantic": "Romantic Palette",
+                "lang-palette-earthy": "Earthy Palette",
+                "lang-palette-neutral": "Neutral Palette",
+                "lang-color-silver": "Silver",
+                "lang-color-cream": "Cream",
+                "lang-color-white": "White",
+                "lang-dresscode-note": "*This is only a recommendation, not an obligation.",
+                "lang-gallery-title": "Portrait of Us",
+                "lang-save-date": "Save the Date",
+                "lang-main-date": "Sunday, May 24th 2026",
+                "lang-days": "Days",
+                "lang-hours": "Hours",
+                "lang-mins": "Mins",
+                "lang-secs": "Secs",
+                "lang-add-cal": "Add To Calendar",
+                "lang-akad-title": "Wedding Covenant",
+                "lang-reception-title": "Wedding Reception",
+                "lang-reception-time": "10.00 WITA - Finish",
+                "lang-location-label": "The Bride's Residence: Jl. A. Yani Km.12.200 Komp. Citra Permai Blok A No.115 Kel. Gambut Barat Kec. Gambut",
+                "lang-btn-map": "OPEN GOOGLE MAPS",
+                "parents-label-bride": "Daughter of",
+                "parents-label-groom": "Son of",
+                "lang-invitation-label": "Wedding Invitation",
+                "lang-to": "To our dear guests:",
+                "btn-open": "Open Invitation",
+                "lang-tap-to-enter": "Tap to enter",
+                "typing-content": "We're tying the knot and you're on |The Guest List!",
+                "lang-bride-groom": "Bride & Groom",
+                "lang-dresscode-title": "Dresscode",
+                "lang-dresscode-note": "*This is only a recommendation, not an obligation.",
+                "lang-gift-title": "Wedding Gift"
+            }
+        };
+
+        let currentLang = 'en'; // Variabel untuk mencatat bahasa aktif
+
+        function toggleLangMenu() {
+            const menu = document.getElementById('langMenu');
+            menu.classList.toggle('hidden');
+            menu.classList.toggle('flex');
+        }
+
+        function switchLang(lang) {
+            currentLang = lang; // Update bahasa yang dipilih
+
+            // Ganti teks elemen dengan ID
+            for (let id in translations[lang]) {
+                const el = document.getElementById(id);
+                if (el && id !== "typing-content") {
+                    el.innerHTML = translations[lang][id];
+                }
+            }
+
+            // KHUSUS PLACEHOLDER (Tambahkan ini)
+            const nameInput = document.getElementById('name');
+            const wishInput = document.getElementById('wish');
+            if (nameInput && wishInput) {
+                nameInput.placeholder = translations[lang]["placeholder-name"];
+                wishInput.placeholder = translations[lang]["placeholder-wish"];
+            }
+            // Ganti teks biasa (yang bukan efek mesin tik)
+            for (let id in translations[lang]) {
+            const el = document.getElementById(id);
+            if (el && id !== "typing-content") {
+                el.style.opacity = 0;
+                setTimeout(() => {
+                    // Gunakan innerHTML supaya tag <br> terbaca
+                    el.innerHTML = translations[lang][id]; 
+                    el.style.opacity = 1;
+                }, 200);
+            }
+        }
+
+            // KHUSUS HALAMAN 5: Reset ketikan orang tua
+            const pBride = document.getElementById("parents-bride");
+            const pGroom = document.getElementById("parents-groom");
+            
+            if (pBride && pGroom) {
+                pBrideIndex = 0; // Reset index ke awal
+                pGroomIndex = 0; 
+                pBride.innerHTML = ""; // Kosongkan tulisan
+                pGroom.innerHTML = "";
+                
+                // Jalankan ulang ngetiknya jika halaman 5 sudah pernah terbuka
+                if (page5Started) { 
+                    typeWriterParentsBride();
+                    typeWriterParentsGroom();
+                }
+            }
+
+            // KHUSUS HALAMAN 2: Reset dan jalankan ulang mesin tik
+            const typewriterEl = document.getElementById("typing-effect");
+            if (typewriterEl) {
+                charIndex = 0;      // Reset index huruf ke nol
+                currentOutput = ""; // Kosongkan layar
+                typewriterEl.innerHTML = "";
+                startTypewriter();  // Panggil fungsi ngetikmu lagi
+            }
+
+            toggleLangMenu();
+            localStorage.setItem('userLang', lang);
+        }
+
+        // Tutup menu jika klik di luar area
+        window.addEventListener('click', function(e) {
+            const container = document.getElementById('langContainer');
+            const menu = document.getElementById('langMenu');
+            if (container && !container.contains(e.target)) {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+            }
+        });
+
+        // 3. QR code
+        // 1. Fungsi untuk Menampilkan QR Code
+        function showQR() {
+            const modal = document.getElementById('qrModal');
+            const guestName = document.getElementById('guest-name').innerText; 
+            const qrTarget = document.getElementById('qrcode');
+            const qrGuestNameElement = document.getElementById('qr-guest-name');
+            
+            // Ambil Status dari URL (s=VIP atau s=Reguler)
+            const urlParams = new URLSearchParams(window.location.search);
+            const guestStatus = urlParams.get('s') || 'Reguler'; 
+
+            // Atur tampilan nama tamu
+            qrGuestNameElement.style.textAlign = 'center';
+            qrGuestNameElement.style.display = 'block';
+
+            // Set Nama & Penanda VIP jika statusnya VIP
+            if (guestStatus.toUpperCase() === 'VIP') {
+                qrGuestNameElement.innerHTML = `
+                    ${guestName} <br>
+                    <span style="color:#d4af37; font-size:10px; font-weight:bold; display:block; margin-top:2px;">
+                        VIP GUEST
+                    </span>`;
+            } else {
+                qrGuestNameElement.innerText = guestName;
+            }
+
+            // Bersihkan QR lama sebelum generate baru
+            qrTarget.innerHTML = "";
+            
+            // Generate QR dengan format: "Nama | Status"
+            const qrContent = `${guestName} | ${guestStatus}`;
+
+            new QRCode(qrTarget, {
+                text: qrContent, 
+                width: 180,
+                height: 180,
+                colorDark : "#2d241d",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
+            // Tampilkan Modal
+            modal.style.display = 'flex';
+        }
+
+        // 2. Fungsi untuk Menutup QR Code (Ini yang membuat tombol tutup berfungsi)
+        function closeQR() {
+            const modal = document.getElementById('qrModal');
+            modal.style.display = 'none';
+        }
+
+        // 3. Logika Tambahan: Klik di luar kotak putih untuk menutup modal
+        window.onclick = function(event) {
+            const modal = document.getElementById('qrModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+
+        // 4. Inisialisasi AOS
+        AOS.init({ duration: 800, once: true, disable: false });
+
+        // 5. Typewriter Knot
+        let charIndex = 0;
+        let currentOutput = "";
+
+        function startTypewriter() {
+            const target = document.getElementById("typing-effect");
+            
+            // PERUBAHAN DI SINI: Mengambil teks berdasarkan bahasa yang sedang aktif (currentLang)
+            const textToType = translations[currentLang]["typing-content"]; 
+
+            if (!target || charIndex >= textToType.length) return;
+
+            let char = textToType.charAt(charIndex);
+            
+            if (char === '|') {
+                currentOutput += '<span class="block text-right mt-2">';
+            } else {
+                currentOutput += char;
+            }
+
+            target.innerHTML = currentOutput + (char === '|' ? "" : "</span>");
+            charIndex++;
+
+            // Kecepatan mengetik
+            setTimeout(startTypewriter, 50); 
+        }
+
+        // UPDATE FUNGSI BUKA UNDANGANMU
+        function openInvitation() {
+            const audio = document.getElementById("weddingMusic");
+            audio.play();
+            
+            const cover = document.getElementById("wedding-cover");
+            cover.classList.add('cover-opened');
+            
+            // LANGSUNG JALANKAN TYPEWRITER BEGITU DIBUKA
+            setTimeout(() => {
+                cover.style.display = 'none';
+                startTypewriter(); // Panggil fungsi di sini
+                AOS.refresh();
+            }, 1000);
+        }
+        // 6. Typewriter Halaman 4
+        const nameAisyah = "Aisyah Hanadiya Taisir";
+        const nameFadil = "Briptu Sayid Akhmad Fadhil, S.H";
+        let aisyahIndex = 0;
+        let fadilIndex = 0;
+        let page4Started = false;
+
+        // Fungsi mengetik nama Aisyah
+        function typeAisyah() {
+            const el = document.getElementById("name-aisyah");
+            if (el && aisyahIndex < nameAisyah.length) {
+                el.innerHTML += nameAisyah.charAt(aisyahIndex);
+                aisyahIndex++;
+                setTimeout(typeAisyah, 50);
+            } else if (el) {
+                document.getElementById("ig-aisyah").classList.replace('opacity-0', 'opacity-100');
+                el.classList.remove('writing');
+            }
+        }
+
+        // Fungsi mengetik nama Fadil
+        function typeFadil() {
+            const el = document.getElementById("name-fadil");
+            if (el && fadilIndex < nameFadil.length) {
+                el.innerHTML += nameFadil.charAt(fadilIndex);
+                fadilIndex++;
+                setTimeout(typeFadil, 45);
+            } else if (el) {
+                document.getElementById("ig-fadil").classList.replace('opacity-0', 'opacity-100');
+                el.classList.remove('writing');
+            }
+        }
+
+        // Pemicu Otomatis yang lebih akurat
+        const observerPage4 = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                // Jika Halaman 4 terlihat 30% di layar, mulai mengetik
+                if (entry.isIntersecting && !page4Started) {
+                    page4Started = true;
+                    // Beri sedikit delay agar transisi scroll selesai dulu baru ngetik
+                    setTimeout(() => {
+                        typeAisyah();
+                        typeFadil();
+                    }, 300);
+                }
+            });
+        }, { threshold: 0.3 }); 
+
+        // Jalankan Observer
+        document.addEventListener("DOMContentLoaded", function() {
+            const section4 = document.getElementById('halaman-4');
+            if (section4) {
+                observerPage4.observe(section4);
+            }
+        });
+
+        // 7. Typewriter Halaman 5
+        const textParentsBride = "Daughter of\nH. Elvius Rinda Jaya, S.Ag\n& Hj. Hani, S.Ag";
+        const textParentsGroom = "Son of Sayid Yusuf\n& Noordiana, S.Pd";
+        let pBrideIndex = 0;
+        let pGroomIndex = 0;
+        let page5Started = false;
+
+        function typeWriterParentsBride() {
+            const target = document.getElementById("parents-bride");
+            // Ambil label (Daughter of / Putri dari) dari kamus
+            const label = translations[currentLang]["parents-label-bride"];
+            // Gabungkan dengan nama orang tua (Nama orang tua tidak perlu diterjemahkan)
+            const fullText = label + "\nH. Elvius Rinda Jaya, S.Ag\n& Hj. Hani, S.Ag";
+
+            if (target && pBrideIndex < fullText.length) {
+                let char = fullText.charAt(pBrideIndex);
+                if (char === '\n') { target.innerHTML += '<br>'; } 
+                else { target.innerHTML += char; }
+                pBrideIndex++;
+                setTimeout(typeWriterParentsBride, 40); 
+            }
+        }
+
+        function typeWriterParentsGroom() {
+            const target = document.getElementById("parents-groom");
+            // Ambil label (Son of / Putra dari) dari kamus
+            const label = translations[currentLang]["parents-label-groom"];
+            const fullText = label + "\nSayid Yusuf\n& Noordiana, S.Pd";
+
+            if (target && pGroomIndex < fullText.length) {
+                let char = fullText.charAt(pGroomIndex);
+                if (char === '\n') { target.innerHTML += '<br>'; } 
+                else { target.innerHTML += char; }
+                pGroomIndex++;
+                setTimeout(typeWriterParentsGroom, 45);
+            }
+        }
+
+        // Pemicu otomatis yang akurat untuk semua HP
+        const observerPage5 = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !page5Started) {
+                    page5Started = true;
+                    // Reset isi agar tidak double jika ada sisa teks
+                    document.getElementById("parents-bride").innerHTML = "";
+                    document.getElementById("parents-groom").innerHTML = "";
+                    
+                    // Beri delay sebentar agar transisi scroll selesai
+                    setTimeout(() => {
+                        typeWriterParentsBride();
+                        typeWriterParentsGroom();
+                    }, 600);
+                }
+            });
+        }, { threshold: 0.3 }); // Mulai ngetik saat 30% halaman terlihat
+
+        // Jalankan fungsi pengamat
+        document.addEventListener("DOMContentLoaded", function() {
+            const target5 = document.getElementById('halaman-5');
+            if (target5) observerPage5.observe(target5);
+        });
+
+        // 8. Swiper Initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            var swiperThumbs = new Swiper(".swiper-thumbs", {
+                spaceBetween: 10,
+                slidesPerView: 4,
+                freeMode: true,
+                watchSlidesProgress: true,
+            });
+            var swiperMain = new Swiper(".swiper-main", {
+                spaceBetween: 10,
+                navigation: {
+                    nextEl: ".swiper-button-next",
+                    prevEl: ".swiper-button-prev",
+                },
+                thumbs: {
+                    swiper: swiperThumbs,
+                },
+                loop: true,
+            });
+        });
+
+        // 9. Utility Functions
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzafTyat2cxVwfeNref5R-oBGX5ITy0pLy-tbEGhHvpAJ_f2rnXS9U1pFDfXj3jpGDtIw/exec';
+
+        // Fungsi Copy Number (tetap sama)
+        function copyNumber(text, btn) {
+        navigator.clipboard.writeText(text).then(() => {
+            const originalText = btn.innerText;
+            // Ganti pesan sukses sesuai bahasa
+            btn.innerText = (currentLang === 'id') ? "TERSALIN!" : "COPIED!";
+            
+            btn.style.backgroundColor = "#8e735b";
+            btn.style.color = "white";
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.style.backgroundColor = "white";
+                btn.style.color = "#8e735b";
+            }, 2000);
+        });
+    }
+
+        // Fungsi Mengambil Doa dari Google Sheets
+        let isFetchingWishes = false;
+
+        function loadWishes() {
+        if (isFetchingWishes) return; 
+        isFetchingWishes = true;
+
+        fetch(scriptURL)
+        .then(res => res.json())
+        .then(data => {
+            const wishBox = document.getElementById('wishBox');
+            
+            if (!data || data.length === 0) {
+                wishBox.innerHTML = '';
+                return;
+            }
+
+            const newWishesHTML = data.map(item => {
+            // --- LOGIKA MENAMPILKAN TANGGAL DAN JAM ---
+            let waktuTampil = "";
+            
+            if (item.waktu) {
+                try {
+                    // Cek apakah formatnya ISO (ada huruf T)
+                    if (item.waktu.includes('T')) {
+                        const d = new Date(item.waktu);
+                        // Cek apakah Date valid
+                        if (!isNaN(d)) {
+                            const tgl = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+                            const jam = String(d.getHours()).padStart(2, '0');
+                            const menit = String(d.getMinutes()).padStart(2, '0');
+                            waktuTampil = `${tgl}, ${jam}:${menit} WITA`;
+                        } else {
+                            waktuTampil = item.waktu; // Fallback jika invalid
+                        }
+                    } else {
+                        // Jika sudah berupa teks dari Google Script (misal: 24 Mei 2026, 10:00)
+                        // Kita hanya perlu memastikan ada tulisan WITA
+                        waktuTampil = item.waktu.includes("WITA") ? item.waktu : item.waktu + " WITA";
+                    }
+                } catch (e) {
+                    waktuTampil = item.waktu; // Fallback jika error
+                }
+            }
+
+            return `
+                <div class="text-left p-4 bg-stone-50 rounded-xl mb-3 border border-stone-100 shadow-sm animate-fade-in">
+                    <div class="flex justify-between items-center mb-1">
+                        <p class="font-bold text-[10px] text-stone-600">${item.nama}</p>
+                        <span class="text-[8px] text-stone-400 font-medium">${waktuTampil}</span>
+                    </div>
+                    <p class="text-gray-500 italic text-[11px]">"${item.pesan || item.ucapan}"</p>
+                </div>
+            `;
+        }).join('');
+
+            if (wishBox.innerHTML !== newWishesHTML) {
+                wishBox.innerHTML = newWishesHTML;
+            }
+        })
+        .catch(err => console.error("Gagal memuat doa:", err))
+        .finally(() => {
+            isFetchingWishes = false;
+        });
+    }
+
+        // Fungsi Menambah Doa (Sudah dioptimasi agar langsung muncul)
+         function addWish() {
+        const n = document.getElementById('name').value;
+        const w = document.getElementById('wish').value;
+        
+        // Pesan peringatan dalam 2 bahasa
+        if(!n || !w) {
+            const msg = (currentLang === 'id') ? "Isi nama dan ucapan." : "Please fill in your name and wish.";
+            return alert(msg);
+        }
+
+        const btn = document.getElementById('lang-btn-send');
+        const originalText = btn.innerText;
+        
+        // Ganti teks tombol saat loading
+        btn.innerText = (currentLang === 'id') ? "MENGIRIM..." : "SENDING...";
+        btn.disabled = true;
+
+        // 1. BUAT WAKTU LOKAL (Agar langsung muncul WITA)
+        const sekarang = new Date();
+        const tgl = sekarang.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+        const jam = String(sekarang.getHours()).padStart(2, '0');
+        const menit = String(sekarang.getMinutes()).padStart(2, '0');
+        const waktuLokal = `${tgl}, ${jam}:${menit} WITA`;
+
+        // 2. OPTIMISTIC UI: Langsung tempel ucapan ke daftar (Paling Atas)
+        const ucapanBaruHTML = `
+            <div id="temp-wish" class="text-left p-4 bg-stone-100 rounded-xl mb-3 border border-stone-200 shadow-sm opacity-70 animate-pulse">
+                <div class="flex justify-between items-center mb-1">
+                    <p class="font-bold text-[10px] text-stone-600">${n}</p>
+                    <span class="text-[8px] text-stone-400 font-medium">${waktuLokal}</span>
+                </div>
+                <p class="text-gray-500 italic text-[11px]">"${w}"</p>
+            </div>
+        `;
+        
+        // Masukkan ke bagian paling atas wishBox
+        wishBox.insertAdjacentHTML('afterbegin', ucapanBaruHTML);
+
+        // 3. Reset form dan matikan tombol
+        document.getElementById('name').value = '';
+        document.getElementById('wish').value = '';
+        btn.innerText = "SENDING...";
+        btn.disabled = true;
+
+        // 4. KIRIM KE GOOGLE SHEETS DI BACKGROUND
+        fetch(scriptURL, { 
+            method: 'POST', 
+            body: JSON.stringify({ nama: n, pesan: w }) 
+        })
+        .then(res => res.json())
+        .then(result => {
+            if(result.result === 'success') {
+                // Hapus efek "loading/pulse" karena sudah sukses terkirim
+                const temp = document.getElementById('temp-wish');
+                if(temp) {
+                    temp.classList.remove('opacity-70', 'animate-pulse', 'bg-stone-100');
+                    temp.classList.add('bg-stone-50');
+                    temp.removeAttribute('id');
+                }
+            }
+        })
+        .catch(err => {
+            console.error("Error:", err);
+            // Jika gagal, hapus ucapan sementara tadi
+            const temp = document.getElementById('temp-wish');
+            if(temp) temp.remove();
+            alert("Gagal mengirim ucapan, periksa koneksi.");
+        })
+        .finally(() => {
+            btn.innerText = originalText;
+            btn.disabled = false;
+        });
+    }
+        // LOGIKA AUTO-REFRESH (POLLING)
+        // Jalankan loadWishes pertama kali
+        document.addEventListener('DOMContentLoaded', loadWishes);
+
+        // Cek data baru setiap 5 detik secara otomatis tanpa refresh halaman
+        setInterval(loadWishes, 5000);
+
+        // 10. Countdown Timer
+        const targetDate = new Date("May 24, 2026 08:00:00").getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+            if (distance > 0) {
+                document.getElementById("days").innerText = Math.floor(distance / 86400000);
+                document.getElementById("hours").innerText = Math.floor((distance % 86400000) / 3600000);
+                document.getElementById("minutes").innerText = Math.floor((distance % 3600000) / 60000);
+                document.getElementById("seconds").innerText = Math.floor((distance % 60000) / 1000);
+            }
+        }, 1000);
+
+        // Event Listeners
+        window.addEventListener('scroll', () => {
+            checkScroll();
+            checkScrollPage4();
+            checkScrollPage5();
+        }, { passive: true });
+
+        window.addEventListener('load', () => {
+            loadWishes();
+            checkScroll();
+            checkScrollPage4();
+            checkScrollPage5();
+        });
+
+        // Tambahkan class lock scroll saat baru dibuka
+        document.body.classList.add('loading-active');
+
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader-wrapper');
+            
+            // Memberikan sedikit delay 500ms agar transisi tidak terlalu kaget
+            setTimeout(() => {
+                loader.classList.add('loader-hidden'); // Hilangkan loading
+                document.body.classList.remove('loading-active'); // Aktifkan scroll kembali
+                
+                // Refresh AOS agar animasi muncul tepat waktu setelah loading hilang
+                if (typeof AOS !== 'undefined') {
+                    AOS.refresh();
+                }
+            }, 800); 
+        });
     </script>
 </body>
 </html>
