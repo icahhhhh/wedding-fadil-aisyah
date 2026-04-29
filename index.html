@@ -830,12 +830,18 @@
             </p>
 
             <div id="qrcode"></div>
-            
+
+    
+        <button onclick="downloadQR()" class="mt-4 flex items-center gap-2 mx-auto px-4 py-2 bg-stone-100 border border-stone-200 rounded-full text-[10px] font-bold text-stone-600 uppercase tracking-widest transition-all active:scale-95">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Simpan QR Ke Galeri
+        </button>
+
             <p class="mt-6 text-[11px] text-stone-500 text-center leading-relaxed">
                 Silakan tunjukkan QR Code ini kepada petugas.
             </p>
         </div>
-
+        
         <div class="qr-footer">
             24 . 05 . 2026 | Gambut, Kalsel
         </div>
@@ -1547,6 +1553,34 @@
             // Tampilkan Modal
             modal.style.display = 'flex';
         }
+
+        function downloadQR() {
+        // Cari elemen gambar di dalam div qrcode
+        const qrImg = document.querySelector('#qrcode img');
+        const guestName = document.getElementById('qr-guest-name').innerText;
+
+        if (qrImg) {
+            const link = document.createElement('a');
+            link.href = qrImg.src; // Ambil data Base64 gambar
+            link.download = `QR_Undangan_${guestName}.png`; // Nama file saat didownload
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } else {
+            // Jika qrcode.js menggunakan Canvas (tergantung versi library)
+            const qrCanvas = document.querySelector('#qrcode canvas');
+            if (qrCanvas) {
+                const link = document.createElement('a');
+                link.href = qrCanvas.toDataURL("image/png");
+                link.download = `QR_Undangan_${guestName}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                alert("Gagal mengunduh gambar. Silakan coba screenshot layar Anda.");
+            }
+        }
+    }
 
         // 2. Fungsi untuk Menutup QR Code (Ini yang membuat tombol tutup berfungsi)
         function closeQR() {
