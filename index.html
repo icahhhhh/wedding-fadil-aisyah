@@ -1779,33 +1779,43 @@
             }
 
             const newWishesHTML = data.map(item => {
-                // --- LOGIKA MENAMPILKAN TANGGAL DAN JAM ---
-                let waktuTampil = "";
-                if (item.waktu) {
-                    // Jika formatnya ISO (dari Google), kita konversi ke format lokal
+            // --- LOGIKA MENAMPILKAN TANGGAL DAN JAM ---
+            let waktuTampil = "";
+            
+            if (item.waktu) {
+                try {
+                    // Cek apakah formatnya ISO (ada huruf T)
                     if (item.waktu.includes('T')) {
                         const d = new Date(item.waktu);
-                        const tgl = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-                        const jam = String(d.getHours()).padStart(2, '0');
-                        const menit = String(d.getMinutes()).padStart(2, '0');
-                        waktuTampil = `${tgl}, ${jam}:${menit} WITA`;
+                        // Cek apakah Date valid
+                        if (!isNaN(d)) {
+                            const tgl = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+                            const jam = String(d.getHours()).padStart(2, '0');
+                            const menit = String(d.getMinutes()).padStart(2, '0');
+                            waktuTampil = `${tgl}, ${jam}:${menit} WITA`;
+                        } else {
+                            waktuTampil = item.waktu; // Fallback jika invalid
+                        }
                     } else {
-                        // Jika sudah format rapi dari Apps Script (dd MMM yyyy, HH:mm)
-                        // Kita pastikan ada tulisan WITA di belakangnya
+                        // Jika sudah berupa teks dari Google Script (misal: 24 Mei 2026, 10:00)
+                        // Kita hanya perlu memastikan ada tulisan WITA
                         waktuTampil = item.waktu.includes("WITA") ? item.waktu : item.waktu + " WITA";
                     }
+                } catch (e) {
+                    waktuTampil = item.waktu; // Fallback jika error
                 }
+            }
 
-                return `
-                    <div class="text-left p-4 bg-stone-50 rounded-xl mb-3 border border-stone-100 shadow-sm animate-fade-in">
-                        <div class="flex justify-between items-center mb-1">
-                            <p class="font-bold text-[10px] text-stone-600">${item.nama}</p>
-                            <span class="text-[8px] text-stone-400 font-medium">${waktuTampil}</span>
-                        </div>
-                        <p class="text-gray-500 italic text-[11px]">"${item.pesan || item.ucapan}"</p>
+            return `
+                <div class="text-left p-4 bg-stone-50 rounded-xl mb-3 border border-stone-100 shadow-sm animate-fade-in">
+                    <div class="flex justify-between items-center mb-1">
+                        <p class="font-bold text-[10px] text-stone-600">${item.nama}</p>
+                        <span class="text-[8px] text-stone-400 font-medium">${waktuTampil}</span>
                     </div>
-                `;
-            }).join('');
+                    <p class="text-gray-500 italic text-[11px]">"${item.pesan || item.ucapan}"</p>
+                </div>
+            `;
+        }).join('');
 
             if (wishBox.innerHTML !== newWishesHTML) {
                 wishBox.innerHTML = newWishesHTML;
