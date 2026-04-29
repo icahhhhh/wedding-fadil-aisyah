@@ -68,62 +68,72 @@
     </div>
 
     <script>
-        // 1. URL GOOGLE APPS SCRIPT
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzafTyat2cxVwfeNref5R-oBGX5ITy0pLy-tbEGhHvpAJ_f2rnXS9U1pFDfXj3jpGDtIw/exec';
-        let isProcessing = false;
+    // 1. URL GOOGLE APPS SCRIPT
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzafTyat2cxVwfeNref5R-oBGX5ITy0pLy-tbEGhHvpAJ_f2rnXS9U1pFDfXj3jpGDtIw/exec';
+    let isProcessing = false;
 
-        // 2. LOGIKA SAAT SCAN BERHASIL
-        // Di bagian onScanSuccess, ganti bagian pemecahan datanya:
-        const data = decodedText.split(" | ");
-        const namaTamu = data[0];
-        const statusTamu = data[1] || "Reguler";
-        const kodeUnik = data[2] || "---"; // Menangkap kode unik dari urutan ke-3
+    // 2. LOGIKA SAAT SCAN BERHASIL
+    function onScanSuccess(decodedText, decodedResult) {
+        if (isProcessing) return; 
+        isProcessing = true;
 
-        // 1. Bedah data QR (Format: "Nama | Status")
+        // 1. Bedah data QR (Format: "Nama | Status | Kode Unik")
         const data = decodedText.split(" | ");
-        const namaTamu = data[0].trim();
+        const namaTamu = data[0] ? data[0].trim() : "Tanpa Nama";
         const statusTamu = data[1] ? data[1].trim() : "Reguler";
+        const kodeUnik = data[2] ? data[2].trim() : "N/A";
 
         const successBox = document.getElementById('success-msg');
         const guestName = document.getElementById('guest-name-result');
         const idleMsg = document.getElementById('idle-msg');
 
-        // 2. Set tampilan Nama & Warna (Gold untuk VIP)
+        // 2. Set tampilan Nama & Warna (Kuning/Gold untuk VIP)
         if (statusTamu.toUpperCase() === "VIP") {
-            successBox.style.backgroundColor = "#d4af37"; 
-            guestName.innerHTML = `${namaTamu} <br><span style="font-size:12px; opacity:0.9; font-weight:normal;">VIP GUEST</span>`;
+            successBox.style.backgroundColor = "#FFD700"; // Warna Kuning Emas
+            successBox.style.color = "#000000"; // Tulisan Hitam agar kontras
+            guestName.innerHTML = `
+                <div style="font-weight: bold; font-size: 14px; letter-spacing: 2px;">🌟 VIP GUEST 🌟</div>
+                <div style="font-size: 24px; margin: 5px 0;">${namaTamu}</div>
+                <div style="font-size: 12px; font-weight: normal; opacity: 0.8;">ID: ${kodeUnik}</div>
+            `;
         } else {
-            successBox.style.backgroundColor = "#16a34a"; 
-            guestName.innerText = namaTamu;
+            successBox.style.backgroundColor = "#16a34a"; // Warna Hijau Standard
+            successBox.style.color = "#ffffff"; // Tulisan Putih
+            guestName.innerHTML = `
+                <div style="font-size: 22px; margin-bottom: 5px;">${namaTamu}</div>
+                <div style="font-size: 12px; font-weight: normal; opacity: 0.9;">ID: ${kodeUnik}</div>
+            `;
         }
 
-        // 3. Tampilkan Pesan Sukses (Langsung muncul di layar scanner)
+        // 3. Tampilkan Pesan Sukses
         idleMsg.classList.add('hidden');
         successBox.classList.remove('hidden');
 
-        // 4. LOGIKA PERCEPAT REKAP (Smart Cache)
-        // Kita buat objek tamu baru untuk disimpan di memori lokal HP
+        // 4. LOGIKA PERCEPAT REKAP (Local Storage)
         const newEntry = {
             nama: namaTamu,
             status: statusTamu,
+            id: kodeUnik,
             waktu: new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
         };
 
-        // Ambil data rekap lama dari memori, tambah yang baru di paling atas
         let localData = JSON.parse(localStorage.getItem('rekap_tamu') || '[]');
         localData.unshift(newEntry); 
         localStorage.setItem('rekap_tamu', JSON.stringify(localData));
 
-        // 5. Kirim data ke Google Sheets (Berjalan di latar belakang)
-        const finalURL = `${scriptURL}?nama=${encodeURIComponent(namaTamu)}&status=${encodeURIComponent(statusTamu)}&type=absen`;
+        // 5. Kirim data ke Google Sheets (Termasuk Kode Unik)
+        const finalURL = `${scriptURL}?nama=${encodeURIComponent(namaTamu)}&status=${encodeURIComponent(statusTamu)}&kode=${encodeURIComponent(kodeUnik)}&type=absen`;
+        
         fetch(finalURL, { mode: 'no-cors' })
-        .catch(err => console.error("Gagal kirim ke server, tapi data lokal aman:", err));
+        .catch(err => console.error("Gagal kirim ke server:", err));
 
         // 6. Reset scanner setelah 3 detik
         setTimeout(() => {
             successBox.classList.add('hidden');
             idleMsg.classList.remove('hidden');
+            // Reset warna ke default hijau untuk scan berikutnya
             successBox.style.backgroundColor = "#16a34a"; 
+            successBox.style.color = "#ffffff";
             isProcessing = false;
         }, 3000);
     }
