@@ -1169,48 +1169,64 @@
         window.addEventListener('touchstart', playAudioOnInteraction);
 
         // 3. QR code
-        function showQR() {
-        const modal = document.getElementById('qrModal');
-        const guestName = document.getElementById('guest-name').innerText; 
-        const qrTarget = document.getElementById('qrcode');
-        const qrGuestNameElement = document.getElementById('qr-guest-name');
-        
-        // 1. AMBIL STATUS DARI URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const guestStatus = urlParams.get('s') || 'Reguler'; 
+        // 1. Fungsi untuk Menampilkan QR Code
+function showQR() {
+    const modal = document.getElementById('qrModal');
+    const guestName = document.getElementById('guest-name').innerText; 
+    const qrTarget = document.getElementById('qrcode');
+    const qrGuestNameElement = document.getElementById('qr-guest-name');
+    
+    // Ambil Status dari URL (s=VIP atau s=Reguler)
+    const urlParams = new URLSearchParams(window.location.search);
+    const guestStatus = urlParams.get('s') || 'Reguler'; 
 
-        // Pastikan container nama di kartu memiliki text-align center
-        qrGuestNameElement.style.textAlign = 'center';
-        qrGuestNameElement.style.display = 'block';
+    // Atur tampilan nama tamu
+    qrGuestNameElement.style.textAlign = 'center';
+    qrGuestNameElement.style.display = 'block';
 
-        // 2. SET NAMA & PENANDA (Posisinya Otomatis Tengah)
-        if (guestStatus.toUpperCase() === 'VIP') {
-            qrGuestNameElement.innerHTML = `
-                ${guestName} <br>
-                <span style="color:#d4af37; font-size:10px; font-weight:bold; display:block; margin-top:2px;">
-                    VIP GUEST
-                </span>`;
-        } else {
-            qrGuestNameElement.innerText = guestName;
-        }
-
-        // Bersihkan QR lama
-        qrTarget.innerHTML = "";
-        
-        // 3. GENERATE QR DENGAN FORMAT: "Nama | Status"
-        const qrContent = `${guestName} | ${guestStatus}`;
-
-        new QRCode(qrTarget, {
-            text: qrContent, 
-            width: 180,
-            height: 180,
-            colorDark : "#2d241d",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
-        });
-
-        modal.style.display = 'flex';
+    // Set Nama & Penanda VIP jika statusnya VIP
+    if (guestStatus.toUpperCase() === 'VIP') {
+        qrGuestNameElement.innerHTML = `
+            ${guestName} <br>
+            <span style="color:#d4af37; font-size:10px; font-weight:bold; display:block; margin-top:2px;">
+                VIP GUEST
+            </span>`;
+    } else {
+        qrGuestNameElement.innerText = guestName;
     }
+
+    // Bersihkan QR lama sebelum generate baru
+    qrTarget.innerHTML = "";
+    
+    // Generate QR dengan format: "Nama | Status"
+    const qrContent = `${guestName} | ${guestStatus}`;
+
+    new QRCode(qrTarget, {
+        text: qrContent, 
+        width: 180,
+        height: 180,
+        colorDark : "#2d241d",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+    });
+
+    // Tampilkan Modal
+    modal.style.display = 'flex';
+}
+
+// 2. Fungsi untuk Menutup QR Code (Ini yang membuat tombol tutup berfungsi)
+function closeQR() {
+    const modal = document.getElementById('qrModal');
+    modal.style.display = 'none';
+}
+
+// 3. Logika Tambahan: Klik di luar kotak putih untuk menutup modal
+window.onclick = function(event) {
+    const modal = document.getElementById('qrModal');
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
         // 4. Inisialisasi AOS
         AOS.init({ duration: 800, once: true, disable: false });
 
