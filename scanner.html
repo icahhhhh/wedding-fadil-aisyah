@@ -73,9 +73,11 @@
         let isProcessing = false;
 
         // 2. LOGIKA SAAT SCAN BERHASIL
-        function onScanSuccess(decodedText, decodedResult) {
-        if (isProcessing) return; 
-        isProcessing = true;
+        // Di bagian onScanSuccess, ganti bagian pemecahan datanya:
+        const data = decodedText.split(" | ");
+        const namaTamu = data[0];
+        const statusTamu = data[1] || "Reguler";
+        const kodeUnik = data[2] || "---"; // Menangkap kode unik dari urutan ke-3
 
         // 1. Bedah data QR (Format: "Nama | Status")
         const data = decodedText.split(" | ");
