@@ -60,73 +60,79 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzafTyat2cxVwfeNref5R-oBGX5ITy0pLy-tbEGhHvpAJ_f2rnXS9U1pFDfXj3jpGDtIw/exec';
+        // 1. PASTIKAN URL INI ADALAH HASIL "NEW DEPLOYMENT" TERBARU
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyo3x9LmXyTtz902XN-ChwrFZATTqqlHpRLzKSw71uszyyCjBTv391jQ4cj2fNF67v_7A/exec';
 
-            function renderTamu(data) {
-                const list = document.getElementById('rekap-list');
-                const countHadir = document.getElementById('count-hadir');
-                
-                // Menghilangkan data ganda jika ada (berdasarkan nama dan waktu)
-                const uniqueData = data.filter((v, i, a) => a.findIndex(t => (t.nama === v.nama && t.waktu === v.waktu)) === i);
-                
-                countHadir.innerText = uniqueData.length;
+        function renderTamu(data) {
+            const list = document.getElementById('rekap-list');
+            const countHadir = document.getElementById('count-hadir');
+            
+            const uniqueData = data.filter((v, i, a) => 
+                a.findIndex(t => (t.nama === v.nama && t.waktu === v.waktu)) === i
+            );
+            
+            countHadir.innerText = uniqueData.length;
 
-                if (uniqueData.length > 0) {
-                    list.innerHTML = uniqueData.map(item => {
-                        const isVIP = item.status && item.status.toUpperCase().includes('VIP');
-                        const badgeClass = isVIP ? 'badge-vip' : 'badge-reg';
-                        const statusText = isVIP ? 'VIP' : 'REG';
+            if (uniqueData.length > 0) {
+                list.innerHTML = uniqueData.map(item => {
+                    const statusStr = (item.status || "Reguler").toUpperCase();
+                    const isVIP = statusStr.includes('VIP');
+                    const badgeClass = isVIP ? 'badge-vip' : 'badge-reg';
+                    const statusText = isVIP ? 'VIP' : 'REG';
 
-                        return `
-                            <tr class="border-b border-stone-50 last:border-0 animate-pulse-once">
-                                <td class="p-4">
-                                    <p class="text-sm font-semibold text-stone-800">${item.nama}</p>
-                                </td>
-                                <td class="p-4 text-center">
-                                    <span class="${badgeClass}">${statusText}</span>
-                                </td>
-                                <td class="p-4 text-right">
-                                    <p class="text-xs text-gray-500">${item.waktu}</p>
-                                </td>
-                            </tr>
-                        `;
-                    }).join('');
-                } else {
-                    list.innerHTML = '<tr><td colspan="3" class="p-10 text-center text-gray-400 text-sm italic">Belum ada tamu yang hadir.</td></tr>';
-                }
+                    return `
+                        <tr class="border-b border-stone-50 last:border-0">
+                            <td class="p-4">
+                                <p class="text-sm font-semibold text-stone-800">${item.nama}</p>
+                            </td>
+                            <td class="p-4 text-center">
+                                <span class="${badgeClass}">${statusText}</span>
+                            </td>
+                            <td class="p-4 text-right">
+                                <p class="text-xs text-gray-500">${item.waktu}</p>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } else {
+                list.innerHTML = '<tr><td colspan="3" class="p-10 text-center text-gray-400 text-sm italic">Belum ada tamu yang hadir.</td></tr>';
             }
-
-            function loadRekap() {
-            // 1. Ambil dari cache dulu (Sangat Cepat/Instan)
-            const cache = localStorage.getItem('rekap_tamu');
-            if (cache) { 
-                renderTamu(JSON.parse(cache)); 
-            }
-
-            // 2. Ambil dari server di latar belakang (Background Sync)
-            fetch(`${scriptURL}?type=get_absen`)
-            .then(res => res.json())
-            .then(data => {
-                // --- BAGIAN YANG DIUBAH MULAI DARI SINI ---
-                
-                // Mengurutkan data: Jam terbaru (besar) ke jam lama (kecil)
-                const sortedData = data.sort((a, b) => {
-                    return b.waktu.localeCompare(a.waktu);
-                });
-                
-                localStorage.setItem('rekap_tamu', JSON.stringify(sortedData));
-                renderTamu(sortedData);
-                
-                // --- BAGIAN YANG DIUBAH SELESAI ---
-            })
-            .catch(err => console.error("Gagal update data server:", err));
         }
 
-            // Jalankan load pertama kali
-            document.addEventListener('DOMContentLoaded', loadRekap);
-            
-            // Cek data tiap 3 detik (lebih cepat dari 5 detik)
-            setInterval(loadRekap, 3000); 
+        function loadRekap() {
+            // Coba ambil dari cache agar tidak putih kosong saat loading
+            const cache = localStorage.getItem('rekap_tamu');
+            if (cache) { 
+                try { renderTamu(JSON.parse(cache)); } catch (e) {}
+            }
+
+            fetch(`${scriptURL}?type=get_absen&v=${new Date().getTime()}`)
+            .then(res => {
+                if (!res.ok) throw new Error('Respon server tidak ok');
+                return res.json();
+            })
+            .then(data => {
+                console.log("Data diterima:", data); 
+                if (!Array.isArray(data)) return;
+
+                // Mengurutkan berdasarkan waktu terbaru di atas
+                const sortedData = data.sort((a, b) => (b.waktu || "").localeCompare(a.waktu || ""));
+                localStorage.setItem('rekap_tamu', JSON.stringify(sortedData));
+                renderTamu(sortedData);
+            })
+            .catch(err => {
+                console.error("Gagal memuat data:", err);
+            });
+        }
+
+        // --- BAGIAN YANG TADI KURANG: MENJALANKAN FUNGSI ---
+
+        // Jalankan otomatis saat halaman pertama kali dibuka
+        document.addEventListener('DOMContentLoaded', loadRekap);
+
+        // Jalankan otomatis setiap 5 detik agar rekap terupdate terus
+        setInterval(loadRekap, 5000); 
+
     </script>
 </body>
 </html>
