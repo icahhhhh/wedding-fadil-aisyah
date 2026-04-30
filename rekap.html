@@ -62,7 +62,7 @@
     
     
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycby77Japz_zkgmxsbX7mAOq5fQf5EkWlxdjlvz9eNDLN2TEatPBpKSChZoQVZfq2WzOV3g/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbykfVqwV0Mxhkef70XalVWFQrjH2O-BVLRU2kY0gVRRJ8yWPI3DMYKw-s0nbdGpAFG1tg/exec';
 
     function renderTamu(data) {
         const list = document.getElementById('rekap-list');
@@ -103,8 +103,8 @@
         }
     }
 
-    function loadRekap() {
-        // Cache buster untuk data terbaru
+        function loadRekap() {
+        // Parameter 'v' memastikan kita tidak mengambil data lama/basi
         const finalFetchURL = `${scriptURL}?type=get_absen&v=${new Date().getTime()}`;
         
         fetch(finalFetchURL, {
@@ -113,7 +113,7 @@
         })
         .then(res => res.json())
         .then(data => {
-            // Sorting: Waktu terbaru (misal 10:02) di atas waktu lama (10:00)
+            // Sorting berdasarkan waktu terbaru (string comparison)
             const sortedData = data.sort((a, b) => b.waktu.localeCompare(a.waktu));
             
             localStorage.setItem('rekap_tamu', JSON.stringify(sortedData));
@@ -125,11 +125,6 @@
             if (cache) renderTamu(JSON.parse(cache));
         });
     }
-
-    window.onload = function() {
-        loadRekap();
-        setInterval(loadRekap, 5000); 
-    };
 </script>
 </body>
 </html>
