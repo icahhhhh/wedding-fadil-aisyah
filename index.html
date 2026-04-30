@@ -1771,171 +1771,148 @@
             });
         });
 
-        // 9. Utility Functions
-        const scriptURL = 'https://script.google.com/macros/s/AKfycby77Japz_zkgmxsbX7mAOq5fQf5EkWlxdjlvz9eNDLN2TEatPBpKSChZoQVZfq2WzOV3g/exec';
+       // 9. Utility Functions
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbykfVqwV0Mxhkef70XalVWFQrjH2O-BVLRU2kY0gVRRJ8yWPI3DMYKw-s0nbdGpAFG1tg/exec';
 
-        // Fungsi Copy Number (tetap sama)
+        // Fungsi Copy Number
         function copyNumber(text, btn) {
-        navigator.clipboard.writeText(text).then(() => {
-            const originalText = btn.innerText;
-            // Ganti pesan sukses sesuai bahasa
-            btn.innerText = (currentLang === 'id') ? "TERSALIN!" : "COPIED!";
-            
-            btn.style.backgroundColor = "#8e735b";
-            btn.style.color = "white";
-            setTimeout(() => {
-                btn.innerText = originalText;
-                btn.style.backgroundColor = "white";
-                btn.style.color = "#8e735b";
-            }, 2000);
-        });
-    }
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.innerText;
+                btn.innerText = (currentLang === 'id') ? "TERSALIN!" : "COPIED!";
+                btn.style.backgroundColor = "#8e735b";
+                btn.style.color = "white";
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.backgroundColor = "white";
+                    btn.style.color = "#8e735b";
+                }, 2000);
+            });
+        }
 
         // Fungsi Mengambil Doa dari Google Sheets
         let isFetchingWishes = false;
 
         function loadWishes() {
-        if (isFetchingWishes) return; 
-        isFetchingWishes = true;
+            if (isFetchingWishes) return; 
+            isFetchingWishes = true;
 
-        fetch(scriptURL)
-        .then(res => res.json())
-        .then(data => {
-            const wishBox = document.getElementById('wishBox');
-            
-            if (!data || data.length === 0) {
-                wishBox.innerHTML = '';
-                return;
-            }
+            // PERBAIKAN: Menambahkan parameter type=get_wishes agar data diambil dari database
+            fetch(`${scriptURL}?type=get_wishes&v=${new Date().getTime()}`)
+            .then(res => res.json())
+            .then(data => {
+                const wishBox = document.getElementById('wishBox');
+                
+                if (!data || data.length === 0) return;
 
-            const newWishesHTML = data.map(item => {
-            // --- LOGIKA MENAMPILKAN TANGGAL DAN JAM ---
-            let waktuTampil = "";
-            
-            if (item.waktu) {
-                try {
-                    // Cek apakah formatnya ISO (ada huruf T)
-                    if (item.waktu.includes('T')) {
-                        const d = new Date(item.waktu);
-                        // Cek apakah Date valid
-                        if (!isNaN(d)) {
-                            const tgl = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-                            const jam = String(d.getHours()).padStart(2, '0');
-                            const menit = String(d.getMinutes()).padStart(2, '0');
-                            waktuTampil = `${tgl}, ${jam}:${menit} WITA`;
-                        } else {
-                            waktuTampil = item.waktu; // Fallback jika invalid
-                        }
-                    } else {
-                        // Jika sudah berupa teks dari Google Script (misal: 24 Mei 2026, 10:00)
-                        // Kita hanya perlu memastikan ada tulisan WITA
-                        waktuTampil = item.waktu.includes("WITA") ? item.waktu : item.waktu + " WITA";
+                const newWishesHTML = data.map(item => {
+                    let waktuTampil = "";
+                    if (item.waktu) {
+                        try {
+                            if (item.waktu.includes('T')) {
+                                const d = new Date(item.waktu);
+                                if (!isNaN(d)) {
+                                    const tgl = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+                                    const jam = String(d.getHours()).padStart(2, '0');
+                                    const menit = String(d.getMinutes()).padStart(2, '0');
+                                    waktuTampil = `${tgl}, ${jam}:${menit} WITA`;
+                                } else { waktuTampil = item.waktu; }
+                            } else {
+                                waktuTampil = item.waktu.includes("WITA") ? item.waktu : item.waktu + " WITA";
+                            }
+                        } catch (e) { waktuTampil = item.waktu; }
                     }
-                } catch (e) {
-                    waktuTampil = item.waktu; // Fallback jika error
-                }
-            }
 
-            return `
-                <div class="text-left p-4 bg-stone-50 rounded-xl mb-3 border border-stone-100 shadow-sm animate-fade-in">
-                    <div class="flex justify-between items-center mb-1">
-                        <p class="font-bold text-[10px] text-stone-600">${item.nama}</p>
-                        <span class="text-[8px] text-stone-400 font-medium">${waktuTampil}</span>
-                    </div>
-                    <p class="text-gray-500 italic text-[11px]">"${item.pesan || item.ucapan}"</p>
-                </div>
-            `;
-        }).join('');
+                    return `
+                        <div class="text-left p-4 bg-stone-50 rounded-xl mb-3 border border-stone-100 shadow-sm">
+                            <div class="flex justify-between items-center mb-1">
+                                <p class="font-bold text-[10px] text-stone-600">${item.nama}</p>
+                                <span class="text-[8px] text-stone-400 font-medium">${waktuTampil}</span>
+                            </div>
+                            <p class="text-gray-500 italic text-[11px]">"${item.pesan || item.ucapan}"</p>
+                        </div>
+                    `;
+                }).join('');
 
-            if (wishBox.innerHTML !== newWishesHTML) {
+                // Tampilkan data permanen dari database
                 wishBox.innerHTML = newWishesHTML;
-            }
-        })
-        .catch(err => console.error("Gagal memuat doa:", err))
-        .finally(() => {
-            isFetchingWishes = false;
-        });
-    }
-
-        // Fungsi Menambah Doa (Sudah dioptimasi agar langsung muncul)
-         function addWish() {
-        const n = document.getElementById('name').value;
-        const w = document.getElementById('wish').value;
-        
-        // Pesan peringatan dalam 2 bahasa
-        if(!n || !w) {
-            const msg = (currentLang === 'id') ? "Isi nama dan ucapan." : "Please fill in your name and wish.";
-            return alert(msg);
+            })
+            .catch(err => console.error("Gagal memuat doa:", err))
+            .finally(() => {
+                isFetchingWishes = false;
+            });
         }
 
-        const btn = document.getElementById('lang-btn-send');
-        const originalText = btn.innerText;
-        
-        // Ganti teks tombol saat loading
-        btn.innerText = (currentLang === 'id') ? "MENGIRIM..." : "SENDING...";
-        btn.disabled = true;
-
-        // 1. BUAT WAKTU LOKAL (Agar langsung muncul WITA)
-        const sekarang = new Date();
-        const tgl = sekarang.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-        const jam = String(sekarang.getHours()).padStart(2, '0');
-        const menit = String(sekarang.getMinutes()).padStart(2, '0');
-        const waktuLokal = `${tgl}, ${jam}:${menit} WITA`;
-
-        // 2. OPTIMISTIC UI: Langsung tempel ucapan ke daftar (Paling Atas)
-        const ucapanBaruHTML = `
-            <div id="temp-wish" class="text-left p-4 bg-stone-100 rounded-xl mb-3 border border-stone-200 shadow-sm opacity-70 animate-pulse">
-                <div class="flex justify-between items-center mb-1">
-                    <p class="font-bold text-[10px] text-stone-600">${n}</p>
-                    <span class="text-[8px] text-stone-400 font-medium">${waktuLokal}</span>
-                </div>
-                <p class="text-gray-500 italic text-[11px]">"${w}"</p>
-            </div>
-        `;
-        
-        // Masukkan ke bagian paling atas wishBox
-        wishBox.insertAdjacentHTML('afterbegin', ucapanBaruHTML);
-
-        // 3. Reset form dan matikan tombol
-        document.getElementById('name').value = '';
-        document.getElementById('wish').value = '';
-        btn.innerText = "SENDING...";
-        btn.disabled = true;
-
-        // 4. KIRIM KE GOOGLE SHEETS DI BACKGROUND
-        fetch(scriptURL, { 
-            method: 'POST', 
-            body: JSON.stringify({ nama: n, pesan: w }) 
-        })
-        .then(res => res.json())
-        .then(result => {
-            if(result.result === 'success') {
-                // Hapus efek "loading/pulse" karena sudah sukses terkirim
-                const temp = document.getElementById('temp-wish');
-                if(temp) {
-                    temp.classList.remove('opacity-70', 'animate-pulse', 'bg-stone-100');
-                    temp.classList.add('bg-stone-50');
-                    temp.removeAttribute('id');
-                }
+        // Fungsi Menambah Doa
+        function addWish() {
+            const n = document.getElementById('name').value;
+            const w = document.getElementById('wish').value;
+            const wishBox = document.getElementById('wishBox');
+            
+            if(!n || !w) {
+                const msg = (currentLang === 'id') ? "Isi nama dan ucapan." : "Please fill in your name and wish.";
+                return alert(msg);
             }
-        })
-        .catch(err => {
-            console.error("Error:", err);
-            // Jika gagal, hapus ucapan sementara tadi
-            const temp = document.getElementById('temp-wish');
-            if(temp) temp.remove();
-            alert("Gagal mengirim ucapan, periksa koneksi.");
-        })
-        .finally(() => {
-            btn.innerText = originalText;
-            btn.disabled = false;
-        });
-    }
-        // LOGIKA AUTO-REFRESH (POLLING)
-        // Jalankan loadWishes pertama kali
+
+            const btn = document.getElementById('lang-btn-send');
+            const originalText = btn.innerText;
+            
+            btn.innerText = (currentLang === 'id') ? "MENGIRIM..." : "SENDING...";
+            btn.disabled = true;
+
+            // 1. Optimistic UI (Muncul sementara)
+            const sekarang = new Date();
+            const waktuLokal = `${sekarang.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}, ${String(sekarang.getHours()).padStart(2, '0')}:${String(sekarang.getMinutes()).padStart(2, '0')} WITA`;
+
+            const ucapanBaruHTML = `
+                <div id="temp-wish" class="text-left p-4 bg-stone-100 rounded-xl mb-3 border border-stone-200 shadow-sm opacity-70 animate-pulse">
+                    <div class="flex justify-between items-center mb-1">
+                        <p class="font-bold text-[10px] text-stone-600">${n}</p>
+                        <span class="text-[8px] text-stone-400 font-medium">${waktuLokal}</span>
+                    </div>
+                    <p class="text-gray-500 italic text-[11px]">"${w}"</p>
+                </div>
+            `;
+            wishBox.insertAdjacentHTML('afterbegin', ucapanBaruHTML);
+
+            // 2. Reset Form
+            document.getElementById('name').value = '';
+            document.getElementById('wish').value = '';
+
+            // 3. KIRIM KE GOOGLE SHEETS (PERBAIKAN: Gunakan parameter type=add_wish)
+            const finalURL = `${scriptURL}?type=add_wish&nama=${encodeURIComponent(n)}&pesan=${encodeURIComponent(w)}`;
+
+            fetch(finalURL)
+            .then(res => res.json())
+            .then(result => {
+                if(result.result === 'success') {
+                    const temp = document.getElementById('temp-wish');
+                    if(temp) {
+                        temp.classList.remove('opacity-70', 'animate-pulse', 'bg-stone-100');
+                        temp.classList.add('bg-stone-50');
+                        temp.removeAttribute('id');
+                    }
+                    // Panggil loadWishes untuk sinkronisasi ulang data
+                    loadWishes();
+                } else {
+                    throw new Error(result.message);
+                }
+            })
+            .catch(err => {
+                console.error("Error:", err);
+                const temp = document.getElementById('temp-wish');
+                if(temp) temp.remove();
+                alert("Gagal mengirim ucapan: " + err.message);
+            })
+            .finally(() => {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            });
+        }
+
+        // Jalankan loadWishes saat halaman dibuka
         document.addEventListener('DOMContentLoaded', loadWishes);
 
-        // Cek data baru setiap 5 detik secara otomatis tanpa refresh halaman
+        // Refresh otomatis setiap 5 detik agar pesan tetap ada dan terupdate
         setInterval(loadWishes, 5000);
 
         // 10. Countdown Timer
