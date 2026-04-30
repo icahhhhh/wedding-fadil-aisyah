@@ -2,129 +2,137 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Buku Tamu Digital - Fadil & Aisyah</title>
-    <script src="https://unpkg.com/html5-qrcode"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekap Tamu - Fadil & Aisyah</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-    
     <style>
         body { font-family: 'Montserrat', sans-serif; background-color: #f4f1ee; }
         .bg-stone-green { background-color: #4a5d4a; }
-        .text-stone-green { color: #4a5d4a; }
-        
-        #reader {
-            border: none !important;
-            border-radius: 20px;
-            overflow: hidden;
-        }
-        #reader__dashboard_section_csr button {
-            background-color: #4a5d4a !important;
-            color: white !important;
-            padding: 10px 20px !important;
-            border-radius: 50px !important;
-            text-transform: uppercase;
-            font-size: 12px;
-            font-weight: bold;
-            border: none !important;
-            margin-top: 10px !important;
-        }
-        video { border-radius: 15px; }
+        /* Warna khusus untuk label VIP */
+        .badge-vip { background-color: #d4af37; color: white; padding: 2px 8px; border-radius: 50px; font-size: 10px; font-weight: bold; }
+        .badge-reg { background-color: #e5e7eb; color: #6b7280; padding: 2px 8px; border-radius: 50px; font-size: 10px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center">
+<body class="min-h-screen pb-10">
 
-    <div class="w-full bg-stone-green p-6 text-white text-center shadow-lg">
-        <h1 class="text-lg font-bold tracking-widest uppercase">Digital Guest Book</h1>
-        <p class="text-xs opacity-80 mt-1">Fadil & Aisyah Wedding</p>
-    </div>
-
-    <div class="w-full max-w-md p-6">
-        <div class="bg-white rounded-3xl shadow-xl p-4 border border-stone-200">
-            <div id="reader" class="w-full"></div>
-        </div>
-
-        <div id="status-container" class="mt-6">
-            <div id="idle-msg" class="text-center p-4 bg-stone-200 rounded-2xl text-stone-600 text-sm italic">
-                Arahkan kamera ke QR Code tamu...
-            </div>
-            
-            <div id="success-msg" class="hidden text-center p-5 bg-green-600 text-white rounded-2xl shadow-lg animate-bounce">
-                <p class="text-xs uppercase tracking-widest opacity-80">Berhasil Dicatat</p>
-                <h2 id="guest-name-result" class="text-xl font-bold mt-1">Nama Tamu</h2>
-            </div>
-        </div>
-
-        <div class="mt-8 grid grid-cols-2 gap-4">
-            <a href="rekap.html" class="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-stone-200 shadow-sm">
-                <span class="text-stone-green font-bold">Rekap</span>
-                <span class="text-[10px] text-gray-400">Lihat Daftar</span>
-            </a>
-            <button onclick="location.reload()" class="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-stone-200 shadow-sm">
-                <span class="text-stone-green font-bold">Refresh</span>
-                <span class="text-[10px] text-gray-400">Reset Kamera</span>
+    <div class="w-full bg-stone-green p-6 text-white text-center shadow-lg sticky top-0 z-50">
+        <div class="flex justify-between items-center max-w-2xl mx-auto">
+            <a href="scanner.html" class="text-white text-sm">← Kembali</a>
+            <h1 class="text-lg font-bold tracking-widest uppercase">Rekap Tamu</h1>
+            <button onclick="loadRekap()" class="text-white opacity-70 hover:opacity-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
             </button>
         </div>
     </div>
 
+    <div class="max-w-2xl mx-auto p-4">
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-stone-200 mb-6 flex justify-between items-center">
+            <div>
+                <p class="text-xs text-gray-500 uppercase tracking-widest">Total Hadir</p>
+                <h2 class="text-3xl font-bold text-stone-900"><span id="count-hadir">0</span> <span class="text-sm font-normal text-gray-400">Tamu</span></h2>
+            </div>
+            <div class="p-3 bg-stone-100 rounded-2xl">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-stone-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-sm border border-stone-200 overflow-hidden">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-stone-50 border-b border-stone-100">
+                        <th class="p-4 text-xs font-bold text-stone-600 uppercase">Nama Tamu</th>
+                        <th class="p-4 text-xs font-bold text-stone-600 uppercase text-center">Status</th>
+                        <th class="p-4 text-xs font-bold text-stone-600 uppercase text-right">Jam</th>
+                    </tr>
+                </thead>
+                <tbody id="rekap-list">
+                    <tr>
+                        <td colspan="3" class="p-10 text-center text-gray-400 text-sm italic">Memuat data...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <script>
-    // 1. URL GOOGLE APPS SCRIPT
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzafTyat2cxVwfeNref5R-oBGX5ITy0pLy-tbEGhHvpAJ_f2rnXS9U1pFDfXj3jpGDtIw/exec';
-    let isProcessing = false;
+        // 1. PASTIKAN URL INI ADALAH HASIL "NEW DEPLOYMENT" TERBARU
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyo3x9LmXyTtz902XN-ChwrFZATTqqlHpRLzKSw71uszyyCjBTv391jQ4cj2fNF67v_7A/exec';
 
-    function onScanSuccess(decodedText, decodedResult) {
-        if (isProcessing) return; 
-        isProcessing = true;
+        function renderTamu(data) {
+            const list = document.getElementById('rekap-list');
+            const countHadir = document.getElementById('count-hadir');
+            
+            const uniqueData = data.filter((v, i, a) => 
+                a.findIndex(t => (t.nama === v.nama && t.waktu === v.waktu)) === i
+            );
+            
+            countHadir.innerText = uniqueData.length;
 
-        // 1. Bedah data QR (Nama | Status | ID)
-        const data = decodedText.split("|");
-        const namaTamu = data[0] ? data[0].trim() : "Tanpa Nama";
-        const statusTamu = data[1] ? data[1].trim() : "Reguler";
-        const kodeUnik = data[2] ? data[2].trim() : "-"; // Tetap diambil untuk database
+            if (uniqueData.length > 0) {
+                list.innerHTML = uniqueData.map(item => {
+                    const statusStr = (item.status || "Reguler").toUpperCase();
+                    const isVIP = statusStr.includes('VIP');
+                    const badgeClass = isVIP ? 'badge-vip' : 'badge-reg';
+                    const statusText = isVIP ? 'VIP' : 'REG';
 
-        const successBox = document.getElementById('success-msg');
-        const guestName = document.getElementById('guest-name-result');
-        const idleMsg = document.getElementById('idle-msg');
-
-        // 2. Set tampilan (Hanya Nama saja yang muncul)
-        if (statusTamu.toUpperCase() === "VIP") {
-            successBox.style.backgroundColor = "#FFD700"; // Kuning Emas
-            successBox.style.color = "#000"; 
-            guestName.innerHTML = `
-                <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">VIP GUEST</div>
-                <div style="font-size: 28px; font-weight: bold; line-height: 1.2;">${namaTamu}</div>
-            `;
-        } else {
-            successBox.style.backgroundColor = "#16a34a"; // Hijau
-            successBox.style.color = "#fff";
-            guestName.innerHTML = `
-                <div style="font-size: 28px; font-weight: bold;">${namaTamu}</div>
-            `;
+                    return `
+                        <tr class="border-b border-stone-50 last:border-0">
+                            <td class="p-4">
+                                <p class="text-sm font-semibold text-stone-800">${item.nama}</p>
+                            </td>
+                            <td class="p-4 text-center">
+                                <span class="${badgeClass}">${statusText}</span>
+                            </td>
+                            <td class="p-4 text-right">
+                                <p class="text-xs text-gray-500">${item.waktu}</p>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } else {
+                list.innerHTML = '<tr><td colspan="3" class="p-10 text-center text-gray-400 text-sm italic">Belum ada tamu yang hadir.</td></tr>';
+            }
         }
 
-        // 3. Munculkan pesan sukses
-        idleMsg.classList.add('hidden');
-        successBox.classList.remove('hidden');
+        function loadRekap() {
+            // Coba ambil dari cache agar tidak putih kosong saat loading
+            const cache = localStorage.getItem('rekap_tamu');
+            if (cache) { 
+                try { renderTamu(JSON.parse(cache)); } catch (e) {}
+            }
 
-        // 4. Kirim data lengkap ke Google Sheets (ID tetap dikirim agar rekap lengkap)
-        const finalURL = `${scriptURL}?nama=${encodeURIComponent(namaTamu)}&status=${encodeURIComponent(statusTamu)}&kode=${encodeURIComponent(kodeUnik)}&type=absen`;
-        
-        fetch(finalURL, { mode: 'no-cors' }).catch(err => console.error("Error:", err));
+            fetch(`${scriptURL}?type=get_absen&v=${new Date().getTime()}`)
+            .then(res => {
+                if (!res.ok) throw new Error('Respon server tidak ok');
+                return res.json();
+            })
+            .then(data => {
+                console.log("Data diterima:", data); 
+                if (!Array.isArray(data)) return;
 
-        // 5. Reset tampilan setelah 3 detik
-        setTimeout(() => {
-            successBox.classList.add('hidden');
-            idleMsg.classList.remove('hidden');
-            isProcessing = false;
-        }, 3000);
-    }
+                // Mengurutkan berdasarkan waktu terbaru di atas
+                const sortedData = data.sort((a, b) => (b.waktu || "").localeCompare(a.waktu || ""));
+                localStorage.setItem('rekap_tamu', JSON.stringify(sortedData));
+                renderTamu(sortedData);
+            })
+            .catch(err => {
+                console.error("Gagal memuat data:", err);
+            });
+        }
 
-    function onScanFailure(error) { /* Abaikan error */ }
+        // --- BAGIAN YANG TADI KURANG: MENJALANKAN FUNGSI ---
 
-    let html5QrcodeScanner = new Html5QrcodeScanner(
-        "reader", { fps: 20, qrbox: { width: 250, height: 250 } }
-    );
-    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        // Jalankan otomatis saat halaman pertama kali dibuka
+        document.addEventListener('DOMContentLoaded', loadRekap);
+
+        // Jalankan otomatis setiap 5 detik agar rekap terupdate terus
+        setInterval(loadRekap, 5000); 
+
     </script>
 </body>
 </html>
