@@ -894,7 +894,7 @@
         </div>
 
             <div class="absolute bottom-20 left-0 w-full flex justify-center z-[30]">
-        <button onclick="showQR()" class="btn-qr-aesthetic">
+        <button id="lang-btn-qr" onclick="showQR()" class="btn-qr-aesthetic">
             Your Invitation QR
         </button>
         </div>
@@ -1356,6 +1356,7 @@
                 "lang-btn-share": "Unggah Momen Anda",
                 "lang-dresscode-title": "Tema Busana",
                 "lang-dresscode-desc": "Kehadiran Anda adalah hadiah terindah bagi kami, namun jika Anda ingin menyesuaikan dengan tema kami, berikut adalah palet warnanya:",
+                "lang-btn-qr": "QR Undangan Anda",
                 "lang-palette-romantic": "Palet Romantis",
                 "lang-palette-earthy": "Palet Warna Bumi",
                 "lang-palette-neutral": "Palet Netral",
@@ -1439,6 +1440,7 @@
                 "btn-open": "Open Invitation",
                 "lang-tap-to-enter": "Tap to enter",
                 "typing-content": "We're tying the knot and you're on |The Guest List!",
+                "lang-btn-qr": "Your Invitation QR",
                 "lang-bride-groom": "Bride & Groom",
                 "lang-dresscode-title": "Dresscode",
                 "lang-dresscode-note": "*This is only a recommendation, not an obligation.",
@@ -1455,18 +1457,16 @@
         }
 
             function switchLang(lang) {
-            currentLang = lang;
+            currentLang = lang; 
 
             for (let id in translations[lang]) {
                 const el = document.getElementById(id);
                 if (el && id !== "typing-content") {
-                    // Jika elemen adalah tombol simpan QR, kita harus jaga agar ICON-nya tetap ada
-                    if (id === "lang-qr-save") {
-                        const icon = el.querySelector('svg').outerHTML;
-                        el.innerHTML = icon + ' ' + translations[lang][id];
-                    } else {
-                        el.innerHTML = translations[lang][id];
-                    }
+                    el.style.opacity = 0; // Efek transisi halus
+                    setTimeout(() => {
+                        el.innerHTML = translations[lang][id]; 
+                        el.style.opacity = 1;
+                    }, 200);
                 }
             }
 
