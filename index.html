@@ -1511,49 +1511,35 @@
         // 3. QR code
         // 1. Fungsi untuk Menampilkan QR Code
         function showQR() {
-            const modal = document.getElementById('qrModal');
-            const guestName = document.getElementById('guest-name').innerText; 
-            const qrTarget = document.getElementById('qrcode');
-            const qrGuestNameElement = document.getElementById('qr-guest-name');
-            
-            // Ambil Status dari URL (s=VIP atau s=Reguler)
-            const urlParams = new URLSearchParams(window.location.search);
-            const guestStatus = urlParams.get('s') || 'Reguler'; 
+        const modal = document.getElementById('qrModal');
+        const guestName = document.getElementById('guest-name').innerText; 
+        const qrTarget = document.getElementById('qrcode');
+        
+        // Ambil Status dari URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const guestStatus = urlParams.get('s') || 'Reguler'; 
+        
+        // BUAT ID UNIK (Misal: Nama tanpa spasi + Jam)
+        const guestID = guestName.replace(/\s/g, '').substring(0,5) + Math.floor(Math.random() * 1000);
 
-            // Atur tampilan nama tamu
-            qrGuestNameElement.style.textAlign = 'center';
-            qrGuestNameElement.style.display = 'block';
+        qrTarget.innerHTML = "";
+        
+        // FORMAT HARUS: Nama | Status | ID (Agar scanner.html bisa baca lengkap)
+        const qrContent = `${guestName} | ${guestStatus} | ${guestID}`;
 
-            // Set Nama & Penanda VIP jika statusnya VIP
-            if (guestStatus.toUpperCase() === 'VIP') {
-                qrGuestNameElement.innerHTML = `
-                    ${guestName} <br>
-                    <span style="color:#d4af37; font-size:10px; font-weight:bold; display:block; margin-top:2px;">
-                        VIP GUEST
-                    </span>`;
-            } else {
-                qrGuestNameElement.innerText = guestName;
-            }
-
-            // Bersihkan QR lama sebelum generate baru
-            qrTarget.innerHTML = "";
-            
-            // Generate QR dengan format: "Nama | Status"
-            const qrContent = `${guestName} | ${guestStatus}`;
-
-            new QRCode(qrTarget, {
+        new QRCode(qrTarget, {
             text: qrContent, 
-            width: 200, // Ukuran sedikit diperbesar agar kotak-kotaknya lebih jelas
+            width: 200,
             height: 200,
-            colorDark : "#000000", // Hitam pekat sempurna (jangan pakai abu-abu/cokelat)
-            colorLight : "#FFFFFF", // Putih bersih
-            // TINGKAT KOREKSI TINGGI: Tetap terbaca meski layar HP tamu baret/buram
+            colorDark : "#000000",
+            colorLight : "#FFFFFF",
             correctLevel : QRCode.CorrectLevel.H 
         });
 
-            // Tampilkan Modal
-            modal.style.display = 'flex';
-        }
+        modal.style.display = 'flex';
+    }
+
+
 
         function downloadQR() {
         const area = document.getElementById('capture-area');
@@ -1786,7 +1772,7 @@
         });
 
         // 9. Utility Functions
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzafTyat2cxVwfeNref5R-oBGX5ITy0pLy-tbEGhHvpAJ_f2rnXS9U1pFDfXj3jpGDtIw/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycby77Japz_zkgmxsbX7mAOq5fQf5EkWlxdjlvz9eNDLN2TEatPBpKSChZoQVZfq2WzOV3g/exec';
 
         // Fungsi Copy Number (tetap sama)
         function copyNumber(text, btn) {
