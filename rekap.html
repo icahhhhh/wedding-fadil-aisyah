@@ -9,7 +9,6 @@
     <style>
         body { font-family: 'Montserrat', sans-serif; background-color: #f4f1ee; }
         .bg-stone-green { background-color: #4a5d4a; }
-        /* Warna khusus untuk label VIP */
         .badge-vip { background-color: #d4af37; color: white; padding: 2px 8px; border-radius: 50px; font-size: 10px; font-weight: bold; }
         .badge-reg { background-color: #e5e7eb; color: #6b7280; padding: 2px 8px; border-radius: 50px; font-size: 10px; }
     </style>
@@ -60,13 +59,16 @@
     </div>
 
     <script>
-        // 1. PASTIKAN URL INI ADALAH HASIL "NEW DEPLOYMENT" TERBARU
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyo3x9LmXyTtz902XN-ChwrFZATTqqlHpRLzKSw71uszyyCjBTv391jQ4cj2fNF67v_7A/exec';
+        // 1. GUNAKAN URL BARU SETELAH DEPLOY ULANG (ANYONE)
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbx5sOfaJ9unMtN-ojIaRn47LFtZEgqNzYY8RtvZw5TObCxW-KDl19nEjlGB8yipvwRSrQ/exec';
 
         function renderTamu(data) {
             const list = document.getElementById('rekap-list');
             const countHadir = document.getElementById('count-hadir');
             
+            if (!data || !Array.isArray(data)) return;
+
+            // Pastikan data unik berdasarkan nama dan waktu
             const uniqueData = data.filter((v, i, a) => 
                 a.findIndex(t => (t.nama === v.nama && t.waktu === v.waktu)) === i
             );
@@ -83,13 +85,13 @@
                     return `
                         <tr class="border-b border-stone-50 last:border-0">
                             <td class="p-4">
-                                <p class="text-sm font-semibold text-stone-800">${item.nama}</p>
+                                <p class="text-sm font-semibold text-stone-800">${item.nama || 'Tanpa Nama'}</p>
                             </td>
                             <td class="p-4 text-center">
                                 <span class="${badgeClass}">${statusText}</span>
                             </td>
                             <td class="p-4 text-right">
-                                <p class="text-xs text-gray-500">${item.waktu}</p>
+                                <p class="text-xs text-gray-500">${item.waktu || '--:--'}</p>
                             </td>
                         </tr>
                     `;
@@ -100,39 +102,29 @@
         }
 
         function loadRekap() {
-            // Coba ambil dari cache agar tidak putih kosong saat loading
-            const cache = localStorage.getItem('rekap_tamu');
-            if (cache) { 
-                try { renderTamu(JSON.parse(cache)); } catch (e) {}
-            }
-
-            fetch(`${scriptURL}?type=get_absen&v=${new Date().getTime()}`)
-            .then(res => {
-                if (!res.ok) throw new Error('Respon server tidak ok');
-                return res.json();
+            // Gunakan redirect: follow untuk menangani sistem Google Apps Script
+            fetch(`${scriptURL}?type=get_absen&v=${new Date().getTime()}`, {
+                method: 'GET',
+                redirect: 'follow'
             })
+            .then(res => res.json())
             .then(data => {
-                console.log("Data diterima:", data); 
-                if (!Array.isArray(data)) return;
-
-                // Mengurutkan berdasarkan waktu terbaru di atas
-                const sortedData = data.sort((a, b) => (b.waktu || "").localeCompare(a.waktu || ""));
-                localStorage.setItem('rekap_tamu', JSON.stringify(sortedData));
-                renderTamu(sortedData);
+                console.log("Data sukses ditarik:", data);
+                localStorage.setItem('rekap_tamu', JSON.stringify(data));
+                renderTamu(data);
             })
             .catch(err => {
-                console.error("Gagal memuat data:", err);
+                console.error("Gagal menarik data:", err);
+                const cache = localStorage.getItem('rekap_tamu');
+                if (cache) renderTamu(JSON.parse(cache));
             });
         }
 
-        // --- BAGIAN YANG TADI KURANG: MENJALANKAN FUNGSI ---
-
-        // Jalankan otomatis saat halaman pertama kali dibuka
-        document.addEventListener('DOMContentLoaded', loadRekap);
-
-        // Jalankan otomatis setiap 5 detik agar rekap terupdate terus
-        setInterval(loadRekap, 5000); 
-
+        // --- WAJIB: PEMANGGIL OTOMATIS ---
+        window.onload = function() {
+            loadRekap(); // Jalankan saat halaman dibuka
+            setInterval(loadRekap, 5000); // Update tiap 5 detik otomatis
+        };
     </script>
 </body>
 </html>
