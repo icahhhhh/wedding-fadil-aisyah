@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekap Terkirim | Fadil & Aisyah</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #5c6351; --bg: #f4f5f0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: #333; padding: 15px; margin: 0; }
+        .container { background: white; max-width: 100%; margin: 0 auto; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e0e2db; box-sizing: border-box; }
+        h1 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--primary); text-align: center; }
+        .btn-back { display: inline-block; margin-bottom: 20px; text-decoration: none; color: var(--primary); font-size: 0.8rem; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; margin-top: 10px; }
+        th { background: var(--primary); color: white; padding: 10px; text-align: left; text-transform: uppercase; }
+        td { padding: 10px; border-bottom: 1px solid #eee; }
+        .badge-vip { background: #d4a373; color: white; padding: 2px 5px; border-radius: 3px; font-size: 0.6rem; font-weight: bold; }
+        .loading { text-align: center; padding: 20px; color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="generator.html" class="btn-back">← KEMBALI KE GENERATOR</a>
+    <h1>Rekap Undangan Terkirim</h1>
+    
+    <div id="loading" class="loading">Memuat data dari Sheets...</div>
+    
+    <table id="rekapTable" style="display:none;">
+        <thead>
+            <tr>
+                <th>Nama</th>
+                <th>WA</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="rekapBody"></tbody>
+    </table>
+</div>
+
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzkZj1Lx7NwonhYagVGlJA2UHycP3K7QbTB5Cff6WYnCUH173yp8liIFGPI2-P3bP8W/exec';
+
+    async function loadRekap() {
+        try {
+            const response = await fetch(`${scriptURL}?type=get_list`);
+            const data = await response.json();
+            const body = document.getElementById('rekapBody');
+            
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('rekapTable').style.display = 'table';
+
+            data.forEach(item => {
+                const row = `<tr>
+                    <td><b>${item.nama}</b><br><small style="color:#999">${item.waktu}</small></td>
+                    <td>${item.status === 'VIP' ? '<span class="badge-vip">VIP</span>' : 'Reguler'}</td>
+                    <td>${item.wa}</td>
+                </tr>`;
+                body.innerHTML += row;
+            });
+        } catch (error) {
+            document.getElementById('loading').innerText = "Gagal memuat data.";
+        }
+    }
+
+    loadRekap();
+</script>
+
+</body>
+</html>
