@@ -20,9 +20,10 @@
         label { display: block; font-size: 0.7rem; font-weight: bold; margin-bottom: 6px; color: var(--primary); text-transform: uppercase; }
         input, textarea { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 8px; background: #fafafa; font-family: inherit; font-size: 16px; box-sizing: border-box; outline: none; }
         button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 8px; letter-spacing: 1px; cursor: pointer; font-weight: bold; font-size: 1rem; }
-        .guest-card { display: flex; flex-direction: column; gap: 12px; padding: 15px; background: #fff; border: 1px solid #eee; border-radius: 8px; margin-top: 15px; }
+        .guest-card { display: flex; flex-direction: column; gap: 12px; padding: 15px; background: #fff; border: 1px solid #eee; border-radius: 8px; margin-top: 15px; transition: 0.3s; }
         .guest-name { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--primary); }
-        .btn-wa { background: #25D366; color: white; text-decoration: none; padding: 12px; text-align: center; font-size: 0.9rem; font-weight: bold; border-radius: 6px; display: block; }
+        .btn-wa { background: #25D366; color: white; text-decoration: none; padding: 12px; text-align: center; font-size: 0.9rem; font-weight: bold; border-radius: 6px; display: block; transition: 0.3s; }
+        .status-sent { font-size: 0.7rem; color: #5c6351; font-weight: bold; display: none; }
     </style>
 </head>
 <body>
@@ -46,6 +47,8 @@
 </div>
 
 <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbztpUChYMidT8TUaY-2cxpAgVSvMXT8RHUg4LQivebYKPCWYgc8i97RrsOIxWbOSytBZw/exec';
+
     function generateLinks() {
         const url = document.getElementById('baseUrl').value.trim();
         const input = document.getElementById('dataInput').value.trim();
@@ -55,38 +58,61 @@
         const lines = input.split('\n');
         let html = '';
 
-        lines.forEach(line => {
+        lines.forEach((line, index) => {
             const parts = line.split(',');
             if(parts.length === 2) {
                 const nama = parts[0].trim();
-                
-                // Pembersihan nomor yang sangat ketat
                 let rawWa = parts[1].trim().replace(/\D/g, ''); 
-                if (rawWa.startsWith('0')) {
-                    rawWa = '62' + rawWa.substring(1);
-                }
+                if (rawWa.startsWith('0')) { rawWa = '62' + rawWa.substring(1); }
                 
                 const waClean = rawWa;
                 const linkPersonal = `${url}?to=${encodeURIComponent(nama).replace(/%20/g, '+')}`;
-                
                 const message = `Assalamu’alaikum Warahmatullahi Wabarakatuh\n\nKepada Yth.\nBapak/Ibu/Saudara/i\n*${nama}*\n___\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri hari bahagia kami:\n\n✨ THE WEDDING OF FADIL & AISYAH ✨\n\nKehadiran Anda adalah kado terindah bagi kami. Mengingat keterbatasan jarak dan waktu, izinkan e-invitation ini menjadi jembatan silaturahmi sebagai pengganti undangan resmi kami.\n\nSilakan akses tautan di bawah ini untuk detail acara, lokasi, dan waktu:\n${linkPersonal}\n\nMerupakan suatu kehormatan apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu bagi perjalanan ibadah panjang kami.\n\nTerima kasih atas doa dan perhatiannya.\n\nWassalamu’alaikum Warahmatullahi Wabarakatuh\n\nHormat kami,\nAisyah & Fadil\n#AIfinallyFAundlove\n\n____\n\nSpread your happiness with us`;
                 
-                // Gunakan api.whatsapp.com tanpa target blank agar langsung melempar ke app
                 const waUrl = `https://api.whatsapp.com/send?phone=${waClean}&text=${encodeURIComponent(message)}`;
 
                 html += `
-                    <div class="guest-card">
+                    <div class="guest-card" id="card-${index}">
                         <div>
                             <div class="guest-name">${nama}</div>
-                            <small style="color:#888">+${waClean}</small>
+                            <small style="color:#888" id="wa-${index}">+${waClean}</small>
+                            <div class="status-sent" id="status-${index}">TERCATAT DI SHEETS ✓</div>
                         </div>
-                        <a href="${waUrl}" rel="noreferrer" class="btn-wa">KIRIM VIA WA</a>
+                        <a href="${waUrl}" 
+                           onclick="kirimData('${nama}', '${waClean}', ${index})" 
+                           rel="noreferrer" 
+                           id="btn-${index}" 
+                           class="btn-wa">KIRIM VIA WA</a>
                     </div>
                 `;
             }
         });
         container.innerHTML = html;
     }
+
+   function kirimData(nama, wa, index) {
+    // URL yang sudah ditambahkan parameter ?type=add_list
+    const finalURL = `${scriptURL}?type=add_list&nama=${encodeURIComponent(nama)}&wa=${encodeURIComponent(wa)}`;
+
+    // Kirim data menggunakan metode GET (sesuai fungsi doGet di script kamu)
+    fetch(finalURL, {
+        method: 'GET',
+        mode: 'no-cors'
+    })
+    .then(() => {
+        console.log('Tercatat di sheet list undangan');
+    })
+    .catch(err => console.error('Gagal mencatat:', err));
+
+    // Update tampilan tombol agar tidak bingung
+    const btn = document.getElementById(`btn-${index}`);
+    const status = document.getElementById(`status-${index}`);
+    
+    btn.innerText = "TERKIRIM ✓";
+    btn.style.background = "#bdc3c7";
+    btn.style.pointerEvents = "none";
+    status.style.display = "block";
+}
 </script>
 </body>
 </html>
