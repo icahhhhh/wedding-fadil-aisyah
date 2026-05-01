@@ -85,8 +85,7 @@
         const urlBase = document.getElementById('baseUrl').value.trim();
         
         // Link Personal
-        const linkPersonal = `${urlBase}?to=${encodeURIComponent(nama).replace(/%20/g, '+')}`;
-        
+       const linkPersonal = `${urlBase}?to=${encodeURIComponent(nama).replace(/%20/g, '+')}&status=${statusTamu}`;
         // Format Pesan dengan Label VIP jika dicentang
         const labelVIP = isVIP ? "*[TAMU VIP]*\n" : "";
         
