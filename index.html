@@ -942,17 +942,39 @@
         <p id="lang-bride-groom" style="font-family: serif; color: white; opacity: 0.8; letter-spacing: 0.1em;">Bride & Groom</p>
         <div class="w-8 h-[1px] bg-white/40 mx-auto mt-2"></div>
     </div>
-</section>
 
-    <section id="halaman-5" class="p-0 m-0 relative h-[100dvh] w-full overflow-hidden bg-black">
+<!-- Bagian Mempelai Wanita -->
+<div class="absolute z-10 flex flex-col items-center text-center w-[40%]" style="top: 60%; left: 10%;">
+    <div id="name-aisyah" class="text-white text-base md:text-2xl font-serif" 
+         style="font-family: 'Times New Roman', Times, serif; font-weight: 600; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); line-height: 1.0; min-height: 1.2em; letter-spacing: 0.05em;">
+    </div>
     
-    <img src="Halaman 5.jpg" alt="Fadil & Aisyah Keluarga" 
-         class="absolute inset-0 w-full h-full object-cover z-0" 
-         style="object-position: center 20%;"> <div class="absolute inset-0 bg-black/20 via-transparent to-transparent z-1"></div>
-         
-        <div id="parents-bride" class="parent-label label-parents-bride color-parents-bride writing-dark"></div>
-        <div id="parents-groom" class="parent-label label-parents-groom color-parents-groom writing-dark"></div>
-    </section>
+    <a id="ig-aisyah" href="https://www.instagram.com/ahanadiya" target="_blank" class="opacity-0 flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 transition-all duration-700">
+        <span class="text-[8px] lowercase tracking-widest text-white">@ahanadiya</span>
+    </a>
+
+    <!-- TEMPAT NAMA ORANG TUA WANITA -->
+    <div id="parents-aisyah-text" class="opacity-0 mt-7 text-white font-serif italic" style="font-size: 8px; line-height: 1.4; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); transition: opacity 1s ease;">
+        <span id="lang-parents-label-bride">Daughter of</span> <br> H. Elvius Rinda Jaya, S.Ag & Hj. Hani, S.Ag
+    </div>
+</div>
+
+<!-- Bagian Mempelai Pria -->
+<div class="absolute z-10 flex flex-col items-center text-center w-[40%]" style="top: 60%; right: 8%;">
+    <div id="name-fadil" class="text-white text-base md:text-2xl font-serif" 
+         style="font-family: 'Times New Roman', Times, serif; font-weight: 600; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); line-height: 1.0; min-height: 1.2em; letter-spacing: 0.05em;">
+    </div>
+    
+    <a id="ig-fadil" href="https://www.instagram.com/s.ahmadfadil" target="_blank" class="opacity-0 flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 transition-all duration-700">
+        <span class="text-[8px] lowercase tracking-widest text-white">@s.ahmadfadil</span>
+    </a>
+
+    <!-- TEMPAT NAMA ORANG TUA PRIA -->
+    <div id="parents-fadil-text" class="opacity-0 mt-11 text-white font-serif italic" style="font-size: 8px; line-height: 1.4; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); transition: opacity 1s ease;">
+        <span id="lang-parents-label-groom">Son of</span> <br> Sayid Yusuf & Noordiana, S.Pd
+    </div>
+</div>
+</section>
 
         <section class="p-0 m-0 min-h-screen relative flex items-center justify-center overflow-hidden">
         <div class="absolute inset-0 w-full h-full">
@@ -1376,8 +1398,8 @@
                 "lang-reception-time": "10.00 WITA - Selesai",
                 "lang-location-label": "Kediaman Mempelai Wanita:<br>Jl. A. Yani Km.12.200 Komp. Citra Permai Blok A No.115 Kel. Gambut Barat Kec. Gambut",
                 "lang-btn-map": "BUKA PETUNJUK LOKASI",
-                "parents-label-bride": "Putri dari",
-                "parents-label-groom": "Putra dari",
+                "lang-parents-label-bride": "Putri dari",
+                "lang-parents-label-groom": "Putra dari",
                 "lang-invitation-label": "Undangan Pernikahan",
                 "lang-to": "Kepada Bapak/Ibu/Saudara/i:",
                 "btn-open": "Buka Undangan",
@@ -1433,8 +1455,8 @@
                 "lang-reception-time": "10.00 WITA - Finish",
                 "lang-location-label": "The Bride's Residence: Jl. A. Yani Km.12.200 Komp. Citra Permai Blok A No.115 Kel. Gambut Barat Kec. Gambut",
                 "lang-btn-map": "OPEN GOOGLE MAPS",
-                "parents-label-bride": "Daughter of",
-                "parents-label-groom": "Son of",
+                "lang-parents-label-bride": "Daughter of",
+                "lang-parents-label-groom": "Son of",
                 "lang-invitation-label": "Wedding Invitation",
                 "lang-to": "To our dear guests:",
                 "btn-open": "Open Invitation",
@@ -1490,23 +1512,6 @@
             }
         }
 
-            // KHUSUS HALAMAN 5: Reset ketikan orang tua
-            const pBride = document.getElementById("parents-bride");
-            const pGroom = document.getElementById("parents-groom");
-            
-            if (pBride && pGroom) {
-                pBrideIndex = 0; // Reset index ke awal
-                pGroomIndex = 0; 
-                pBride.innerHTML = ""; // Kosongkan tulisan
-                pGroom.innerHTML = "";
-                
-                // Jalankan ulang ngetiknya jika halaman 5 sudah pernah terbuka
-                if (page5Started) { 
-                    typeWriterParentsBride();
-                    typeWriterParentsGroom();
-                }
-            }
-
             // KHUSUS HALAMAN 2: Reset dan jalankan ulang mesin tik
             const typewriterEl = document.getElementById("typing-effect");
             if (typewriterEl) {
@@ -1531,57 +1536,64 @@
         });
 
         // 3. QR code
-        // 1. Fungsi untuk Menampilkan QR Code
-        function showQR() {
-        const modal = document.getElementById('qrModal');
-        const nameDisplay = document.getElementById('qr-guest-name'); // Target nama di modal
-        const guestName = document.getElementById('guest-name').innerText; 
-        const qrTarget = document.getElementById('qrcode');
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        const guestStatus = urlParams.get('s') || 'Reguler'; 
-        const guestID = guestName.replace(/\s/g, '').substring(0,5) + Math.floor(Math.random() * 1000);
+            // 1. Fungsi untuk Menampilkan QR Code
+            function showQR() {
+            const modal = document.getElementById('qrModal');
+            const nameDisplay = document.getElementById('qr-guest-name'); 
+            const guestName = document.getElementById('guest-name').innerText; 
+            const qrTarget = document.getElementById('qrcode');
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const guestStatus = urlParams.get('s') || 'Reguler'; 
+            const guestID = guestName.replace(/\s/g, '').substring(0,5) + Math.floor(Math.random() * 1000);
 
-        // Update nama di dalam modal agar ikut ter-capture
-        if (nameDisplay) nameDisplay.innerText = guestName;
+            // --- TAMBAHKAN LOGIKA INI ---
+            let displayName = guestName;
+            if (guestStatus.toUpperCase() === 'VIP') {
+                displayName = guestName + " (VIP Guest)";
+            }
+            // ----------------------------
 
-        qrTarget.innerHTML = "";
-        const qrContent = `${guestName} | ${guestStatus} | ${guestID}`;
+            // Update nama di dalam modal menggunakan displayName yang sudah dimodifikasi
+            if (nameDisplay) nameDisplay.innerText = displayName;
 
-        new QRCode(qrTarget, {
-            text: qrContent, 
-            width: 200,
-            height: 200,
-            colorDark : "#000000",
-            colorLight : "#FFFFFF",
-            correctLevel : QRCode.CorrectLevel.H 
-        });
+            qrTarget.innerHTML = "";
+            const qrContent = `${guestName} | ${guestStatus} | ${guestID}`;
 
-        modal.style.display = 'flex';
-    }
+            new QRCode(qrTarget, {
+                text: qrContent, 
+                width: 200,
+                height: 200,
+                colorDark : "#000000",
+                colorLight : "#FFFFFF",
+                correctLevel : QRCode.CorrectLevel.H 
+            });
+
+            modal.style.display = 'flex';
+        }
 
 
 
-        function downloadQR() {
-        const area = document.getElementById('capture-area');
-        const nama = document.getElementById('qr-guest-name').innerText;
-        
-        // 1. Sembunyikan elemen yang tidak ingin ikut terunduh
-        // Kita cari tombol simpan dan tombol tutup di dalam area capture
-        const buttonsToHide = area.querySelectorAll('button');
-        buttonsToHide.forEach(btn => btn.style.display = 'none');
+            function downloadQR() {
+            const area = document.getElementById('capture-area');
+            const nama = document.getElementById('qr-guest-name').innerText;
+            
+            // 1. Sembunyikan elemen yang tidak ingin ikut terunduh
+            // Kita cari tombol simpan dan tombol tutup di dalam area capture
+            const buttonsToHide = area.querySelectorAll('button');
+            buttonsToHide.forEach(btn => btn.style.display = 'none');
 
-        // 2. Proses Capture menggunakan html2canvas
-        html2canvas(area, { 
-            scale: 3, // Kualitas tinggi
-            backgroundColor: "#fdfbf7", // Warna cream kartu
-            useCORS: true,
-            logging: false,
-            letterRendering: 1,
-            allowTaint: false
-        }).then(canvas => {
-            // 3. Kembalikan tampilan tombol setelah capture selesai
-            buttonsToHide.forEach(btn => btn.style.display = 'block');
+            // 2. Proses Capture menggunakan html2canvas
+            html2canvas(area, { 
+                scale: 3, // Kualitas tinggi
+                backgroundColor: "#fdfbf7", // Warna cream kartu
+                useCORS: true,
+                logging: false,
+                letterRendering: 1,
+                allowTaint: false
+            }).then(canvas => {
+                // 3. Kembalikan tampilan tombol setelah capture selesai
+                buttonsToHide.forEach(btn => btn.style.display = 'block');
 
             try {
                 const imageData = canvas.toDataURL("image/png");
@@ -1667,30 +1679,38 @@
         let page4Started = false;
 
         // Fungsi mengetik nama Aisyah
-        function typeAisyah() {
-            const el = document.getElementById("name-aisyah");
-            if (el && aisyahIndex < nameAisyah.length) {
-                el.innerHTML += nameAisyah.charAt(aisyahIndex);
-                aisyahIndex++;
-                setTimeout(typeAisyah, 50);
-            } else if (el) {
-                document.getElementById("ig-aisyah").classList.replace('opacity-0', 'opacity-100');
-                el.classList.remove('writing');
+            function typeAisyah() {
+                const el = document.getElementById("name-aisyah");
+                if (el && aisyahIndex < nameAisyah.length) {
+                    el.innerHTML += nameAisyah.charAt(aisyahIndex);
+                    aisyahIndex++;
+                    setTimeout(typeAisyah, 50);
+                } else if (el) {
+                    // Tampilkan IG
+                    document.getElementById("ig-aisyah").classList.replace('opacity-0', 'opacity-100');
+                    // Tampilkan Nama Orang Tua dengan fade in (delay 500ms setelah IG)
+                    setTimeout(() => {
+                        document.getElementById("parents-aisyah-text").classList.replace('opacity-0', 'opacity-100');
+                    }, 500);
+                }
             }
-        }
 
-        // Fungsi mengetik nama Fadil
-        function typeFadil() {
-            const el = document.getElementById("name-fadil");
-            if (el && fadilIndex < nameFadil.length) {
-                el.innerHTML += nameFadil.charAt(fadilIndex);
-                fadilIndex++;
-                setTimeout(typeFadil, 45);
-            } else if (el) {
-                document.getElementById("ig-fadil").classList.replace('opacity-0', 'opacity-100');
-                el.classList.remove('writing');
+            // Fungsi mengetik nama Fadil
+            function typeFadil() {
+                const el = document.getElementById("name-fadil");
+                if (el && fadilIndex < nameFadil.length) {
+                    el.innerHTML += nameFadil.charAt(fadilIndex);
+                    fadilIndex++;
+                    setTimeout(typeFadil, 45);
+                } else if (el) {
+                    // Tampilkan IG
+                    document.getElementById("ig-fadil").classList.replace('opacity-0', 'opacity-100');
+                    // Tampilkan Nama Orang Tua dengan fade in (delay 500ms setelah IG)
+                    setTimeout(() => {
+                        document.getElementById("parents-fadil-text").classList.replace('opacity-0', 'opacity-100');
+                    }, 500);
+                }
             }
-        }
 
         // Pemicu Otomatis yang lebih akurat
         const observerPage4 = new IntersectionObserver((entries) => {
@@ -1713,68 +1733,6 @@
             if (section4) {
                 observerPage4.observe(section4);
             }
-        });
-
-        // 7. Typewriter Halaman 5
-        const textParentsBride = "Daughter of\nH. Elvius Rinda Jaya, S.Ag\n& Hj. Hani, S.Ag";
-        const textParentsGroom = "Son of Sayid Yusuf\n& Noordiana, S.Pd";
-        let pBrideIndex = 0;
-        let pGroomIndex = 0;
-        let page5Started = false;
-
-        function typeWriterParentsBride() {
-            const target = document.getElementById("parents-bride");
-            // Ambil label (Daughter of / Putri dari) dari kamus
-            const label = translations[currentLang]["parents-label-bride"];
-            // Gabungkan dengan nama orang tua (Nama orang tua tidak perlu diterjemahkan)
-            const fullText = label + "\nH. Elvius Rinda Jaya, S.Ag\n& Hj. Hani, S.Ag";
-
-            if (target && pBrideIndex < fullText.length) {
-                let char = fullText.charAt(pBrideIndex);
-                if (char === '\n') { target.innerHTML += '<br>'; } 
-                else { target.innerHTML += char; }
-                pBrideIndex++;
-                setTimeout(typeWriterParentsBride, 40); 
-            }
-        }
-
-        function typeWriterParentsGroom() {
-            const target = document.getElementById("parents-groom");
-            // Ambil label (Son of / Putra dari) dari kamus
-            const label = translations[currentLang]["parents-label-groom"];
-            const fullText = label + "\nSayid Yusuf\n& Noordiana, S.Pd";
-
-            if (target && pGroomIndex < fullText.length) {
-                let char = fullText.charAt(pGroomIndex);
-                if (char === '\n') { target.innerHTML += '<br>'; } 
-                else { target.innerHTML += char; }
-                pGroomIndex++;
-                setTimeout(typeWriterParentsGroom, 45);
-            }
-        }
-
-        // Pemicu otomatis yang akurat untuk semua HP
-        const observerPage5 = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && !page5Started) {
-                    page5Started = true;
-                    // Reset isi agar tidak double jika ada sisa teks
-                    document.getElementById("parents-bride").innerHTML = "";
-                    document.getElementById("parents-groom").innerHTML = "";
-                    
-                    // Beri delay sebentar agar transisi scroll selesai
-                    setTimeout(() => {
-                        typeWriterParentsBride();
-                        typeWriterParentsGroom();
-                    }, 600);
-                }
-            });
-        }, { threshold: 0.3 }); // Mulai ngetik saat 30% halaman terlihat
-
-        // Jalankan fungsi pengamat
-        document.addEventListener("DOMContentLoaded", function() {
-            const target5 = document.getElementById('halaman-5');
-            if (target5) observerPage5.observe(target5);
         });
 
         // 8. Swiper Initialization
