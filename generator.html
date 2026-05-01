@@ -3,15 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator | Fadil & Aisyah</title>
+    <title>Generator VIP | Fadil & Aisyah</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #5c6351; 
-            --accent: #8c947e; 
-            --bg: #f4f5f0;    
-            --text: #333;
-        }
+        :root { --primary: #5c6351; --accent: #8c947e; --bg: #f4f5f0; --text: #333; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 15px; }
         .container { background: white; max-width: 100%; margin: 0 auto; padding: 25px 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e0e2db; box-sizing: border-box; }
         h1 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--primary); text-align: center; margin: 0 0 5px 0; }
@@ -20,17 +15,19 @@
         label { display: block; font-size: 0.7rem; font-weight: bold; margin-bottom: 6px; color: var(--primary); text-transform: uppercase; }
         input, textarea { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 8px; background: #fafafa; font-family: inherit; font-size: 16px; box-sizing: border-box; outline: none; }
         button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 8px; letter-spacing: 1px; cursor: pointer; font-weight: bold; font-size: 1rem; }
-        .guest-card { display: flex; flex-direction: column; gap: 12px; padding: 15px; background: #fff; border: 1px solid #eee; border-radius: 8px; margin-top: 15px; transition: 0.3s; }
+        .guest-card { display: flex; flex-direction: column; gap: 10px; padding: 15px; background: #fff; border: 1px solid #eee; border-radius: 8px; margin-top: 15px; }
         .guest-name { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--primary); }
-        .btn-wa { background: #25D366; color: white; text-decoration: none; padding: 12px; text-align: center; font-size: 0.9rem; font-weight: bold; border-radius: 6px; display: block; transition: 0.3s; }
-        .status-sent { font-size: 0.7rem; color: #5c6351; font-weight: bold; display: none; }
+        .vip-badge { background: #d4a373; color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px; }
+        .btn-wa { background: #25D366; color: white; text-decoration: none; padding: 12px; text-align: center; font-size: 0.9rem; font-weight: bold; border-radius: 6px; display: block; }
+        .vip-option { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--primary); margin-top: 5px; }
+        .vip-option input { width: auto; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>Fadil & Aisyah</h1>
-    <div class="subtitle">Invitation Generator</div>
+    <div class="subtitle">Invitation Generator VIP</div>
 
     <div class="input-section">
         <label>URL Undangan Utama</label>
@@ -39,7 +36,7 @@
 
     <div class="input-section">
         <label>Daftar Tamu (Nama, NomorWA)</label>
-        <textarea id="dataInput" rows="5" placeholder="Contoh:&#10;Icah, +62 856-5332-0232"></textarea>
+        <textarea id="dataInput" rows="5" placeholder="Icah, 6285653320232"></textarea>
     </div>
 
     <button onclick="generateLinks()">GENERATE LIST</button>
@@ -47,7 +44,7 @@
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbw6iWqUOWoY9cQqfusD66mCwN3-IQs3Z0-F5GDR7RCwMEnMz3gsFn5CuKSxtpZjFdgoEg/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzlwgjAY3qaan3vAUfW_OHoAQwXvrEsN1gKP2TgIjffxV39KdVzOUD9fLfbezNkgPLPvA/exec';
 
     function generateLinks() {
         const url = document.getElementById('baseUrl').value.trim();
@@ -65,24 +62,16 @@
                 let rawWa = parts[1].trim().replace(/\D/g, ''); 
                 if (rawWa.startsWith('0')) { rawWa = '62' + rawWa.substring(1); }
                 
-                const waClean = rawWa;
-                const linkPersonal = `${url}?to=${encodeURIComponent(nama).replace(/%20/g, '+')}`;
-                const message = `Assalamu’alaikum Warahmatullahi Wabarakatuh\n\nKepada Yth.\nBapak/Ibu/Saudara/i\n*${nama}*\n___\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri hari bahagia kami:\n\n✨ THE WEDDING OF FADIL & AISYAH ✨\n\nKehadiran Anda adalah kado terindah bagi kami. Mengingat keterbatasan jarak dan waktu, izinkan e-invitation ini menjadi jembatan silaturahmi sebagai pengganti undangan resmi kami.\n\nSilakan akses tautan di bawah ini untuk detail acara, lokasi, dan waktu:\n${linkPersonal}\n\nMerupakan suatu kehormatan apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu bagi perjalanan ibadah panjang kami.\n\nTerima kasih atas doa dan perhatiannya.\n\nWassalamu’alaikum Warahmatullahi Wabarakatuh\n\nHormat kami,\nAisyah & Fadil\n#AIfinallyFAundlove\n\n____\n\nSpread your happiness with us`;
-                
-                const waUrl = `https://api.whatsapp.com/send?phone=${waClean}&text=${encodeURIComponent(message)}`;
-
                 html += `
                     <div class="guest-card" id="card-${index}">
                         <div>
-                            <div class="guest-name">${nama}</div>
-                            <small style="color:#888" id="wa-${index}">+${waClean}</small>
-                            <div class="status-sent" id="status-${index}">TERCATAT DI SHEETS ✓</div>
+                            <span class="guest-name">${nama}</span>
+                            <small style="color:#888"> (+${rawWa})</small>
+                            <div class="vip-option">
+                                <input type="checkbox" id="vip-${index}"> <label for="vip-${index}" style="display:inline; margin:0;">Tamu VIP</label>
+                            </div>
                         </div>
-                        <a href="${waUrl}" 
-                           onclick="kirimData('${nama}', '${waClean}', ${index})" 
-                           rel="noreferrer" 
-                           id="btn-${index}" 
-                           class="btn-wa">KIRIM VIA WA</a>
+                        <a href="#" onclick="prosesKirim('${nama}', '${rawWa}', ${index})" class="btn-wa">KIRIM VIA WA</a>
                     </div>
                 `;
             }
@@ -90,29 +79,34 @@
         container.innerHTML = html;
     }
 
-   function kirimData(nama, wa, index) {
-    // URL yang sudah ditambahkan parameter ?type=add_list
-    const finalURL = `${scriptURL}?type=add_list&nama=${encodeURIComponent(nama)}&wa=${encodeURIComponent(wa)}`;
+    function prosesKirim(nama, wa, index) {
+        const isVIP = document.getElementById(`vip-${index}`).checked;
+        const statusTamu = isVIP ? "VIP" : "Reguler";
+        const urlBase = document.getElementById('baseUrl').value.trim();
+        
+        // Link Personal
+        const linkPersonal = `${urlBase}?to=${encodeURIComponent(nama).replace(/%20/g, '+')}`;
+        
+        // Format Pesan dengan Label VIP jika dicentang
+        const labelVIP = isVIP ? "*[TAMU VIP]*\n" : "";
+        
+        const message = `Assalamu’alaikum Warahmatullahi Wabarakatuh\n\n${labelVIP}Kepada Yth.\nBapak/Ibu/Saudara/i\n*${nama}*\n___\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri hari bahagia kami:\n\n✨ THE WEDDING OF FADIL & AISYAH ✨\n\nKehadiran Anda adalah kado terindah bagi kami. Mengingat keterbatasan jarak dan waktu, izinkan e-invitation ini menjadi jembatan silaturahmi sebagai pengganti undangan resmi kami.\n\nSilakan akses tautan di bawah ini untuk detail acara, lokasi, dan waktu:\n${linkPersonal}\n\nMerupakan suatu kehormatan apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu bagi perjalanan ibadah panjang kami.\n\nTerima kasih atas doa dan perhatiannya.\n\nWassalamu’alaikum Warahmatullahi Wabarakatuh\n\nHormat kami,\nAisyah & Fadil\n#AIfinallyFAundlove\n\n____\n\nSpread your happiness with us`;
 
-    // Kirim data menggunakan metode GET (sesuai fungsi doGet di script kamu)
-    fetch(finalURL, {
-        method: 'GET',
-        mode: 'no-cors'
-    })
-    .then(() => {
-        console.log('Tercatat di sheet list undangan');
-    })
-    .catch(err => console.error('Gagal mencatat:', err));
+        // 1. Kirim ke Google Sheets
+        const finalURL = `${scriptURL}?type=add_list&nama=${encodeURIComponent(nama)}&wa=${encodeURIComponent(wa)}&status=${statusTamu}`;
+        fetch(finalURL, { method: 'GET', mode: 'no-cors' });
 
-    // Update tampilan tombol agar tidak bingung
-    const btn = document.getElementById(`btn-${index}`);
-    const status = document.getElementById(`status-${index}`);
-    
-    btn.innerText = "TERKIRIM ✓";
-    btn.style.background = "#bdc3c7";
-    btn.style.pointerEvents = "none";
-    status.style.display = "block";
-}
+        // 2. Buka WhatsApp
+        const waUrl = `https://api.whatsapp.com/send?phone=${wa}&text=${encodeURIComponent(message)}`;
+        window.open(waUrl, '_blank');
+
+        // 3. Update tampilan tombol
+        const card = document.getElementById(`card-${index}`);
+        card.style.opacity = "0.5";
+        card.querySelector('.btn-wa').innerText = "TERKIRIM ✓";
+        card.querySelector('.btn-wa').style.background = "#bdc3c7";
+        card.querySelector('.btn-wa').style.pointerEvents = "none";
+    }
 </script>
 </body>
 </html>
