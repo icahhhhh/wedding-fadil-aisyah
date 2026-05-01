@@ -125,6 +125,18 @@
             if (cache) renderTamu(JSON.parse(cache));
         });
     }
+
+    // 2. Tambahkan Listener Otomatis di bawah fungsi loadRekap
+    document.addEventListener('DOMContentLoaded', () => {
+        const cache = localStorage.getItem('rekap_tamu');
+        if (cache) {
+            renderTamu(JSON.parse(cache));
+        }
+        loadRekap();
+    });
+
+    // TAMBAHKAN INI DI AKHIR
+    document.addEventListener('DOMContentLoaded', loadRekap);
 </script>
 </body>
 </html>
