@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Undangan | Fadil & Aisyah</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5c6351; 
+            --accent: #8c947e; 
+            --bg: #f4f5f0;    
+            --text: #333;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            max-width: 650px;
+            width: 100%;
+            padding: 40px;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid #e0e2db;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 40px;
+        }
+
+        .input-section { margin-bottom: 25px; }
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 0;
+            background: #fafafa;
+            font-family: inherit;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover { background: #4a5041; }
+
+        #resultList { margin-top: 40px; }
+
+        .guest-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #fff;
+            border: 1px solid #eee;
+            margin-bottom: 10px;
+        }
+
+        .guest-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; }
+
+        .btn-wa {
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Fadil & Aisyah</h1>
+    <div class="subtitle">Official Invitation Generator</div>
+
+    <div class="input-section">
+        <label>URL Undangan Utama</label>
+        <input type="text" id="baseUrl" value="https://wedding-fadil-aisyah.vercel.app">
+    </div>
+
+    <div class="input-section">
+        <label>List Tamu (Format: Nama, NomorWA)</label>
+        <textarea id="dataInput" rows="8" placeholder="Contoh:&#10;Icah sekeluarga, 62812345678&#10;Budi, 628999888"></textarea>
+    </div>
+
+    <button onclick="generateLinks()">GENERATE LIST KIRIM</button>
+
+    <div id="resultList"></div>
+</div>
+
+<script>
+    function generateLinks() {
+        const url = document.getElementById('baseUrl').value.trim();
+        const input = document.getElementById('dataInput').value.trim();
+        const container = document.getElementById('resultList');
+
+        if(!input) return alert("Silakan masukkan daftar tamu!");
+
+        const lines = input.split('\n');
+        let html = '';
+
+        lines.forEach(line => {
+            const parts = line.split(',');
+            if(parts.length === 2) {
+                const nama = parts[0].trim();
+                const wa = parts[1].trim();
+                
+                // Membuat Link Personal untuk Tombol di Web
+                const linkPersonal = `${url}?to=${encodeURIComponent(nama).replace(/%20/g, '+')}`;
+                
+                // FORMAT PESAN SESUAI REQUEST
+                const message = `Assalamu’alaikum Warahmatullahi Wabarakatuh\n\nKepada Yth.\nBapak/Ibu/Saudara/i\n*${nama}*\n___\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri hari bahagia kami:\n\n✨ THE WEDDING OF FADIL & AISYAH ✨\n\nKehadiran Anda adalah kado terindah bagi kami. Mengingat keterbatasan jarak dan waktu, izinkan e-invitation ini menjadi jembatan silaturahmi sebagai pengganti undangan resmi kami.\n\nSilakan akses tautan di bawah ini untuk detail acara, lokasi, dan waktu:\n${linkPersonal}\n\nMerupakan suatu kehormatan apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu bagi perjalanan ibadah panjang kami.\n\nTerima kasih atas doa dan perhatiannya.\n\nWassalamu’alaikum Warahmatullahi Wabarakatuh\n\nHormat kami,\nAisyah & Fadil\n#AIfinallyFAundlove\n\n____\n\nSpread your happiness with us`;
+                
+                const waUrl = `https://api.whatsapp.com/send?phone=${wa}&text=${encodeURIComponent(message)}`;
+
+                html += `
+                    <div class="guest-card">
+                        <div>
+                            <div class="guest-name">${nama}</div>
+                            <small style="color:#888">${wa}</small>
+                        </div>
+                        <a href="${waUrl}" target="_blank" class="btn-wa">KIRIM UNDANGAN</a>
+                    </div>
+                `;
+            }
+        });
+        container.innerHTML = html;
+    }
+</script>
+
+</body>
+</html>
