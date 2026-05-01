@@ -132,28 +132,32 @@
     function onScanFailure(error) { /* Abaikan error */ }
 
     // PENGATURAN SCANNER YANG LEBIH SENSITIF
-        let html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", 
-            { 
-                fps: 30,             // Meningkatkan frame per second (Standar industri untuk kecepatan)
-                qrbox: function(viewfinderWidth, viewfinderHeight) {
-                    // Membuat kotak scan yang dinamis (60% dari lebar layar)
-                    let minEdgePercentage = 0.6; 
-                    let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
-                    let qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
-                    return {
-                        width: qrboxSize,
-                        height: qrboxSize
-                    };
-                },
-                aspectRatio: 1.0,    // Memastikan tampilan kamera kotak sempurna
-                showTorchButtonIfSupported: true, // Menampilkan tombol senter jika gelap
-                useBarCodeDetectorIfSupported: true, // MENGGUNAKAN HARDWARE ACCELERATION (Sangat Penting!)
-                rememberLastUsedCamera: true
-            }
-        );
-        
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);;
+        // KONFIGURASI SCANNER SUPER SENSITIF
+    const config = {
+        fps: 60, // Meningkatkan kecepatan proses gambar ke 60 frame per detik
+        qrbox: (viewfinderWidth, viewfinderHeight) => {
+            // Kotak scan lebih besar agar user tidak perlu terlalu presisi mengarahkan kamera
+            let size = Math.min(viewfinderWidth, viewfinderHeight) * 0.75;
+            return { width: size, height: size };
+        },
+        aspectRatio: 1.0,
+        // MEMAKSA RESOLUSI HD (Membantu sensor fokus lebih cepat dan tajam)
+        videoConstraints: {
+            facingMode: "environment",
+            width: { min: 640, ideal: 1280, max: 1920 },
+            height: { min: 480, ideal: 720, max: 1080 },
+            frameRate: { ideal: 60 }
+        },
+        showTorchButtonIfSupported: true,
+        useBarCodeDetectorIfSupported: true, // Hardware Acceleration
+        rememberLastUsedCamera: true,
+        experimentalFeatures: {
+            useBarCodeDetectorIfSupported: true // Fitur eksperimental untuk kecepatan maksimal
+        }
+    };
+
+    let html5QrcodeScanner = new Html5QrcodeScanner("reader", config, /* verbose= */ false);
+    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
     </script>
 </body>
 </html>
