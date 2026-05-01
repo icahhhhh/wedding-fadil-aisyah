@@ -104,7 +104,6 @@
     }
 
         function loadRekap() {
-        // Parameter 'v' memastikan kita tidak mengambil data lama/basi
         const finalFetchURL = `${scriptURL}?type=get_absen&v=${new Date().getTime()}`;
         
         fetch(finalFetchURL, {
@@ -113,8 +112,11 @@
         })
         .then(res => res.json())
         .then(data => {
-            // Sorting berdasarkan waktu terbaru (string comparison)
-            const sortedData = data.sort((a, b) => b.waktu.localeCompare(a.waktu));
+            // PERBAIKAN: Gunakan slice() sebelum sort agar tidak merusak array asli
+            // Dan pastikan sorting turun (descending) berdasarkan jam
+            const sortedData = [...data].sort((a, b) => {
+                return (b.waktu || "").localeCompare(a.waktu || "");
+            });
             
             localStorage.setItem('rekap_tamu', JSON.stringify(sortedData));
             renderTamu(sortedData);
@@ -125,7 +127,7 @@
             if (cache) renderTamu(JSON.parse(cache));
         });
     }
-
+    
     // 2. Tambahkan Listener Otomatis di bawah fungsi loadRekap
     document.addEventListener('DOMContentLoaded', () => {
         const cache = localStorage.getItem('rekap_tamu');
