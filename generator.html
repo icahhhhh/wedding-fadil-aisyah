@@ -103,12 +103,13 @@ function generateLinks() {
         const statusTamu = isVIP ? "VIP" : "Reguler";
         const urlBase = document.getElementById('baseUrl').value.trim();
         
+        // Link tetap membawa status VIP agar sistem di undangan web tahu
         const linkPersonal = `${urlBase}?to=${encodeURIComponent(nama).replace(/%20/g, '+')}&s=${statusTamu}`;
-        const labelVIP = isVIP ? "*[TAMU VIP]*\n" : "";
         
-        const message = `Assalamu’alaikum Warahmatullahi Wabarakatuh\n\n${labelVIP}Kepada Yth.\nBapak/Ibu/Saudara/i\n*${nama}*\n___\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri hari bahagia kami:\n\n✨ THE WEDDING OF FADIL & AISYAH ✨\n\nKehadiran Anda adalah kado terindah bagi kami. Mengingat keterbatasan jarak dan waktu, izinkan e-invitation ini menjadi jembatan silaturahmi sebagai pengganti undangan resmi kami.\n\nSilakan akses tautan di bawah ini untuk detail acara, lokasi, dan waktu:\n${linkPersonal}\n\nMerupakan suatu kehormatan apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu bagi perjalanan ibadah panjang kami.\n\nTerima kasih atas doa dan perhatiannya.\n\nWassalamu’alaikum Warahmatullahi Wabarakatuh\n\nHormat kami,\nAisyah & Fadil\n#AIfinallyFAundlove\n\n____\n\nSpread your happiness with us`;
+        // KALIMAT PENGHANTAR: Label VIP dihapus dari sini sesuai permintaanmu
+        const message = `Assalamu’alaikum Warahmatullahi Wabarakatuh\n\nKepada Yth.\nBapak/Ibu/Saudara/i\n*${nama}*\n___\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri hari bahagia kami:\n\n✨ THE WEDDING OF FADIL & AISYAH ✨\n\nKehadiran Anda adalah kado terindah bagi kami. Mengingat keterbatasan jarak dan waktu, izinkan e-invitation ini menjadi jembatan silaturahmi sebagai pengganti undangan resmi kami.\n\nSilakan akses tautan di bawah ini untuk detail acara, lokasi, dan waktu:\n${linkPersonal}\n\nMerupakan suatu kehormatan apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu bagi perjalanan ibadah panjang kami.\n\nTerima kasih atas doa dan perhatiannya.\n\nWassalamu’alaikum Warahmatullahi Wabarakatuh\n\nHormat kami,\nAisyah & Fadil\n#AIfinallyFAundlove\n\n____\n\nSpread your happiness with us`;
 
-        // 1. Logika Aksi
+        // 1. Logika Aksi (WA, Salin, atau Share)
         if (aksi === 'wa') {
             const waUrl = wa ? `https://api.whatsapp.com/send?phone=${wa}&text=${encodeURIComponent(message)}` : `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
             window.open(waUrl, '_blank');
@@ -129,7 +130,7 @@ function generateLinks() {
             }
         }
 
-        // 2. Simpan ke Google Sheets
+        // 2. Simpan data ke Google Sheets untuk rekap
         const finalURL = `${scriptURL}?type=add_list&nama=${encodeURIComponent(nama)}&wa=${encodeURIComponent(wa || "Manual")}&status=${statusTamu}`;
         fetch(finalURL, { method: 'GET', mode: 'no-cors' });
 
