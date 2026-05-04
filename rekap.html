@@ -114,28 +114,21 @@
     }
 
     function loadRekap() {
-        // Menambahkan parameter 'cache-buster' unik agar HP tidak mengambil data lama
-        const cacheBuster = new Date().getTime();
-        const finalFetchURL = `${scriptURL}?type=get_absen&v=${cacheBuster}`;
+        const finalFetchURL = `${scriptURL}?type=get_absen&v=${new Date().getTime()}`;
         
         fetch(finalFetchURL, {
             method: 'GET',
-            mode: 'cors', // Memastikan mode CORS aktif
             redirect: 'follow'
         })
-        .then(res => {
-            if (!res.ok) throw new Error("Network response was not ok");
-            return res.json();
-        })
+        .then(res => res.json())
         .then(data => {
-            // Simpan ke localStorage agar sinkron
+            // Langsung simpan dan tampilkan data dari Apps Script 
+            // karena urutannya sudah dibalik (reverse) di sana.
             localStorage.setItem('rekap_tamu', JSON.stringify(data));
             renderTamu(data); 
-            console.log("Data berhasil diperbarui:", cacheBuster);
-        })
+        }) // <--- Tadi di sini kurungnya berantakan
         .catch(err => {
             console.error("Gagal memuat data:", err);
-            // Jika gagal, tampilkan data yang ada di memori HP saja
             const cache = localStorage.getItem('rekap_tamu');
             if (cache) renderTamu(JSON.parse(cache));
         });
