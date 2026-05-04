@@ -776,12 +776,24 @@
 
 <body>
     <div id="loader-wrapper" class="fixed inset-0 z-[10001] bg-[#f4f1ee] flex flex-col items-center justify-center transition-opacity duration-700">
-        <div class="relative flex items-center justify-center">
-            <div class="w-16 h-16 border-4 border-stone-200 border-t-[#8e735b] rounded-full animate-spin"></div>
-            <span class="absolute font-serif text-[10px] text-[#8e735b] font-bold">F & A</span>
-        </div>
-        <p class="mt-4 font-serif italic text-stone-500 text-xs tracking-[0.2em] animate-pulse">Loading...</p>
+    <div class="relative flex items-center justify-center">
+        <!-- Lingkaran Loading -->
+        <div class="w-20 h-20 border-4 border-stone-200 border-t-[#4a5d4a] rounded-full animate-spin"></div>
+        
+        <!-- Logo Monogram -->
+        <img src="logo.png" 
+             alt="Logo F & A" 
+             class="absolute w-12 h-12 object-contain"
+             onerror="this.style.display='none'; document.getElementById('alt-text').style.display='block';">
+        
+        <!-- Teks Cadangan jika Gambar Error -->
+        <span id="alt-text" class="absolute font-serif text-xs text-[#4a5d4a] font-bold hidden">F & A</span>
     </div>
+    
+    <p class="mt-6 font-serif italic text-stone-500 text-xs tracking-[0.2em] animate-pulse">
+        Menyiapkan kebahagiaan...
+    </p>
+</div>
 
     <div id="langContainer" class="fixed bottom-20 right-5 z-[10000] flex flex-col items-center gap-2">
         <div id="langMenu" class="hidden flex-col gap-2 mb-2 animate-fade-in">
