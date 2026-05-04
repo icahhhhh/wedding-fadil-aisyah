@@ -9,7 +9,9 @@
     <style>
         body { font-family: 'Montserrat', sans-serif; background-color: #f4f1ee; }
         .bg-stone-green { background-color: #4a5d4a; }
-        /* Warna khusus untuk label VIP */
+        
+        /* Badge Styles */
+        .badge-vvip { background-color: #C0C0C0; color: #333; padding: 2px 8px; border-radius: 50px; font-size: 10px; font-weight: bold; }
         .badge-vip { background-color: #d4af37; color: white; padding: 2px 8px; border-radius: 50px; font-size: 10px; font-weight: bold; }
         .badge-reg { background-color: #e5e7eb; color: #6b7280; padding: 2px 8px; border-radius: 50px; font-size: 10px; }
     </style>
@@ -20,7 +22,7 @@
         <div class="flex justify-between items-center max-w-2xl mx-auto">
             <a href="scanner.html" class="text-white text-sm">← Kembali</a>
             <h1 class="text-lg font-bold tracking-widest uppercase">Rekap Tamu</h1>
-            <button onclick="loadRekap()" class="text-white opacity-70 hover:opacity-100">
+            <button onclick="loadRekap()" class="text-white opacity-70 hover:opacity-100 transition-transform active:rotate-180">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
@@ -52,25 +54,26 @@
                 </thead>
                 <tbody id="rekap-list">
                     <tr>
-                        <td colspan="3" class="p-10 text-center text-gray-400 text-sm italic">Memuat data...</td>
+                        <td colspan="3" class="p-10 text-center text-gray-400 text-sm italic">Memuat data terbaru...</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    
-    
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxJhRqMmUU3Y8_ZClBNDJtqUhTznp3Nc5JPqy0gD_f8c0ny7Csek0rXazf39fuULR6cHQ/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwXOIhBKuGaMb-I6hfOwXddPHKD-0OGRU2seIdZUUwHIU2tHiqKHPt6z2IO6aqmiwKDWg/exec';
 
     function renderTamu(data) {
         const list = document.getElementById('rekap-list');
         const countHadir = document.getElementById('count-hadir');
         
-        if (!data || !Array.isArray(data)) return;
+        if (!data || !Array.isArray(data)) {
+            list.innerHTML = '<tr><td colspan="3" class="p-10 text-center text-red-400 text-sm italic">Format data salah.</td></tr>';
+            return;
+        }
 
-        // Menghilangkan duplikat
+        // Hilangkan duplikat berdasarkan nama dan waktu
         const uniqueData = data.filter((v, i, a) => 
             a.findIndex(t => (t.nama === v.nama && t.waktu === v.waktu)) === i
         );
@@ -80,17 +83,26 @@
         if (uniqueData.length > 0) {
             list.innerHTML = uniqueData.map(item => {
                 const statusStr = (item.status || "Reguler").toUpperCase();
-                const isVIP = statusStr.includes('VIP');
-                const badgeClass = isVIP ? 'badge-vip' : 'badge-reg';
-                const statusText = isVIP ? 'VIP' : 'REG';
+                
+                // Logika Badge VVIP, VIP, REG
+                let badgeClass = 'badge-reg';
+                let statusLabel = 'REG';
+
+                if (statusStr.includes('VVIP')) {
+                    badgeClass = 'badge-vvip';
+                    statusLabel = 'VVIP';
+                } else if (statusStr.includes('VIP')) {
+                    badgeClass = 'badge-vip';
+                    statusLabel = 'VIP';
+                }
 
                 return `
-                    <tr class="border-b border-stone-50 last:border-0">
+                    <tr class="border-b border-stone-50 last:border-0 hover:bg-stone-50 transition-colors">
                         <td class="p-4">
                             <p class="text-sm font-semibold text-stone-800">${item.nama || 'Tanpa Nama'}</p>
                         </td>
                         <td class="p-4 text-center">
-                            <span class="${badgeClass}">${statusText}</span>
+                            <span class="${badgeClass}">${statusLabel}</span>
                         </td>
                         <td class="p-4 text-right">
                             <p class="text-xs text-gray-500">${item.waktu || '--:--'}</p>
@@ -104,28 +116,29 @@
     }
 
     function loadRekap() {
-        // Di file rekap.html, pastikan URL-nya seperti ini:
+        // Tampilkan loading saat refresh diklik
+        const list = document.getElementById('rekap-list');
+        list.innerHTML = '<tr><td colspan="3" class="p-10 text-center text-stone-400 text-sm italic animate-pulse">Menyingkronkan data...</td></tr>';
+
         const finalFetchURL = `${scriptURL}?type=get_absen&nocache=${new Date().getTime()}`;
         
-        fetch(finalFetchURL, {
-            method: 'GET',
-            redirect: 'follow'
-        })
-        .then(res => res.json())
-        .then(data => {
-            // Langsung simpan dan tampilkan data dari Apps Script 
-            // karena urutannya sudah dibalik (reverse) di sana.
-            localStorage.setItem('rekap_tamu', JSON.stringify(data));
-            renderTamu(data); 
-        }) // <--- Tadi di sini kurungnya berantakan
-        .catch(err => {
-            console.error("Gagal memuat data:", err);
-            const cache = localStorage.getItem('rekap_tamu');
-            if (cache) renderTamu(JSON.parse(cache));
-        });
+        fetch(finalFetchURL)
+            .then(res => res.json())
+            .then(data => {
+                localStorage.setItem('rekap_tamu', JSON.stringify(data));
+                renderTamu(data); 
+            })
+            .catch(err => {
+                console.error("Gagal memuat data:", err);
+                const cache = localStorage.getItem('rekap_rekap_tamu');
+                if (cache) {
+                    renderTamu(JSON.parse(cache));
+                } else {
+                    list.innerHTML = '<tr><td colspan="3" class="p-10 text-center text-red-400 text-sm italic">Gagal mengambil data. Cek koneksi internet.</td></tr>';
+                }
+            });
     }
     
-    // Inisialisasi saat halaman dimuat
     document.addEventListener('DOMContentLoaded', () => {
         const cache = localStorage.getItem('rekap_tamu');
         if (cache) {
