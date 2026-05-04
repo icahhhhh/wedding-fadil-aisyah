@@ -84,9 +84,24 @@
         <iframe id="pageFrame" src="" class="w-full flex-grow border-none"></iframe>
     </div>
 
-    <footer class="mt-16 text-center text-stone-400 text-[10px] uppercase tracking-widest">
-        &copy; 2026 Fadil & Aisyah Wedding Team
-    </footer>
+    <!-- Footer dengan Efek Overlay & Glassmorphism -->
+<footer class="relative w-full py-8 mt-10 text-center border-none overflow-hidden" style="background-color: #4a5d4a;">
+    <!-- Layer Overlay Halus (Glassmorphism effect) -->
+    <div class="absolute inset-0 bg-white/5 backdrop-blur-[2px] pointer-events-none"></div>
+
+    <div class="relative z-10 px-4">
+        <p class="text-white text-sm font-serif tracking-[0.3em] mb-3 uppercase drop-shadow-md">
+            #AIfinallyFAundlove
+        </p>
+        
+        <!-- Garis dekoratif tipis -->
+        <div class="w-12 h-[1px] bg-white/20 mx-auto mb-4"></div>
+        
+        <p class="text-[10px] tracking-[0.4em] uppercase text-white/70 font-light">
+            With love <span class="font-semibold text-white/90">Fadil & Aisyah</span> © 2026
+        </p>
+    </div>
+</footer>
 
     <script>
         const overlay = document.getElementById('fullOverlay');
