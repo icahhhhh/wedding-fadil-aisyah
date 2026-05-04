@@ -805,12 +805,11 @@
             </button>
         </div>
         
-        <button onclick="toggleLangMenu()" class="bg-white/80 p-2 rounded-full shadow-lg border border-stone-200 transition-all active:scale-95">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8e735b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="2" y1="12" x2="22" y2="12"></line>
-                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-            </svg>
+        <!-- Tombol Bahasa Bulat (Versi Lebih Kecil) -->
+        <button onclick="toggleLanguage()" id="langBtn" 
+            class="fixed bottom-[70px] right-5 z-[10000] w-9 h-9 bg-white/80 backdrop-blur-md border border-stone-200 rounded-full shadow-lg flex flex-col items-center justify-center group transition-all active:scale-95">
+            <span id="langText" class="text-[9px] font-bold text-stone-600 group-hover:text-stone-green tracking-tighter leading-none">EN</span>
+            <span class="text-[6px] text-stone-400 uppercase mt-0.5 tracking-tighter">Lang</span>
         </button>
     </div>
 
@@ -1291,7 +1290,7 @@
         </div>
     </section>
 
-    <footer class="py-6 text-center m-0" style="background-color: #4a5d4a; border: none;"> 
+    <footer class="py-4 text-center m-0" style="background-color: #4a5d4a; border: none;"> 
     <p class="text-white text-sm font-serif tracking-widest mb-2">#AIfinallyFAundlove</p>
     <p class="text-[9px] tracking-[0.3em] uppercase text-white/60">With love Fadil & Aisyah © 2026</p>
 </footer>
@@ -1484,58 +1483,56 @@
             }
         };
 
-        let currentLang = 'en'; // Variabel untuk mencatat bahasa aktif
+    
 
-        function toggleLangMenu() {
-            const menu = document.getElementById('langMenu');
-            menu.classList.toggle('hidden');
-            menu.classList.toggle('flex');
+        // Inisialisasi bahasa dari memori atau default ke ID
+        let currentLang = localStorage.getItem('userLang') || 'id';
+
+        function toggleLanguage() {
+            const langBtnText = document.getElementById('langText');
+            
+            // Logika Tukar Bahasa
+            if (currentLang === 'id') {
+                currentLang = 'en';
+                langBtnText.innerText = 'ID'; // Menampilkan ID saat mode aktif adalah EN
+            } else {
+                currentLang = 'id';
+                langBtnText.innerText = 'EN'; // Menampilkan EN saat mode aktif adalah ID
+            }
+            
+            applyLanguageUpdate(currentLang);
         }
 
-            function switchLang(lang) {
-            currentLang = lang; 
-
+        function applyLanguageUpdate(lang) {
+            // Jalankan loop terjemahan untuk semua ID yang ada di objek translations
             for (let id in translations[lang]) {
                 const el = document.getElementById(id);
                 if (el && id !== "typing-content") {
-                    el.style.opacity = 0; // Efek transisi halus
+                    el.style.opacity = 0;
                     setTimeout(() => {
-                        el.innerHTML = translations[lang][id]; 
+                        el.innerHTML = translations[lang][id];
                         el.style.opacity = 1;
                     }, 200);
                 }
             }
 
-            // KHUSUS PLACEHOLDER (Tambahkan ini)
+            // Update Placeholder Form
             const nameInput = document.getElementById('name');
             const wishInput = document.getElementById('wish');
             if (nameInput && wishInput) {
                 nameInput.placeholder = translations[lang]["placeholder-name"];
                 wishInput.placeholder = translations[lang]["placeholder-wish"];
             }
-            // Ganti teks biasa (yang bukan efek mesin tik)
-            for (let id in translations[lang]) {
-            const el = document.getElementById(id);
-            if (el && id !== "typing-content") {
-                el.style.opacity = 0;
-                setTimeout(() => {
-                    // Gunakan innerHTML supaya tag <br> terbaca
-                    el.innerHTML = translations[lang][id]; 
-                    el.style.opacity = 1;
-                }, 200);
-            }
-        }
 
-            // KHUSUS HALAMAN 2: Reset dan jalankan ulang mesin tik
+            // Reset dan jalankan ulang efek mesin tik di Halaman 2
             const typewriterEl = document.getElementById("typing-effect");
             if (typewriterEl) {
-                charIndex = 0;      // Reset index huruf ke nol
-                currentOutput = ""; // Kosongkan layar
+                charIndex = 0;
+                currentOutput = "";
                 typewriterEl.innerHTML = "";
-                startTypewriter();  // Panggil fungsi ngetikmu lagi
+                startTypewriter();
             }
 
-            toggleLangMenu();
             localStorage.setItem('userLang', lang);
         }
 
