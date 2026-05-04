@@ -12,6 +12,13 @@
         .card-shadow { box-shadow: 0 10px 25px -5px rgba(74, 93, 74, 0.1), 0 8px 10px -6px rgba(74, 93, 74, 0.1); }
         .bg-stone-green { background-color: #4a5d4a; }
         .text-stone-green { color: #4a5d4a; }
+
+        html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        overflow-x: hidden; /* Mencegah geser kanan-kiri yang merusak layout */
+    }
         
         /* FULL OVERLAY ANIMATION */
         #fullOverlay { 
@@ -84,15 +91,17 @@
         <iframe id="pageFrame" src="" class="w-full flex-grow border-none"></iframe>
     </div>
 
-    <!-- Footer Dashboard Full Screen -->
-<footer class="w-full py-8 text-center mt-10 left-0" 
+    <!-- Footer Dashboard Full Screen Fixed -->
+<footer class="w-full py-8 text-center mt-10" 
         style="background-color: rgba(74, 93, 74, 0.9); 
                backdrop-filter: blur(8px); 
                -webkit-backdrop-filter: blur(8px); 
                border-top: 1px solid rgba(255, 255, 255, 0.1);
                position: relative;
+               left: 0;
+               right: 0;
                width: 100vw;
-               margin-left: calc(-50vw + 50%);"> 
+               box-sizing: border-box;"> 
     
     <div class="max-w-2xl mx-auto px-4">
         <p class="text-white text-sm font-semibold tracking-[0.3em] mb-3 opacity-90">#AIfinallyFAundlove</p>
