@@ -127,6 +127,19 @@
             flex-direction: column;
         }
 
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .animate-spin-slow {
+            animation: spin-slow 4s linear infinite;
+        }
+
+        .paused {
+            animation-play-state: paused !important;
+        }
+
         #langMenu {
         transition: all 0.3s ease;
         }
@@ -804,12 +817,43 @@
                 <img src="https://flagcdn.com/w40/gb.png" class="w-full h-full object-cover" alt="English">
             </button>
         </div>
+   
+   <div class="fixed bottom-5 right-2 z-[10000] flex flex-col gap-3"></div>
         
         <!-- Tombol Bahasa Bulat (Versi Lebih Kecil) -->
         <button onclick="toggleLanguage()" id="langBtn" 
-            class="fixed bottom-[70px] right-5 z-[10000] w-9 h-9 bg-white/80 backdrop-blur-md border border-stone-200 rounded-full shadow-lg flex flex-col items-center justify-center group transition-all active:scale-95">
-            <span id="langText" class="text-[9px] font-bold text-stone-600 group-hover:text-stone-green tracking-tighter leading-none">EN</span>
-            <span class="text-[6px] text-stone-400 uppercase mt-0.5 tracking-tighter">Lang</span>
+            class="w-9 h-9 bg-white/80 backdrop-blur-md border border-stone-200 rounded-full shadow-lg flex flex-col items-center justify-center group transition-all active:scale-95">
+            <span id="langText" class="text-[10px] font-bold tracking-tighter leading-none" style="color: #4a5d4a;">EN</span>
+            <span class="text-[6px] uppercase mt-0.5 tracking-tighter" style="color: #4a5d4a;" >Lang</span>
+        </button>
+    </div>
+
+        <!-- Tombol Musik Vinyl Realistic -->
+        <button id="musicButton" onclick="toggleMusic()" 
+            class="relative w-10 h-10 flex items-center justify-center transition-all active:scale-95 focus:outline-none">
+            
+            <!-- Piringan Hitam -->
+            <div id="musicIcon" class="w-full h-full bg-[#0a0a0a] rounded-full shadow-2xl flex items-center justify-center animate-spin-slow relative overflow-hidden border border-black">
+                
+                <!-- Tekstur Alur Piringan (Garis halus melingkar) -->
+                <div class="absolute inset-0 rounded-full opacity-40" 
+                    style="background: repeating-radial-gradient(circle, #222, #222 0.5px, #000 1.5px);">
+                </div>
+                
+                <!-- Efek Pantulan Cahaya Glossy (Conic Gradient tajam seperti foto) -->
+                <div class="absolute inset-0 rounded-full opacity-60" 
+                    style="background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.3) 10%, transparent 20%, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%, transparent 80%, rgba(255,255,255,0.3) 90%, transparent);">
+                </div>
+                
+                    <!-- Logo F&A Putih di Tengah -->
+                    <img src="logo.png" alt="Logo" class="w-7 h-7 object-contain brightness-0 invert" 
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span class="hidden text-[5px] font-bold text-white">F&A</span>
+                    
+                    <!-- Titik Lubang Tengah Vinyl -->
+                    <div class="absolute w-1 h-1 bg-black rounded-full opacity-30"></div>
+                </div>
+            </div>
         </button>
     </div>
 
@@ -817,15 +861,6 @@
         <source src="musik.mp3" type="audio/mpeg">
     </audio>
 
-    <button id="musicButton" onclick="toggleMusic()" class="fixed bottom-5 right-5 z-[100] bg-white/80 p-2 rounded-full shadow-lg border border-stone-200">
-        <div id="musicIcon" class="animate-spin-slow">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8e735b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 18V5l12-2v13"></path>
-                <circle cx="6" cy="18" r="3"></circle>
-                <circle cx="18" cy="16" r="3"></circle>
-            </svg>
-        </div>
-    </button>
 
         <div id="qrModal" onclick="closeQR()">
         <div id="capture-area" class="qr-card" onclick="event.stopPropagation()">
