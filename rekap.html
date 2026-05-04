@@ -62,7 +62,7 @@
     
     
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxFSs6KrLeLzIZGzYMFoxl_WmprsPug8p4lp1ckBPxIaffrr2LeoG86tksMu-grj7ImWg/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxJhRqMmUU3Y8_ZClBNDJtqUhTznp3Nc5JPqy0gD_f8c0ny7Csek0rXazf39fuULR6cHQ/exec';
 
     function renderTamu(data) {
         const list = document.getElementById('rekap-list');
@@ -104,7 +104,8 @@
     }
 
     function loadRekap() {
-        const finalFetchURL = `${scriptURL}?type=get_absen&v=${new Date().getTime()}`;
+        // Di file rekap.html, pastikan URL-nya seperti ini:
+        const finalFetchURL = `${scriptURL}?type=get_absen&nocache=${new Date().getTime()}`;
         
         fetch(finalFetchURL, {
             method: 'GET',
