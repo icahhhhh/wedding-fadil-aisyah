@@ -69,7 +69,7 @@
 
     <script>
     // 1. URL GOOGLE APPS SCRIPT
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzkZj1Lx7NwonhYagVGlJA2UHycP3K7QbTB5Cff6WYnCUH173yp8liIFGPI2-P3bP8W/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxJhRqMmUU3Y8_ZClBNDJtqUhTznp3Nc5JPqy0gD_f8c0ny7Csek0rXazf39fuULR6cHQ/exec';
     let isProcessing = false;
 
     function onScanSuccess(decodedText, decodedResult) {
@@ -96,6 +96,34 @@
             `;
         } else {
             successBox.style.backgroundColor = "#16a34a"; // Hijau
+            successBox.style.color = "#fff";
+            guestName.innerHTML = `
+                <div style="font-size: 28px; font-weight: bold;">${namaTamu}</div>
+            `;
+        }
+
+        // 2. Set tampilan (Logika warna untuk VVIP, VIP, dan Reguler)
+        const statusUpper = statusTamu.toUpperCase();
+
+        if (statusUpper === "VVIP") {
+            // Tampilan Silver untuk VVIP
+            successBox.style.backgroundColor = "#C0C0C0"; // Warna Silver
+            successBox.style.color = "#333"; // Teks gelap agar kontras dengan silver
+            guestName.innerHTML = `
+                <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px; letter-spacing: 2px;">VVIP GUEST</div>
+                <div style="font-size: 28px; font-weight: bold; line-height: 1.2;">${namaTamu}</div>
+            `;
+        } else if (statusUpper === "VIP") {
+            // Tampilan Kuning Emas untuk VIP
+            successBox.style.backgroundColor = "#FFD700"; 
+            successBox.style.color = "#000"; 
+            guestName.innerHTML = `
+                <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">VIP GUEST</div>
+                <div style="font-size: 28px; font-weight: bold; line-height: 1.2;">${namaTamu}</div>
+            `;
+        } else {
+            // Tampilan Hijau untuk Reguler
+            successBox.style.backgroundColor = "#16a34a"; 
             successBox.style.color = "#fff";
             guestName.innerHTML = `
                 <div style="font-size: 28px; font-weight: bold;">${namaTamu}</div>
