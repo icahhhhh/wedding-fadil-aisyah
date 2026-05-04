@@ -10,8 +10,9 @@
         body { font-family: 'Montserrat', sans-serif; background-color: #f4f1ee; }
         .bg-stone-green { background-color: #4a5d4a; }
         /* Warna khusus untuk label VIP */
-        .badge-vip { background-color: #d4af37; color: white; padding: 2px 8px; border-radius: 50px; font-size: 10px; font-weight: bold; }
-        .badge-reg { background-color: #e5e7eb; color: #6b7280; padding: 2px 8px; border-radius: 50px; font-size: 10px; }
+        .badge-vvip { background-color: #C0C0C0; color: #333; padding: 2px 8px; border-radius: 50px; font-size: 10px; font-weight: bold; } /* Silver untuk VVIP */
+        .badge-vip { background-color: #d4af37; color: white; padding: 2px 8px; border-radius: 50px; font-size: 10px; font-weight: bold; } /* Emas untuk VIP */
+        .badge-reg { background-color: #11734b; color: #d4edbc; padding: 2px 8px; border-radius: 50px; font-size: 10px; }
     </style>
 </head>
 <body class="min-h-screen pb-10">
@@ -62,7 +63,7 @@
     
     
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzkZj1Lx7NwonhYagVGlJA2UHycP3K7QbTB5Cff6WYnCUH173yp8liIFGPI2-P3bP8W/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxFSs6KrLeLzIZGzYMFoxl_WmprsPug8p4lp1ckBPxIaffrr2LeoG86tksMu-grj7ImWg/exec';
 
     function renderTamu(data) {
         const list = document.getElementById('rekap-list');
@@ -80,9 +81,18 @@
         if (uniqueData.length > 0) {
             list.innerHTML = uniqueData.map(item => {
                 const statusStr = (item.status || "Reguler").toUpperCase();
-                const isVIP = statusStr.includes('VIP');
-                const badgeClass = isVIP ? 'badge-vip' : 'badge-reg';
-                const statusText = isVIP ? 'VIP' : 'REG';
+                
+                // Logika Penentuan Badge
+                let badgeClass = 'badge-reg';
+                let statusText = 'REG';
+
+                if (statusStr.includes('VVIP')) {
+                    badgeClass = 'badge-vvip';
+                    statusText = 'VVIP';
+                } else if (statusStr.includes('VIP')) {
+                    badgeClass = 'badge-vip';
+                    statusText = 'VIP';
+                }
 
                 return `
                     <tr class="border-b border-stone-50 last:border-0">
