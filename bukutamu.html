@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Buku Tamu Manual | Fadil & Aisyah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --green: #4a5d4a; --green-light: #e8f0e8; --bg: #f4f1ee; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg); }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .bg-green { background-color: var(--green); }
+        .text-green { color: var(--green); }
+        .border-green { border-color: var(--green); }
+
+        /* Search input */
+        #searchInput { -webkit-appearance: none; appearance: none; }
+        #searchInput:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(74,93,74,0.12); }
+
+        /* Tamu card */
+        .tamu-card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+        .tamu-card:active { transform: scale(0.98); }
+        .tamu-card.hidden { display: none !important; }
+        .tamu-card.sudah-hadir { opacity: 0.5; }
+
+        /* Tombol status */
+        .btn-hadir-idle   { background: white; color: var(--green); border: 1.5px solid var(--green); }
+        .btn-hadir-active { background: var(--green); color: white; border: 1.5px solid var(--green); }
+        .btn-tidak-idle   { background: white; color: #c0392b; border: 1.5px solid #e0b0ab; }
+        .btn-tidak-active { background: #fde8e8; color: #c0392b; border: 1.5px solid #c0392b; font-weight: 600; }
+
+        /* Badge */
+        .badge-vvip { background: #C0C0C0; color: #333; }
+        .badge-vip  { background: #d4af37; color: white; }
+        .badge-reg  { background: #e8f0e8; color: var(--green); }
+
+        /* Spinner */
+        .spinner { border: 3px solid #e8e4e0; border-top: 3px solid var(--green); border-radius: 50%; width: 30px; height: 30px; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Toast */
+        #toast { transition: all 0.3s ease; opacity: 0; transform: translateY(16px); pointer-events: none; }
+        #toast.show { opacity: 1; transform: translateY(0); }
+
+        /* Modal backdrop */
+        #confirmModal { transition: opacity 0.2s ease; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #c5bfb9; border-radius: 10px; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+<!-- HEADER -->
+<div class="bg-green sticky top-0 z-40 shadow-md">
+    <div class="px-5 pt-5 pb-4 text-white text-center">
+        <p class="text-[9px] uppercase tracking-[0.4em] opacity-70 mb-1">Buku Tamu Manual</p>
+        <h1 class="font-serif text-2xl tracking-tight">Fadil & Aisyah</h1>
+    </div>
+
+    <!-- Stat Bar -->
+    <div id="statBar" class="hidden grid grid-cols-3 border-t border-white/20">
+        <div class="text-center py-2 border-r border-white/20">
+            <p id="statTotal" class="text-lg font-bold text-white">0</p>
+            <p class="text-[9px] uppercase tracking-widest text-white/60">Tamu</p>
+        </div>
+        <div class="text-center py-2 border-r border-white/20">
+            <p id="statHadir" class="text-lg font-bold text-green-200">0</p>
+            <p class="text-[9px] uppercase tracking-widest text-white/60">Hadir</p>
+        </div>
+        <div class="text-center py-2">
+            <p id="statTidak" class="text-lg font-bold text-red-200">0</p>
+            <p class="text-[9px] uppercase tracking-widest text-white/60">Tidak</p>
+        </div>
+    </div>
+</div>
+
+<!-- SEARCH BAR -->
+<div id="searchSection" class="hidden sticky top-[calc(var(--header-h,120px))] z-30 bg-stone-50/90 backdrop-blur-sm px-4 py-3 border-b border-stone-200">
+    <div class="relative flex items-center bg-white rounded-2xl border border-stone-200 px-4 py-2.5 shadow-sm focus-within:border-green-600 focus-within:shadow-md transition-all">
+        <svg class="w-4 h-4 text-stone-400 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"/>
+        </svg>
+        <input id="searchInput" type="text" placeholder="Cari nama tamu..." oninput="filterTamu(this.value)" autocomplete="off"
+            class="flex-1 text-sm bg-transparent focus:outline-none text-stone-800 placeholder-stone-300">
+        <button id="clearBtn" onclick="resetSearch()" class="hidden text-stone-300 hover:text-stone-500 ml-2 text-xl leading-none">&times;</button>
+    </div>
+    <div class="flex justify-between items-center mt-2 px-1">
+        <p id="resultCount" class="text-[10px] text-stone-400"></p>
+        <button onclick="reloadData()" class="text-[10px] text-green underline opacity-70 flex items-center gap-1">
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            Refresh
+        </button>
+    </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="max-w-lg mx-auto px-4 py-4">
+
+    <!-- LOADING -->
+    <div id="loadingState" class="text-center py-16">
+        <div class="spinner mx-auto mb-4"></div>
+        <p class="text-sm text-stone-400">Memuat daftar tamu...</p>
+    </div>
+
+    <!-- ERROR -->
+    <div id="errorState" class="hidden">
+        <div class="bg-white rounded-3xl p-6 text-center border border-red-100 shadow-sm">
+            <div class="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                <svg class="w-6 h-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <p class="font-bold text-stone-700 text-sm mb-1">Gagal memuat data</p>
+            <p id="errorMsg" class="text-stone-400 text-xs mb-4"></p>
+            <button onclick="reloadData()" class="bg-green text-white text-xs px-5 py-2 rounded-full">Coba Lagi</button>
+        </div>
+    </div>
+
+    <!-- LIST TAMU -->
+    <div id="tamuContainer" class="hidden space-y-2"></div>
+
+    <!-- EMPTY SEARCH -->
+    <div id="emptySearch" class="hidden text-center py-12">
+        <p class="text-stone-300 text-3xl mb-2">🔍</p>
+        <p class="text-stone-500 text-sm font-medium">Nama tidak ditemukan</p>
+        <p class="text-stone-400 text-xs mt-1">Coba kata kunci yang lain</p>
+    </div>
+
+</div>
+
+<!-- MODAL KONFIRMASI TIDAK HADIR -->
+<div id="confirmModal" class="hidden fixed inset-0 z-50 bg-black/40 flex items-end justify-center pb-6 px-4">
+    <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl">
+        <h3 class="font-bold text-stone-800 text-base mb-1">Tandai Tidak Hadir?</h3>
+        <p id="modalNama" class="text-stone-500 text-sm mb-5"></p>
+        <div class="flex gap-3">
+            <button onclick="closeModal()" class="flex-1 py-3 rounded-2xl border border-stone-200 text-stone-600 text-sm font-medium">Batal</button>
+            <button onclick="confirmTidak()" class="flex-1 py-3 rounded-2xl bg-red-500 text-white text-sm font-bold">Ya, Tidak Hadir</button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-stone-800 text-white text-xs px-5 py-2.5 rounded-full shadow-lg whitespace-nowrap"></div>
+
+<script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyWUFupf09SSpNyYuUw7-zX_snccsaYApQ9MW56olliOkYqnuPvSxCm_Q3nbNkBCeqibg/exec';
+    const STATUS_KEY = 'bukutamu_manual_status';
+
+    let allTamu = [];
+    let localStatus = {}; // { "Nama": "hadir" | "tidak" }
+    let pendingTidakNama = null;
+    let isSending = false;
+
+    // ─── INIT ────────────────────────────────────────────
+    window.onload = () => {
+        localStatus = JSON.parse(localStorage.getItem(STATUS_KEY) || '{}');
+        loadData();
+    };
+
+    // ─── LOAD DATA ───────────────────────────────────────
+    async function loadData() {
+        show('loadingState');
+        hide('tamuContainer');
+        hide('errorState');
+        hide('searchSection');
+        hide('statBar');
+
+        try {
+            const url = `${SCRIPT_URL}?type=get_tamu_manual&v=${Date.now()}`;
+            const res = await fetch(url);
+            const data = await res.json();
+
+            if (!Array.isArray(data)) throw new Error('Format data tidak valid');
+            allTamu = data;
+
+            hide('loadingState');
+            renderList();
+            updateStats();
+            show('tamuContainer');
+            show('searchSection');
+            show('statBar');
+            updateResultCount();
+        } catch (e) {
+            hide('loadingState');
+            show('errorState');
+            document.getElementById('errorMsg').textContent = e.message || 'Periksa koneksi internet kamu.';
+        }
+    }
+
+    function reloadData() { loadData(); }
+
+    // ─── RENDER ──────────────────────────────────────────
+    function renderList(list) {
+        list = list || allTamu;
+        const container = document.getElementById('tamuContainer');
+        container.innerHTML = '';
+
+        list.forEach((t, i) => {
+            const nama = t.nama || '';
+            const grup = t.grup || '';
+            const status = localStatus[nama] || null;
+
+            const hadirClass = status === 'hadir' ? 'btn-hadir-active' : 'btn-hadir-idle';
+            const tidakClass = status === 'tidak' ? 'btn-tidak-active' : 'btn-tidak-idle';
+            const hadirLabel = status === 'hadir' ? '✓ Hadir' : 'Hadir';
+            const tidakLabel = status === 'tidak' ? '✗ Tidak' : 'Tidak';
+
+            // Badge status undangan
+            const s = (t.status || 'REG').toUpperCase();
+            let badgeClass = 'badge-reg', badgeText = 'REG';
+            if (s.includes('VVIP')) { badgeClass = 'badge-vvip'; badgeText = 'VVIP'; }
+            else if (s.includes('VIP')) { badgeClass = 'badge-vip'; badgeText = 'VIP'; }
+
+            const cardOpacity = status === 'tidak' ? 'sudah-hadir' : '';
+
+            container.innerHTML += `
+            <div class="tamu-card bg-white rounded-2xl px-4 py-3.5 shadow-sm border border-stone-100 flex items-center gap-3 ${cardOpacity}"
+                 data-nama="${escHtml(nama).toLowerCase()}" data-idx="${i}">
+                <!-- Info -->
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <p class="font-semibold text-stone-800 text-sm truncate">${escHtml(nama)}</p>
+                        <span class="${badgeClass} text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">${badgeText}</span>
+                    </div>
+                    ${grup ? `<p class="text-[11px] text-stone-400 mt-0.5 truncate">${escHtml(grup)}</p>` : ''}
+                </div>
+                <!-- Tombol -->
+                <div class="flex gap-1.5 flex-shrink-0">
+                    <button onclick="setHadir('${escHtml(nama)}')"
+                        class="${hadirClass} text-xs px-3.5 py-2 rounded-xl font-medium transition-all active:scale-95">${hadirLabel}</button>
+                    <button onclick="openModal('${escHtml(nama)}')"
+                        class="${tidakClass} text-xs px-3.5 py-2 rounded-xl font-medium transition-all active:scale-95">${tidakLabel}</button>
+                </div>
+            </div>`;
+        });
+    }
+
+    // ─── HADIR ───────────────────────────────────────────
+    async function setHadir(nama) {
+        if (isSending) return;
+
+        // Toggle: klik lagi → reset
+        if (localStatus[nama] === 'hadir') {
+            delete localStatus[nama];
+            saveLocal();
+            refreshCard(nama);
+            updateStats();
+            showToast('Status direset: ' + nama);
+            return;
+        }
+
+        localStatus[nama] = 'hadir';
+        saveLocal();
+        refreshCard(nama);
+        updateStats();
+        showToast('✓ Hadir: ' + nama);
+
+        // Kirim ke Google Sheets (absen)
+        const tamu = allTamu.find(t => t.nama === nama);
+        const statusUndangan = tamu ? (tamu.status || 'Reguler') : 'Reguler';
+        sendAbsen(nama, statusUndangan);
+    }
+
+    // ─── MODAL TIDAK HADIR ───────────────────────────────
+    function openModal(nama) {
+        if (localStatus[nama] === 'tidak') {
+            // Toggle off
+            delete localStatus[nama];
+            saveLocal();
+            refreshCard(nama);
+            updateStats();
+            showToast('Status direset: ' + nama);
+            return;
+        }
+        pendingTidakNama = nama;
+        document.getElementById('modalNama').textContent = nama;
+        show('confirmModal');
+        document.getElementById('confirmModal').style.opacity = '0';
+        setTimeout(() => document.getElementById('confirmModal').style.opacity = '1', 10);
+    }
+
+    function closeModal() {
+        const m = document.getElementById('confirmModal');
+        m.style.opacity = '0';
+        setTimeout(() => hide('confirmModal'), 200);
+        pendingTidakNama = null;
+    }
+
+    function confirmTidak() {
+        if (!pendingTidakNama) return;
+        const nama = pendingTidakNama;
+        closeModal();
+        localStatus[nama] = 'tidak';
+        saveLocal();
+        refreshCard(nama);
+        updateStats();
+        showToast('✗ Tidak hadir: ' + nama);
+    }
+
+    // ─── KIRIM ABSEN KE SHEETS ───────────────────────────
+    async function sendAbsen(nama, status) {
+        isSending = true;
+        try {
+            const url = `${SCRIPT_URL}?type=absen&nama=${encodeURIComponent(nama)}&status=${encodeURIComponent(status)}`;
+            await fetch(url);
+        } catch (e) {
+            // Silent fail — data tetap tersimpan lokal
+        } finally {
+            isSending = false;
+        }
+    }
+
+    // ─── REFRESH SINGLE CARD ────────────────────────────
+    function refreshCard(nama) {
+        const cards = document.querySelectorAll('.tamu-card');
+        cards.forEach(card => {
+            if (card.dataset.nama === nama.toLowerCase()) {
+                const s = localStatus[nama] || null;
+                const btns = card.querySelectorAll('button');
+                btns[0].textContent = s === 'hadir' ? '✓ Hadir' : 'Hadir';
+                btns[0].className = (s === 'hadir' ? 'btn-hadir-active' : 'btn-hadir-idle') + ' text-xs px-3.5 py-2 rounded-xl font-medium transition-all active:scale-95';
+                btns[1].textContent = s === 'tidak' ? '✗ Tidak' : 'Tidak';
+                btns[1].className = (s === 'tidak' ? 'btn-tidak-active' : 'btn-tidak-idle') + ' text-xs px-3.5 py-2 rounded-xl font-medium transition-all active:scale-95';
+                card.classList.toggle('sudah-hadir', s === 'tidak');
+            }
+        });
+    }
+
+    // ─── STATS ───────────────────────────────────────────
+    function updateStats() {
+        document.getElementById('statTotal').textContent = allTamu.length;
+        document.getElementById('statHadir').textContent = allTamu.filter(t => localStatus[t.nama] === 'hadir').length;
+        document.getElementById('statTidak').textContent = allTamu.filter(t => localStatus[t.nama] === 'tidak').length;
+    }
+
+    // ─── SEARCH / FILTER ────────────────────────────────
+    function filterTamu(q) {
+        const query = q.toLowerCase().trim();
+        const cards = document.querySelectorAll('.tamu-card');
+        let visible = 0;
+        cards.forEach(card => {
+            const match = !query || card.dataset.nama.includes(query);
+            card.classList.toggle('hidden', !match);
+            if (match) visible++;
+        });
+        document.getElementById('clearBtn').classList.toggle('hidden', !q);
+        const empty = document.getElementById('emptySearch');
+        if (visible === 0 && query) show('emptySearch'); else hide('emptySearch');
+        updateResultCount(query ? visible : null);
+    }
+
+    function resetSearch() {
+        document.getElementById('searchInput').value = '';
+        filterTamu('');
+    }
+
+    function updateResultCount(count) {
+        const el = document.getElementById('resultCount');
+        el.textContent = count != null
+            ? `${count} dari ${allTamu.length} tamu ditemukan`
+            : `${allTamu.length} tamu terdaftar`;
+    }
+
+    // ─── HELPERS ─────────────────────────────────────────
+    function saveLocal() { localStorage.setItem(STATUS_KEY, JSON.stringify(localStatus)); }
+    function show(id) { document.getElementById(id)?.classList.remove('hidden'); }
+    function hide(id) { document.getElementById(id)?.classList.add('hidden'); }
+    function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+    let toastTimer;
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+    }
+</script>
+</body>
+</html>
