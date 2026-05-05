@@ -14,42 +14,39 @@
         .text-green { color: var(--green); }
         .border-green { border-color: var(--green); }
 
-        /* Search input */
         #searchInput { -webkit-appearance: none; appearance: none; }
         #searchInput:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(74,93,74,0.12); }
 
-        /* Tamu card */
         .tamu-card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
         .tamu-card:active { transform: scale(0.98); }
         .tamu-card.hidden { display: none !important; }
         .tamu-card.sudah-hadir { opacity: 0.5; }
 
-        /* Tombol status */
         .btn-hadir-idle   { background: white; color: var(--green); border: 1.5px solid var(--green); }
         .btn-hadir-active { background: var(--green); color: white; border: 1.5px solid var(--green); }
         .btn-tidak-idle   { background: white; color: #c0392b; border: 1.5px solid #e0b0ab; }
         .btn-tidak-active { background: #fde8e8; color: #c0392b; border: 1.5px solid #c0392b; font-weight: 600; }
 
-        /* Badge */
         .badge-vvip { background: #C0C0C0; color: #333; }
         .badge-vip  { background: #d4af37; color: white; }
         .badge-reg  { background: #e8f0e8; color: var(--green); }
+        .badge-new  { background: #fff3cd; color: #856404; }
 
-        /* Spinner */
         .spinner { border: 3px solid #e8e4e0; border-top: 3px solid var(--green); border-radius: 50%; width: 30px; height: 30px; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Toast */
         #toast { transition: all 0.3s ease; opacity: 0; transform: translateY(16px); pointer-events: none; }
         #toast.show { opacity: 1; transform: translateY(0); }
 
-        /* Modal backdrop */
-        #confirmModal { transition: opacity 0.2s ease; }
+        #confirmModal, #addModal { transition: opacity 0.2s ease; }
 
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #c5bfb9; border-radius: 10px; }
+
+        /* Fab button */
+        #fabAdd { box-shadow: 0 4px 20px rgba(74,93,74,0.4); }
+        #fabAdd:active { transform: scale(0.94); }
     </style>
 </head>
 <body class="min-h-screen">
@@ -60,8 +57,6 @@
         <p class="text-[9px] uppercase tracking-[0.4em] opacity-70 mb-1">Buku Tamu Manual</p>
         <h1 class="font-serif text-2xl tracking-tight">Fadil & Aisyah</h1>
     </div>
-
-    <!-- Stat Bar -->
     <div id="statBar" class="hidden grid grid-cols-3 border-t border-white/20">
         <div class="text-center py-2 border-r border-white/20">
             <p id="statTotal" class="text-lg font-bold text-white">0</p>
@@ -98,15 +93,13 @@
 </div>
 
 <!-- MAIN CONTENT -->
-<div class="max-w-lg mx-auto px-4 py-4">
+<div class="max-w-lg mx-auto px-4 py-4 pb-24">
 
-    <!-- LOADING -->
     <div id="loadingState" class="text-center py-16">
         <div class="spinner mx-auto mb-4"></div>
         <p class="text-sm text-stone-400">Memuat daftar tamu...</p>
     </div>
 
-    <!-- ERROR -->
     <div id="errorState" class="hidden">
         <div class="bg-white rounded-3xl p-6 text-center border border-red-100 shadow-sm">
             <div class="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -118,17 +111,27 @@
         </div>
     </div>
 
-    <!-- LIST TAMU -->
     <div id="tamuContainer" class="hidden space-y-2"></div>
 
-    <!-- EMPTY SEARCH -->
     <div id="emptySearch" class="hidden text-center py-12">
         <p class="text-stone-300 text-3xl mb-2">🔍</p>
         <p class="text-stone-500 text-sm font-medium">Nama tidak ditemukan</p>
-        <p class="text-stone-400 text-xs mt-1">Coba kata kunci yang lain</p>
+        <p class="text-stone-400 text-xs mt-1 mb-4">Tamu ini belum ada di daftar.</p>
+        <!-- Tombol tambah dari hasil pencarian kosong -->
+        <button id="btnTambahDariSearch" onclick="bukaModalTambah()" class="hidden bg-green text-white text-xs px-5 py-2.5 rounded-full font-medium">
+            + Tambah sebagai Tamu Baru
+        </button>
     </div>
 
 </div>
+
+<!-- FAB TOMBOL TAMBAH TAMU -->
+<button id="fabAdd" onclick="bukaModalTambah()"
+    class="fixed bottom-6 right-6 z-40 bg-green text-white w-14 h-14 rounded-full flex items-center justify-center transition-all active:scale-95">
+    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+    </svg>
+</button>
 
 <!-- MODAL KONFIRMASI TIDAK HADIR -->
 <div id="confirmModal" class="hidden fixed inset-0 z-50 bg-black/40 flex items-end justify-center pb-6 px-4">
@@ -142,15 +145,50 @@
     </div>
 </div>
 
+<!-- MODAL TAMBAH TAMU BARU -->
+<div id="addModal" class="hidden fixed inset-0 z-50 bg-black/40 flex items-end justify-center pb-6 px-4">
+    <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-stone-800 text-base">Tambah Tamu Baru</h3>
+            <button onclick="tutupModalTambah()" class="text-stone-400 text-2xl leading-none">&times;</button>
+        </div>
+        <p class="text-stone-400 text-xs mb-4">Tamu akan ditambahkan ke daftar dan langsung ditandai <strong>Hadir</strong>.</p>
+
+        <div class="mb-3">
+            <label class="text-[10px] font-bold text-stone-500 uppercase tracking-wider block mb-1">Nama Tamu</label>
+            <input id="inputNamaBaru" type="text" placeholder="Tulis nama lengkap..."
+                class="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100">
+        </div>
+
+        <div class="mb-5">
+            <label class="text-[10px] font-bold text-stone-500 uppercase tracking-wider block mb-1">Status Undangan</label>
+            <select id="inputStatusBaru" class="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-600 bg-white">
+                <option value="Reguler">Reguler</option>
+                <option value="VIP">VIP</option>
+                <option value="VVIP">VVIP</option>
+            </select>
+        </div>
+
+        <div class="flex gap-3">
+            <button onclick="tutupModalTambah()" class="flex-1 py-3 rounded-2xl border border-stone-200 text-stone-600 text-sm font-medium">Batal</button>
+            <button id="btnSimpanTamu" onclick="simpanTamuBaru()"
+                class="flex-1 py-3 rounded-2xl bg-green text-white text-sm font-bold transition-opacity">
+                Simpan & Hadir
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-stone-800 text-white text-xs px-5 py-2.5 rounded-full shadow-lg whitespace-nowrap"></div>
 
 <script>
+    // ✅ URL BENAR — SAMA DENGAN SEMUA FILE LAINNYA
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwsuDPy2rb0yf-2r0WyYUL6rSwIbMbxj5kp7fEpinXbQ9FkaXoQA5x_h0wUdwavAqhZvg/exec';
     const STATUS_KEY = 'bukutamu_manual_status';
 
     let allTamu = [];
-    let localStatus = {}; // { "Nama": "hadir" | "tidak" }
+    let localStatus = {};
     let pendingTidakNama = null;
     let isSending = false;
 
@@ -200,7 +238,6 @@
 
         list.forEach((t, i) => {
             const nama = t.nama || '';
-            const grup = t.grup || '';
             const status = localStatus[nama] || null;
 
             const hadirClass = status === 'hadir' ? 'btn-hadir-active' : 'btn-hadir-idle';
@@ -208,26 +245,27 @@
             const hadirLabel = status === 'hadir' ? '✓ Hadir' : 'Hadir';
             const tidakLabel = status === 'tidak' ? '✗ Tidak' : 'Tidak';
 
-            // Badge status undangan
             const s = (t.status || 'REG').toUpperCase();
             let badgeClass = 'badge-reg', badgeText = 'REG';
             if (s.includes('VVIP')) { badgeClass = 'badge-vvip'; badgeText = 'VVIP'; }
             else if (s.includes('VIP')) { badgeClass = 'badge-vip'; badgeText = 'VIP'; }
+
+            // Tamu yang ditambah manual di hari H diberi badge khusus
+            const isNew = t.isNew || false;
+            const newBadge = isNew ? `<span class="badge-new text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">Baru</span>` : '';
 
             const cardOpacity = status === 'tidak' ? 'sudah-hadir' : '';
 
             container.innerHTML += `
             <div class="tamu-card bg-white rounded-2xl px-4 py-3.5 shadow-sm border border-stone-100 flex items-center gap-3 ${cardOpacity}"
                  data-nama="${escHtml(nama).toLowerCase()}" data-idx="${i}">
-                <!-- Info -->
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2 flex-wrap">
                         <p class="font-semibold text-stone-800 text-sm truncate">${escHtml(nama)}</p>
                         <span class="${badgeClass} text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">${badgeText}</span>
+                        ${newBadge}
                     </div>
-                    ${grup ? `<p class="text-[11px] text-stone-400 mt-0.5 truncate">${escHtml(grup)}</p>` : ''}
                 </div>
-                <!-- Tombol -->
                 <div class="flex gap-1.5 flex-shrink-0">
                     <button onclick="setHadir('${escHtml(nama)}')"
                         class="${hadirClass} text-xs px-3.5 py-2 rounded-xl font-medium transition-all active:scale-95">${hadirLabel}</button>
@@ -242,7 +280,6 @@
     async function setHadir(nama) {
         if (isSending) return;
 
-        // Toggle: klik lagi → reset
         if (localStatus[nama] === 'hadir') {
             delete localStatus[nama];
             saveLocal();
@@ -258,7 +295,6 @@
         updateStats();
         showToast('✓ Hadir: ' + nama);
 
-        // Kirim ke Google Sheets (absen)
         const tamu = allTamu.find(t => t.nama === nama);
         const statusUndangan = tamu ? (tamu.status || 'Reguler') : 'Reguler';
         sendAbsen(nama, statusUndangan);
@@ -267,7 +303,6 @@
     // ─── MODAL TIDAK HADIR ───────────────────────────────
     function openModal(nama) {
         if (localStatus[nama] === 'tidak') {
-            // Toggle off
             delete localStatus[nama];
             saveLocal();
             refreshCard(nama);
@@ -300,6 +335,84 @@
         showToast('✗ Tidak hadir: ' + nama);
     }
 
+    // ─── MODAL TAMBAH TAMU BARU ──────────────────────────
+    function bukaModalTambah() {
+        // Pre-fill dari search jika ada
+        const query = document.getElementById('searchInput').value.trim();
+        if (query) {
+            document.getElementById('inputNamaBaru').value = query;
+        } else {
+            document.getElementById('inputNamaBaru').value = '';
+        }
+        document.getElementById('inputStatusBaru').value = 'Reguler';
+        show('addModal');
+        document.getElementById('addModal').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('addModal').style.opacity = '1';
+            document.getElementById('inputNamaBaru').focus();
+        }, 10);
+    }
+
+    function tutupModalTambah() {
+        const m = document.getElementById('addModal');
+        m.style.opacity = '0';
+        setTimeout(() => hide('addModal'), 200);
+    }
+
+    async function simpanTamuBaru() {
+        const nama = document.getElementById('inputNamaBaru').value.trim();
+        const status = document.getElementById('inputStatusBaru').value;
+
+        if (!nama) {
+            document.getElementById('inputNamaBaru').focus();
+            showToast('⚠ Nama tidak boleh kosong');
+            return;
+        }
+
+        // Cek duplikat di list lokal
+        const sudahAda = allTamu.some(t => t.nama.toLowerCase() === nama.toLowerCase());
+        if (sudahAda) {
+            tutupModalTambah();
+            showToast('⚠ ' + nama + ' sudah ada di daftar');
+            // Scroll ke nama tersebut dan tandai hadir
+            const namaAsli = allTamu.find(t => t.nama.toLowerCase() === nama.toLowerCase())?.nama;
+            if (namaAsli) setHadir(namaAsli);
+            return;
+        }
+
+        // Disable tombol
+        const btn = document.getElementById('btnSimpanTamu');
+        btn.textContent = 'Menyimpan...';
+        btn.disabled = true;
+
+        try {
+            // Kirim ke Apps Script — tambah ke daftar tamu + langsung absen
+            const url = `${SCRIPT_URL}?type=add_tamu_manual&nama=${encodeURIComponent(nama)}&status=${encodeURIComponent(status)}`;
+            await fetch(url);
+        } catch(e) {
+            // Silent fail — tetap tambah ke lokal
+        }
+
+        // Tambah ke array lokal
+        allTamu.unshift({ nama, status, isNew: true });
+
+        // Tandai hadir langsung
+        localStatus[nama] = 'hadir';
+        saveLocal();
+
+        tutupModalTambah();
+        resetSearch();
+
+        // Re-render dan update
+        renderList();
+        updateStats();
+        show('tamuContainer');
+        showToast('✓ Tamu baru ditambahkan: ' + nama);
+
+        btn.textContent = 'Simpan & Hadir';
+        btn.disabled = false;
+    }
+
     // ─── KIRIM ABSEN KE SHEETS ───────────────────────────
     async function sendAbsen(nama, status) {
         isSending = true;
@@ -307,7 +420,7 @@
             const url = `${SCRIPT_URL}?type=absen&nama=${encodeURIComponent(nama)}&status=${encodeURIComponent(status)}`;
             await fetch(url);
         } catch (e) {
-            // Silent fail — data tetap tersimpan lokal
+            // Silent fail
         } finally {
             isSending = false;
         }
@@ -347,8 +460,17 @@
             if (match) visible++;
         });
         document.getElementById('clearBtn').classList.toggle('hidden', !q);
-        const empty = document.getElementById('emptySearch');
-        if (visible === 0 && query) show('emptySearch'); else hide('emptySearch');
+
+        const emptyDiv = document.getElementById('emptySearch');
+        const btnTambah = document.getElementById('btnTambahDariSearch');
+
+        if (visible === 0 && query) {
+            show('emptySearch');
+            btnTambah.classList.remove('hidden'); // Tampilkan tombol tambah
+        } else {
+            hide('emptySearch');
+            btnTambah.classList.add('hidden');
+        }
         updateResultCount(query ? visible : null);
     }
 
