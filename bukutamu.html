@@ -259,7 +259,7 @@
     function reloadData() { loadData(); }
 
         // ─── RENDER ──────────────────────────────────────────
-    function renderList(list) {
+function renderList(list) {
     list = list || allTamu;
     const container = document.getElementById('tamuContainer');
     container.innerHTML = '';
@@ -462,16 +462,16 @@
         cards.forEach(card => {
             if (card.dataset.nama === nama.toLowerCase()) {
                 const s = localStatus[nama] || null;
-                const btn = card.querySelector('button');
-                if (btn) {
-                    btn.textContent = s === 'hadir' ? '✓ Sudah Hadir' : 'Tandai Hadir';
-                    btn.className = (s === 'hadir' ? 'btn-hadir-active' : 'btn-hadir-idle') + 
-                                    ' text-[11px] px-6 py-2.5 rounded-xl font-bold transition-all active:scale-95 shadow-sm min-w-[120px]';
-                }
+                const btns = card.querySelectorAll('button');
+                btns[0].textContent = s === 'hadir' ? '✓ Hadir' : 'Hadir';
+                btns[0].className = (s === 'hadir' ? 'btn-hadir-active' : 'btn-hadir-idle') + ' text-xs px-3.5 py-2 rounded-xl font-medium transition-all active:scale-95';
+                btns[1].textContent = s === 'tidak' ? '✗ Tidak' : 'Tidak';
+                btns[1].className = (s === 'tidak' ? 'btn-tidak-active' : 'btn-tidak-idle') + ' text-xs px-3.5 py-2 rounded-xl font-medium transition-all active:scale-95';
+                card.classList.toggle('sudah-hadir', s === 'tidak');
             }
         });
     }
-    
+
     // ─── STATS ───────────────────────────────────────────
     function updateStats() {
         document.getElementById('statTotal').textContent = allTamu.length;
