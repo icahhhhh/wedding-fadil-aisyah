@@ -1359,22 +1359,31 @@
         const musicIcon = document.getElementById("musicIcon");
         let isPlaying = false;
 
-        function openInvitation() {
-        const audio = document.getElementById("weddingMusic");
-        if (audio) audio.play();
-        
-        const cover = document.getElementById("wedding-cover");
-        if (cover) {
-            cover.classList.add('cover-opened');
-            
-            setTimeout(() => {
-                cover.style.display = 'none';
-                // PENTING: Jalankan ulang typewriter sesuai bahasa aktif
-                startTypewriter(); 
-                if (typeof AOS !== 'undefined') AOS.refresh();
-            }, 1000);
+        function openInvitation()
+         {
+            // Paksa play musik
+            if (audio) {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    musicIcon.classList.remove('paused');
+                }).catch(error => {
+                    console.log("Playback failed:", error);
+                    // Jika gagal, kita coba play lagi di interaksi berikutnya
+                });
+            }
+
+            const cover = document.getElementById("wedding-cover");
+            if (cover) {
+                cover.classList.add('cover-opened');
+                setTimeout(() => {
+                    cover.style.display = 'none';
+                    // Pastikan AOS dan pengetikan nama direset posisinya
+                    AOS.refresh();
+                    if (typeof startTypewriter === "function") startTypewriter();
+                }, 1000);
+            }
         }
-}
+
         function toggleMusic() {
             if (audio) {
                 if (isPlaying) {
