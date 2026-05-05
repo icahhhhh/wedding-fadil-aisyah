@@ -270,50 +270,49 @@
         const container = document.getElementById('tamuContainer');
         container.innerHTML = '';
 
-     list.forEach((t, i) => {
-        const nama = t.nama || '';
-        const status = localStatus[nama] || null;
+      // ─── RENDER (Ganti isi loop di dalam list.forEach) ───────────────────
+        list.forEach((t, i) => {
+            const nama = t.nama || '';
+            const status = localStatus[nama] || null;
 
-        const hadirClass = status === 'hadir' ? 'btn-hadir-active' : 'btn-hadir-idle';
-        const tidakClass = status === 'tidak' ? 'btn-tidak-active' : 'btn-tidak-idle';
-        const hadirLabel = status === 'hadir' ? '✓ Hadir' : 'Hadir';
-        const tidakLabel = status === 'tidak' ? '✗ Tidak' : 'Tidak';
+            const hadirClass = status === 'hadir' ? 'btn-hadir-active' : 'btn-hadir-idle';
+            const tidakClass = status === 'tidak' ? 'btn-tidak-active' : 'btn-tidak-idle';
+            const hadirLabel = status === 'hadir' ? '✓ Hadir' : 'Hadir';
+            const tidakLabel = status === 'tidak' ? '✗ Tidak' : 'Tidak';
 
-        const s = (t.status || 'REG').toUpperCase();
-        let badgeClass = 'badge-reg', badgeText = 'REG';
-        if (s.includes('VVIP')) { badgeClass = 'badge-vvip'; badgeText = 'VVIP'; }
-        else if (s.includes('VIP')) { badgeClass = 'badge-vip'; badgeText = 'VIP'; }
+            const s = (t.status || 'REG').toUpperCase();
+            let badgeClass = 'badge-reg', badgeText = 'REG';
+            if (s.includes('VVIP')) { badgeClass = 'badge-vvip'; badgeText = 'VVIP'; }
+            else if (s.includes('VIP')) { badgeClass = 'badge-vip'; badgeText = 'VIP'; }
 
-        const isNew = t.isNew || false;
-        const newBadge = isNew ? `<span class="badge-new badge-status font-bold uppercase ml-1">Baru</span>` : '';
+            const isNew = t.isNew || false;
+            const newBadge = isNew ? `<span class="badge-new badge-status font-bold rounded-full uppercase ml-1">Baru</span>` : '';
 
-        const cardOpacity = status === 'tidak' ? 'sudah-hadir' : '';
+            const cardOpacity = status === 'tidak' ? 'sudah-hadir' : '';
 
-        container.innerHTML += `
-        <div class="tamu-card bg-white rounded-2xl px-5 py-4 shadow-sm border border-stone-100 ${cardOpacity}"
-             data-nama="${escHtml(nama).toLowerCase()}" data-idx="${i}">
-            
-            <!-- BARIS ATAS: NAMA TAMU (FULL WIDTH) -->
-            <div class="w-full">
-                <p class="nama-tamu font-bold text-stone-800">${escHtml(nama)}</p>
-            </div>
-
-            <!-- BARIS BAWAH: BADGE & TOMBOL -->
-            <div class="card-footer">
-                <div class="flex items-center gap-1">
-                    <span class="${badgeClass} badge-status font-bold uppercase">${badgeText}</span>
-                    ${newBadge}
-                </div>
+            container.innerHTML += `
+            <div class="tamu-card bg-white rounded-2xl px-3 py-3 shadow-sm border border-stone-100 flex items-center justify-between gap-2 ${cardOpacity}"
+                data-nama="${escHtml(nama).toLowerCase()}" data-idx="${i}">
                 
-                <div class="flex gap-2">
-                    <button onclick="setHadir('${escHtml(nama)}')"
-                        class="${hadirClass} text-[11px] px-4 py-2 rounded-xl font-bold transition-all active:scale-95 shadow-sm">${hadirLabel}</button>
-                    <button onclick="openModal('${escHtml(nama)}')"
-                        class="${tidakClass} text-[11px] px-4 py-2 rounded-xl font-bold transition-all active:scale-95 shadow-sm">${tidakLabel}</button>
+                <div class="flex-1 min-w-0 flex flex-col gap-1">
+                    <!-- NAMA TAMU: Sekarang menggunakan class nama-tamu -->
+                    <p class="nama-tamu font-semibold text-stone-800">${escHtml(nama)}</p>
+                    
+                    <div class="flex items-center gap-1">
+                        <span class="${badgeClass} badge-status font-bold rounded-full uppercase">${badgeText}</span>
+                        ${newBadge}
+                    </div>
                 </div>
-            </div>
-        </div>`;
-    });
+
+                <!-- TOMBOL: Tetap di kanan dengan ukuran yang konsisten -->
+                <div class="flex gap-1 flex-shrink-0">
+                    <button onclick="setHadir('${escHtml(nama)}')"
+                        class="${hadirClass} text-[10px] px-3 py-2 rounded-lg font-medium transition-all active:scale-95">${hadirLabel}</button>
+                    <button onclick="openModal('${escHtml(nama)}')"
+                        class="${tidakClass} text-[10px] px-3 py-2 rounded-lg font-medium transition-all active:scale-95">${tidakLabel}</button>
+                </div>
+            </div>`;
+        });
     }
 
     // ─── HADIR ───────────────────────────────────────────
