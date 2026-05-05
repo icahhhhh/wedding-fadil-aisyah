@@ -471,8 +471,14 @@
             }
         });
     }
+    
+    // ─── STATS ───────────────────────────────────────────
+    function updateStats() {
+        document.getElementById('statTotal').textContent = allTamu.length;
+        document.getElementById('statHadir').textContent = allTamu.filter(t => localStatus[t.nama] === 'hadir').length;
+        document.getElementById('statTidak').textContent = allTamu.filter(t => localStatus[t.nama] === 'tidak').length;
+    }
 
-   
     // ─── SEARCH / FILTER ────────────────────────────────
     function filterTamu(q) {
         const query = q.toLowerCase().trim();
