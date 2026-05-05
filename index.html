@@ -828,34 +828,33 @@
         </button>
     </div>
 
-           <!-- Tombol Musik Vinyl Realistic -->
+           <!-- Tombol Musik Piringan Hitam (Tanpa Label Tengah) -->
         <button id="musicButton" onclick="toggleMusic()" 
             class="relative w-10 h-10 flex items-center justify-center transition-all active:scale-95 focus:outline-none">
             
-            <!-- Piringan Hitam -->
-            <div id="musicIcon" class="w-full h-full bg-[#0a0a0a] rounded-full shadow-2xl flex items-center justify-center animate-spin-slow relative overflow-hidden border border-black">
+            <div id="musicIcon" class="w-full h-full bg-[#0a0a0a] rounded-full shadow-2xl flex items-center justify-center animate-spin-slow relative overflow-hidden border border-black paused">
                 
                 <!-- Tekstur Alur Piringan (Garis halus melingkar) -->
                 <div class="absolute inset-0 rounded-full opacity-40" 
                     style="background: repeating-radial-gradient(circle, #222, #222 0.5px, #000 1.5px);">
                 </div>
                 
-                <!-- Efek Pantulan Cahaya Glossy (Conic Gradient tajam seperti foto) -->
+                <!-- Efek Pantulan Cahaya Glossy (Refleksi Conic) -->
                 <div class="absolute inset-0 rounded-full opacity-60" 
                     style="background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.3) 10%, transparent 20%, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%, transparent 80%, rgba(255,255,255,0.3) 90%, transparent);">
                 </div>
                 
-                    <!-- Logo F&A Putih di Tengah -->
-                    <img src="logo.png" alt="Logo" class="w-7 h-7 object-contain brightness-0 invert" 
+                <!-- Logo Langsung di Atas Vinyl (Tanpa Bulatan Warna) -->
+                <div class="z-10 flex items-center justify-center">
+                    <img src="logo.png" alt="Logo" class="w-7 h-7 object-contain brightness-0 invert opacity-80" 
                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <span class="hidden text-[5px] font-bold text-white">F&A</span>
-                    
-                    <!-- Titik Lubang Tengah Vinyl -->
-                    <div class="absolute w-1 h-1 bg-black rounded-full opacity-30"></div>
+                    <span class="hidden text-[8px] font-bold text-white opacity-70">F&A</span>
                 </div>
+
+                <!-- Titik Lubang Kecil di Tengah Sempurna -->
+                <div class="absolute w-1 h-1 bg-black rounded-full border border-white/10 z-20"></div>
             </div>
         </button>
-    </div>
 
      <audio id="weddingMusic" loop>
         <source src="musik.mp3" type="audio/mpeg">
