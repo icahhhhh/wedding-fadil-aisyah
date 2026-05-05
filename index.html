@@ -1525,23 +1525,20 @@
 
     
 
-        // Inisialisasi bahasa dari memori atau default ke ID
-        let currentLang = localStorage.getItem('userLang') || 'id';
+        // 1. Paksa default ke 'en' (English) jika belum ada pilihan di memori
+        let currentLang = localStorage.getItem('userLang') || 'en';
 
-        function toggleLanguage() {
-            const langBtnText = document.getElementById('langText');
-            
-            // Logika Tukar Bahasa
-            if (currentLang === 'id') {
-                currentLang = 'en';
-                langBtnText.innerText = 'ID'; // Menampilkan ID saat mode aktif adalah EN
-            } else {
-                currentLang = 'id';
-                langBtnText.innerText = 'EN'; // Menampilkan EN saat mode aktif adalah ID
-            }
-            
+        // 2. Jalankan fungsi terjemahan otomatis saat halaman terbuka
+        document.addEventListener('DOMContentLoaded', () => {
+            // Terapkan bahasa yang tersimpan (atau default EN)
             applyLanguageUpdate(currentLang);
-        }
+            
+            // Pastikan teks pada tombol toggle bahasa sudah benar (menampilkan ID jika sedang mode EN)
+            const langBtnText = document.getElementById('langText');
+            if (langBtnText) {
+                langBtnText.innerText = (currentLang === 'en') ? 'EN' : 'ID';
+            }
+        });
 
         function applyLanguageUpdate(lang) {
             // Jalankan loop terjemahan untuk semua ID yang ada di objek translations
