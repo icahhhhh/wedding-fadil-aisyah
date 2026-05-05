@@ -16,6 +16,47 @@
         td { padding: 10px; border-bottom: 1px solid #eee; }
         .badge-vip { background: #d4a373; color: white; padding: 2px 5px; border-radius: 3px; font-size: 0.6rem; font-weight: bold; }
         .loading { text-align: center; padding: 20px; color: var(--primary); }
+
+        /* === DUPLIKAT STYLES === */
+        .badge-duplikat {
+            background: #e74c3c;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            margin-left: 4px;
+        }
+        tr.row-duplikat td {
+            background: #fff0f0;
+        }
+        .warning-duplikat {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin: 10px 0;
+            font-size: 0.8rem;
+            color: #856404;
+            display: none;
+        }
+        .warning-duplikat strong { display: block; margin-bottom: 5px; }
+        .stat-bar {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0 15px 0;
+            font-size: 0.75rem;
+        }
+        .stat-item {
+            background: #f4f5f0;
+            border-radius: 6px;
+            padding: 8px 12px;
+            flex: 1;
+            text-align: center;
+        }
+        .stat-item strong { display: block; font-size: 1.1rem; color: var(--primary); }
+        .stat-item.danger { background: #fff0f0; }
+        .stat-item.danger strong { color: #e74c3c; }
     </style>
 </head>
 <body>
@@ -23,12 +64,33 @@
 <div class="container">
     <a href="generator.html" class="btn-back">← KEMBALI KE GENERATOR</a>
     <h1>Rekap Undangan Terkirim</h1>
-    
+
     <div id="loading" class="loading">Memuat data dari Sheets...</div>
-    
+
+    <div id="statBar" class="stat-bar" style="display:none;">
+        <div class="stat-item">
+            <strong id="statTotal">0</strong>
+            Total Terkirim
+        </div>
+        <div class="stat-item">
+            <strong id="statVIP">0</strong>
+            VIP
+        </div>
+        <div class="stat-item danger" id="statDupBox">
+            <strong id="statDuplikat">0</strong>
+            Duplikat
+        </div>
+    </div>
+
+    <div id="warningDuplikat" class="warning-duplikat">
+        <strong>⚠️ Ditemukan nama duplikat di rekap:</strong>
+        <span id="listDuplikat"></span>
+    </div>
+
     <table id="rekapTable" style="display:none;">
         <thead>
             <tr>
+                <th>#</th>
                 <th>Nama</th>
                 <th>WA</th>
                 <th>Status</th>
@@ -46,18 +108,57 @@
             const response = await fetch(`${scriptURL}?type=get_list`);
             const data = await response.json();
             const body = document.getElementById('rekapBody');
-            
+
             document.getElementById('loading').style.display = 'none';
             document.getElementById('rekapTable').style.display = 'table';
+            document.getElementById('statBar').style.display = 'flex';
 
+            // === DETEKSI DUPLIKAT ===
+            const namaCount = {};
             data.forEach(item => {
-                const row = `<tr>
-                    <td><b>${item.nama}</b><br><small style="color:#999">${item.waktu}</small></td>
+                const key = item.nama.trim().toLowerCase();
+                namaCount[key] = (namaCount[key] || 0) + 1;
+            });
+
+            const duplikatList = Object.keys(namaCount).filter(k => namaCount[k] > 1);
+
+            // Statistik
+            document.getElementById('statTotal').textContent = data.length;
+            document.getElementById('statVIP').textContent = data.filter(i => i.status === 'VIP').length;
+            document.getElementById('statDuplikat').textContent = duplikatList.length;
+
+            // Tampilkan warning jika ada duplikat
+            if (duplikatList.length > 0) {
+                const warningEl = document.getElementById('warningDuplikat');
+                warningEl.style.display = 'block';
+                document.getElementById('listDuplikat').innerHTML = duplikatList.map(n =>
+                    `<b style="text-transform:capitalize">${n}</b>`).join(', ');
+            } else {
+                document.getElementById('statDupBox').style.background = '#f4f5f0';
+                document.getElementById('statDuplikat').style.color = 'var(--primary)';
+            }
+
+            // Render tabel
+            data.forEach((item, i) => {
+                const namaKey = item.nama.trim().toLowerCase();
+                const isDup = namaCount[namaKey] > 1;
+
+                const row = document.createElement('tr');
+                if (isDup) row.classList.add('row-duplikat');
+
+                row.innerHTML = `
+                    <td style="color:#aaa; font-size:0.7rem;">${i + 1}</td>
+                    <td>
+                        <b>${item.nama}</b>
+                        ${isDup ? '<span class="badge-duplikat">DUPLIKAT</span>' : ''}
+                        <br><small style="color:#999">${item.waktu}</small>
+                    </td>
                     <td>${item.wa}</td>
                     <td>${item.status === 'VIP' ? '<span class="badge-vip">VIP</span>' : 'Reguler'}</td>
-                </tr>`;
-                body.innerHTML += row;
+                `;
+                body.appendChild(row);
             });
+
         } catch (error) {
             document.getElementById('loading').innerText = "Gagal memuat data.";
         }
