@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Buku Tamu Digital - Fadil & Aisyah</title>
+    <title>Scanner QR - Fadil & Aisyah</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
@@ -13,21 +13,12 @@
         .bg-stone-green { background-color: #4a5d4a; }
         .text-stone-green { color: #4a5d4a; }
         
-        #reader {
-            border: none !important;
-            border-radius: 20px;
-            overflow: hidden;
-        }
+        #reader { border: none !important; border-radius: 20px; overflow: hidden; }
         #reader__dashboard_section_csr button {
-            background-color: #4a5d4a !important;
-            color: white !important;
-            padding: 10px 20px !important;
-            border-radius: 50px !important;
-            text-transform: uppercase;
-            font-size: 12px;
-            font-weight: bold;
-            border: none !important;
-            margin-top: 10px !important;
+            background-color: #4a5d4a !important; color: white !important;
+            padding: 10px 20px !important; border-radius: 50px !important;
+            text-transform: uppercase; font-size: 12px; font-weight: bold;
+            border: none !important; margin-top: 10px !important;
         }
         video { border-radius: 15px; }
     </style>
@@ -49,107 +40,76 @@
                 Arahkan kamera ke QR Code tamu...
             </div>
             
-            <div id="success-msg" class="hidden text-center p-5 bg-green-600 text-white rounded-2xl shadow-lg animate-bounce">
+            <div id="success-msg" class="hidden text-center p-5 text-white rounded-2xl shadow-lg animate-bounce">
                 <p class="text-xs uppercase tracking-widest opacity-80">Berhasil Dicatat</p>
                 <h2 id="guest-name-result" class="text-xl font-bold mt-1">Nama Tamu</h2>
             </div>
         </div>
 
-        <div class="mt-8 grid grid-cols-2 gap-4">
+        <div class="mt-8 grid grid-cols-3 gap-3">
             <a href="rekap.html" class="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-stone-200 shadow-sm">
-                <span class="text-stone-green font-bold">Rekap</span>
+                <span class="text-stone-green font-bold text-sm">Rekap</span>
                 <span class="text-[10px] text-gray-400">Lihat Daftar</span>
             </a>
+            <a href="bukutamu.html" class="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-stone-200 shadow-sm">
+                <span class="text-stone-green font-bold text-sm">Manual</span>
+                <span class="text-[10px] text-gray-400">Buku Tamu</span>
+            </a>
             <button onclick="location.reload()" class="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border border-stone-200 shadow-sm">
-                <span class="text-stone-green font-bold">Refresh</span>
+                <span class="text-stone-green font-bold text-sm">Refresh</span>
                 <span class="text-[10px] text-gray-400">Reset Kamera</span>
             </button>
         </div>
     </div>
 
     <script>
-    // 1. URL GOOGLE APPS SCRIPT
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzkZj1Lx7NwonhYagVGlJA2UHycP3K7QbTB5Cff6WYnCUH173yp8liIFGPI2-P3bP8W/exec';
+    // ✅ URL BARU - SAMA DENGAN SEMUA FILE LAINNYA
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyWUFupf09SSpNyYuUw7-zX_snccsaYApQ9MW56olliOkYqnuPvSxCm_Q3nbNkBCeqibg/exec';
     let isProcessing = false;
 
     function onScanSuccess(decodedText, decodedResult) {
         if (isProcessing) return; 
         isProcessing = true;
 
-        // 1. Bedah data QR (Nama | Status | ID)
         const data = decodedText.split("|");
         const namaTamu = data[0] ? data[0].trim() : "Tanpa Nama";
         const statusTamu = data[1] ? data[1].trim() : "Reguler";
-        const kodeUnik = data[2] ? data[2].trim() : "-"; // Tetap diambil untuk database
 
         const successBox = document.getElementById('success-msg');
         const guestName = document.getElementById('guest-name-result');
         const idleMsg = document.getElementById('idle-msg');
-
-        // 2. Set tampilan (Hanya Nama saja yang muncul)
-        if (statusTamu.toUpperCase() === "VIP") {
-            successBox.style.backgroundColor = "#FFD700"; // Kuning Emas
-            successBox.style.color = "#000"; 
-            guestName.innerHTML = `
-                <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">VIP GUEST</div>
-                <div style="font-size: 28px; font-weight: bold; line-height: 1.2;">${namaTamu}</div>
-            `;
-        } else {
-            successBox.style.backgroundColor = "#16a34a"; // Hijau
-            successBox.style.color = "#fff";
-            guestName.innerHTML = `
-                <div style="font-size: 28px; font-weight: bold;">${namaTamu}</div>
-            `;
-        }
-
-        // 2. Set tampilan (Logika warna untuk VVIP, VIP, dan Reguler)
         const statusUpper = statusTamu.toUpperCase();
 
         if (statusUpper === "VVIP") {
-            // Tampilan Silver untuk VVIP
-            successBox.style.backgroundColor = "#C0C0C0"; // Warna Silver
-            successBox.style.color = "#333"; // Teks gelap agar kontras dengan silver
+            successBox.style.backgroundColor = "#C0C0C0";
+            successBox.style.color = "#333";
             guestName.innerHTML = `
                 <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px; letter-spacing: 2px;">VVIP GUEST</div>
                 <div style="font-size: 28px; font-weight: bold; line-height: 1.2;">${namaTamu}</div>
             `;
         } else if (statusUpper === "VIP") {
-            // Tampilan Kuning Emas untuk VIP
-            successBox.style.backgroundColor = "#FFD700"; 
-            successBox.style.color = "#000"; 
+            successBox.style.backgroundColor = "#FFD700";
+            successBox.style.color = "#000";
             guestName.innerHTML = `
                 <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">VIP GUEST</div>
                 <div style="font-size: 28px; font-weight: bold; line-height: 1.2;">${namaTamu}</div>
             `;
         } else {
-            // Tampilan Hijau untuk Reguler
-            successBox.style.backgroundColor = "#16a34a"; 
+            successBox.style.backgroundColor = "#16a34a";
             successBox.style.color = "#fff";
-            guestName.innerHTML = `
-                <div style="font-size: 28px; font-weight: bold;">${namaTamu}</div>
-            `;
+            guestName.innerHTML = `<div style="font-size: 28px; font-weight: bold;">${namaTamu}</div>`;
         }
 
-        // 3. Munculkan pesan sukses
         idleMsg.classList.add('hidden');
         successBox.classList.remove('hidden');
 
-        
-        // 4. Kirim data lengkap ke Google Sheets
+        // ✅ Kirim ke Google Sheets dengan URL baru
         const finalURL = `${scriptURL}?type=absen&nama=${encodeURIComponent(namaTamu)}&status=${encodeURIComponent(statusTamu)}`;
-        
-        console.log("Mengirim data:", finalURL); // Cek ini di console browser (F12)
-
         fetch(finalURL)
-        .then(res => res.json())
-        .then(result => {
-            console.log("Respon Berhasil:", result);
-        })
-        .catch(err => {
-            console.error("Gagal mengirim data:", err);
-        });
+            .then(res => res.json())
+            .then(result => console.log("Absen berhasil:", result))
+            .catch(err => console.error("Gagal kirim absen:", err));
 
-        // 5. Reset tampilan setelah 3 detik
         setTimeout(() => {
             successBox.classList.add('hidden');
             idleMsg.classList.remove('hidden');
@@ -157,19 +117,15 @@
         }, 3000);
     }
 
-    function onScanFailure(error) { /* Abaikan error */ }
+    function onScanFailure(error) { /* Abaikan */ }
 
-    // PENGATURAN SCANNER YANG LEBIH SENSITIF
-        // KONFIGURASI SCANNER SUPER SENSITIF
     const config = {
-        fps: 60, // Meningkatkan kecepatan proses gambar ke 60 frame per detik
+        fps: 60,
         qrbox: (viewfinderWidth, viewfinderHeight) => {
-            // Kotak scan lebih besar agar user tidak perlu terlalu presisi mengarahkan kamera
             let size = Math.min(viewfinderWidth, viewfinderHeight) * 0.75;
             return { width: size, height: size };
         },
         aspectRatio: 1.0,
-        // MEMAKSA RESOLUSI HD (Membantu sensor fokus lebih cepat dan tajam)
         videoConstraints: {
             facingMode: "environment",
             width: { min: 640, ideal: 1280, max: 1920 },
@@ -177,14 +133,12 @@
             frameRate: { ideal: 60 }
         },
         showTorchButtonIfSupported: true,
-        useBarCodeDetectorIfSupported: true, // Hardware Acceleration
+        useBarCodeDetectorIfSupported: true,
         rememberLastUsedCamera: true,
-        experimentalFeatures: {
-            useBarCodeDetectorIfSupported: true // Fitur eksperimental untuk kecepatan maksimal
-        }
+        experimentalFeatures: { useBarCodeDetectorIfSupported: true }
     };
 
-    let html5QrcodeScanner = new Html5QrcodeScanner("reader", config, /* verbose= */ false);
+    let html5QrcodeScanner = new Html5QrcodeScanner("reader", config, false);
     html5QrcodeScanner.render(onScanSuccess, onScanFailure);
     </script>
 </body>
