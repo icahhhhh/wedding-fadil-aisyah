@@ -1535,7 +1535,19 @@
     
 
         // Inisialisasi bahasa dari memori atau default ke ID
-        let currentLang = localStorage.getItem('userLang') || 'id';
+        let currentLang = localStorage.getItem('userLang') || 'en';
+
+        // 2. Paksa jalankan update bahasa saat halaman pertama kali dibuka
+        document.addEventListener('DOMContentLoaded', () => {
+            // Terapkan teks bahasa Inggris ke seluruh elemen
+            applyLanguageUpdate(currentLang);
+            
+            // Sesuaikan teks pada tombol toggle (Jika sedang EN, tombol harus tulisan 'ID')
+            const langBtnText = document.getElementById('langText');
+            if (langBtnText) {
+                langBtnText.innerText = (currentLang === 'en') ? 'ID' : 'EN';
+            }
+        });
 
         function toggleLanguage() {
             const langBtnText = document.getElementById('langText');
