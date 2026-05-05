@@ -91,19 +91,13 @@
         <p class="text-[9px] uppercase tracking-[0.4em] opacity-70 mb-1">Buku Tamu Manual</p>
         <h1 class="font-serif text-2xl tracking-tight">Fadil & Aisyah</h1>
     </div>
-    <div id="statBar" class="hidden grid grid-cols-3 border-t border-white/20">
-        <div class="text-center py-2 border-r border-white/20">
-            <p id="statTotal" class="text-lg font-bold text-white">0</p>
-            <p class="text-[9px] uppercase tracking-widest text-white/60">Tamu</p>
-        </div>
-        <div class="text-center py-2 border-r border-white/20">
-            <p id="statHadir" class="text-lg font-bold text-green-200">0</p>
-            <p class="text-[9px] uppercase tracking-widest text-white/60">Hadir</p>
-        </div>
+    <!-- StatBar disederhanakan menjadi satu kolom -->
+    <div id="statBar" class="hidden border-t border-white/20">
         <div class="text-center py-2">
-            <p id="statTidak" class="text-lg font-bold text-red-200">0</p>
-            <p class="text-[9px] uppercase tracking-widest text-white/60">Tidak</p>
+            <p id="statTotal" class="text-lg font-bold text-white inline-block mr-1">0</p>
+            <p class="text-[9px] uppercase tracking-widest text-white/60 inline-block">Tamu Terdaftar</p>
         </div>
+        <!-- Kolom Hadir & Tidak dihapus -->
     </div>
 </div>
 
@@ -265,56 +259,52 @@
     function reloadData() { loadData(); }
 
         // ─── RENDER ──────────────────────────────────────────
-        function renderList(list) {
-            list = list || allTamu;
-            const container = document.getElementById('tamuContainer');
-            container.innerHTML = '';
+    function renderList(list) {
+    list = list || allTamu;
+    const container = document.getElementById('tamuContainer');
+    container.innerHTML = '';
 
-        list.forEach((t, i) => {
-            const nama = t.nama || '';
-            const status = localStatus[nama] || null;
+    list.forEach((t, i) => {
+        const nama = t.nama || '';
+        const status = localStatus[nama] || null;
 
-            const hadirClass = status === 'hadir' ? 'btn-hadir-active' : 'btn-hadir-idle';
-            const tidakClass = status === 'tidak' ? 'btn-tidak-active' : 'btn-tidak-idle';
-            const hadirLabel = status === 'hadir' ? '✓ Hadir' : 'Hadir';
-            const tidakLabel = status === 'tidak' ? '✗ Tidak' : 'Tidak';
+        // Logika warna tombol
+        const hadirClass = status === 'hadir' ? 'btn-hadir-active' : 'btn-hadir-idle';
+        const hadirLabel = status === 'hadir' ? '✓ Sudah Hadir' : 'Tandai Hadir';
 
-            const s = (t.status || 'REG').toUpperCase();
-            let badgeClass = 'badge-reg', badgeText = 'REG';
-            if (s.includes('VVIP')) { badgeClass = 'badge-vvip'; badgeText = 'VVIP'; }
-            else if (s.includes('VIP')) { badgeClass = 'badge-vip'; badgeText = 'VIP'; }
+        const s = (t.status || 'REG').toUpperCase();
+        let badgeClass = 'badge-reg', badgeText = 'REG';
+        if (s.includes('VVIP')) { badgeClass = 'badge-vvip'; badgeText = 'VVIP'; }
+        else if (s.includes('VIP')) { badgeClass = 'badge-vip'; badgeText = 'VIP'; }
 
-            const isNew = t.isNew || false;
-            const newBadge = isNew ? `<span class="badge-new badge-status font-bold uppercase ml-1">Baru</span>` : '';
+        const isNew = t.isNew || false;
+        const newBadge = isNew ? `<span class="badge-new badge-status font-bold uppercase ml-1">Baru</span>` : '';
 
-            const cardOpacity = status === 'tidak' ? 'sudah-hadir' : '';
+        container.innerHTML += `
+        <div class="tamu-card bg-white rounded-2xl px-5 py-4 shadow-sm border border-stone-100"
+            data-nama="${escHtml(nama).toLowerCase()}" data-idx="${i}">
+            
+            <div class="w-full">
+                <p class="nama-tamu font-bold text-stone-800 mb-1">${escHtml(nama)}</p>
+            </div>
 
-            container.innerHTML += `
-            <div class="tamu-card bg-white rounded-2xl px-5 py-4 shadow-sm border border-stone-100 ${cardOpacity}"
-                data-nama="${escHtml(nama).toLowerCase()}" data-idx="${i}">
+            <div class="card-footer">
+                <div class="flex items-center gap-1">
+                    <span class="${badgeClass} badge-status font-bold uppercase">${badgeText}</span>
+                    ${newBadge}
+                </div>
                 
-                <!-- BARIS ATAS: NAMA TAMU (FULL WIDTH) -->
-                <div class="w-full">
-                    <p class="nama-tamu font-bold text-stone-800">${escHtml(nama)}</p>
+                <div class="flex gap-2 flex-1 justify-end">
+                    <!-- Hanya Tombol Hadir -->
+                    <button onclick="setHadir('${escHtml(nama)}')"
+                        class="${hadirClass} text-[11px] px-6 py-2.5 rounded-xl font-bold transition-all active:scale-95 shadow-sm min-w-[120px]">
+                        ${hadirLabel}
+                    </button>
                 </div>
-
-                <!-- BARIS BAWAH: BADGE & TOMBOL -->
-                <div class="card-footer">
-                    <div class="flex items-center gap-1">
-                        <span class="${badgeClass} badge-status font-bold uppercase">${badgeText}</span>
-                        ${newBadge}
-                    </div>
-                    
-                    <div class="flex gap-2">
-                        <button onclick="setHadir('${escHtml(nama)}')"
-                            class="${hadirClass} text-[11px] px-4 py-2 rounded-xl font-bold transition-all active:scale-95 shadow-sm">${hadirLabel}</button>
-                        <button onclick="openModal('${escHtml(nama)}')"
-                            class="${tidakClass} text-[11px] px-4 py-2 rounded-xl font-bold transition-all active:scale-95 shadow-sm">${tidakLabel}</button>
-                    </div>
-                </div>
-            </div>`;
-        });
-    }
+            </div>
+        </div>`;
+    });
+}
 
     // ─── HADIR ───────────────────────────────────────────
     async function setHadir(nama) {
@@ -472,23 +462,17 @@
         cards.forEach(card => {
             if (card.dataset.nama === nama.toLowerCase()) {
                 const s = localStatus[nama] || null;
-                const btns = card.querySelectorAll('button');
-                btns[0].textContent = s === 'hadir' ? '✓ Hadir' : 'Hadir';
-                btns[0].className = (s === 'hadir' ? 'btn-hadir-active' : 'btn-hadir-idle') + ' text-xs px-3.5 py-2 rounded-xl font-medium transition-all active:scale-95';
-                btns[1].textContent = s === 'tidak' ? '✗ Tidak' : 'Tidak';
-                btns[1].className = (s === 'tidak' ? 'btn-tidak-active' : 'btn-tidak-idle') + ' text-xs px-3.5 py-2 rounded-xl font-medium transition-all active:scale-95';
-                card.classList.toggle('sudah-hadir', s === 'tidak');
+                const btn = card.querySelector('button');
+                if (btn) {
+                    btn.textContent = s === 'hadir' ? '✓ Sudah Hadir' : 'Tandai Hadir';
+                    btn.className = (s === 'hadir' ? 'btn-hadir-active' : 'btn-hadir-idle') + 
+                                    ' text-[11px] px-6 py-2.5 rounded-xl font-bold transition-all active:scale-95 shadow-sm min-w-[120px]';
+                }
             }
         });
     }
 
-    // ─── STATS ───────────────────────────────────────────
-    function updateStats() {
-        document.getElementById('statTotal').textContent = allTamu.length;
-        document.getElementById('statHadir').textContent = allTamu.filter(t => localStatus[t.nama] === 'hadir').length;
-        document.getElementById('statTidak').textContent = allTamu.filter(t => localStatus[t.nama] === 'tidak').length;
-    }
-
+   
     // ─── SEARCH / FILTER ────────────────────────────────
     function filterTamu(q) {
         const query = q.toLowerCase().trim();
