@@ -74,6 +74,7 @@
         const data = decodedText.split("|");
         const namaTamu = data[0] ? data[0].trim() : "Tanpa Nama";
         const statusTamu = data[1] ? data[1].trim() : "Reguler";
+        const kodeUnik = data[2] ? data[2].trim() : "";
 
         const successBox = document.getElementById('success-msg');
         const guestName = document.getElementById('guest-name-result');
@@ -104,7 +105,7 @@
         successBox.classList.remove('hidden');
 
         // ✅ Kirim ke Google Sheets dengan URL baru
-        const finalURL = `${scriptURL}?type=absen&nama=${encodeURIComponent(namaTamu)}&status=${encodeURIComponent(statusTamu)}`;
+        const finalURL = `${scriptURL}?type=absen&nama=${encodeURIComponent(namaTamu)}&status=${encodeURIComponent(statusTamu)}&kode=${encodeURIComponent(kodeUnik)}`;
         fetch(finalURL)
             .then(res => res.json())
             .then(result => console.log("Absen berhasil:", result))
