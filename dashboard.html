@@ -7,8 +7,8 @@
 
     <!-- Open Graph Meta Tags untuk Preview Link -->
     <meta property="og:title" content="Wedding Dashboard Fadil & Aisyah">
-    <meta property="og:description" content="Wedding Invitation Management Fadil & Aisyah">
-    <meta property="og:image" content="logo.jpg">
+    <meta property="og:description" content="Sistem Manajemen Tamu Undangan Fadil & Aisyah">
+    <meta property="og:image" content="logo.png">
     <meta property="og:type" content="website">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -106,7 +106,7 @@
             <button onclick="openFullPage('rekap.html')" class="group bg-white p-6 rounded-[2rem] text-stone-green flex items-center justify-between card-shadow border border-stone-100 transition-all hover:bg-stone-50 active:scale-95">
                 <div class="text-left">
                     <p class="text-[9px] uppercase tracking-widest text-stone-400 mb-1">Database</p>
-                    <h3 class="font-serif text-xl">Attendance Summary</h3>
+                    <h3 class="font-serif text-xl">Guest Recap</h3>
                 </div>
                 <div class="w-10 h-10 bg-stone-green/10 rounded-full flex items-center justify-center text-xl transition-transform group-hover:-translate-y-1">📋</div>
             </button>
@@ -140,13 +140,17 @@
 
     <!-- FULL PAGE OVERLAY -->
     <div id="fullOverlay" class="fixed inset-0 bg-stone-light z-[100] flex flex-col">
-        <!-- Header Overlay -->
-        <div class="bg-white px-5 py-4 flex justify-between items-center border-b border-stone-200 card-shadow z-10">
-            <button onclick="closeFullPage()" class="text-stone-green text-sm font-bold flex items-center gap-2 uppercase tracking-widest">
+        <!-- Header Overlay - Updated for Centered Title and Accessible Back Button -->
+        <div class="bg-white px-5 py-4 relative flex items-center border-b border-stone-200 card-shadow z-10">
+            <!-- Tombol Kembali tetap di kiri dan punya z-index tinggi -->
+            <button onclick="closeFullPage()" class="relative z-20 text-stone-green text-sm font-bold flex items-center gap-2 uppercase tracking-widest active:scale-95 transition-transform">
                 <span class="text-lg">←</span> BACK
             </button>
-            <span id="overlayTitle" class="text-xs font-bold uppercase tracking-widest">Menu</span>
-            <div class="w-10"></div>
+            
+            <!-- Judul dibuat absolute inset agar tepat di center kontainer -->
+            <div class="absolute inset-x-0 text-center pointer-events-none">
+                <span id="overlayTitle" class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-stone-400 inline-block">Menu</span>
+            </div>
         </div>
         
         <!-- Loading State inside Overlay -->
@@ -174,7 +178,7 @@
             if(url.includes('generator')) titleText.innerText = "Invitation Generator";
             else if(url.includes('scanner')) titleText.innerText = "Guest Scanner";
             else if(url.includes('rekap')) titleText.innerText = "Data Summary";
-            else if(url.includes('dashboard-kehadiran-tamu')) titleText.innerText = "Guest Analytics Dashboard";
+            else if(url.includes('dashboard-kehadiran-tamu')) titleText.innerHTML = "Guest Analytics<br>Dashboard";
             else titleText.innerText = "Menu";
 
             // Efek Instant: Tampilkan overlay dulu, baru set src
