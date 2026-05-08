@@ -37,22 +37,28 @@
 <body class="p-4 md:p-10 flex flex-col items-center min-h-screen pb-20">
 
     <div class="w-full max-w-2xl fade-in">
-        <!-- Header -->
-        <header class="flex justify-between items-end mb-10 px-2">
-            <div>
-                <p class="text-[10px] font-bold text-stone-400 uppercase tracking-[0.4em] mb-2">Real-Time Report</p>
-                <h1 class="font-serif text-3xl text-[#4a5d4a] font-bold">Attendance Log</h1>
-            </div>
-            <div class="flex gap-2">
-                <!-- Tombol Kembali ke Scanner -->
-                <a href="scanner.html" class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-5 py-3 rounded-full shadow-sm border border-stone-100 hover:shadow-md transition-all active:scale-95">
+        <!-- Header: Responsive Layout to prevent overlapping -->
+        <header class="flex flex-col items-center gap-6 mb-10 px-2">
+            <!-- Row for Buttons -->
+            <div class="w-full flex justify-between items-center">
+                <!-- Back to Scanner Button -->
+                <a href="scanner.html" class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-4 py-2.5 rounded-full shadow-sm border border-stone-100 hover:shadow-md transition-all active:scale-95">
                     <span class="text-xs">←</span> Scanner
                 </a>
-                <!-- Tombol Refresh -->
-                <button onclick="loadRekap()" id="refreshBtn" class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-5 py-3 rounded-full shadow-sm border border-stone-100 hover:shadow-md transition-all active:scale-95 group">
-                    <svg id="refreshIcon" class="w-3 h-3 transition-transform group-active:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+
+                <!-- Refresh Button -->
+                <button onclick="loadRekap()" id="refreshBtn" class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-4 py-2.5 rounded-full shadow-sm border border-stone-100 hover:shadow-md transition-all active:scale-95 group">
+                    <svg id="refreshIcon" class="w-3 h-3 transition-transform group-active:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
                     Refresh
                 </button>
+            </div>
+
+            <!-- Centered Titles -->
+            <div class="text-center">
+                <p class="text-[10px] font-bold text-stone-400 uppercase tracking-[0.4em] mb-2">Real-Time Report</p>
+                <h1 class="font-serif text-3xl text-[#4a5d4a] font-bold">Attendance Summary</h1>
             </div>
         </header>
 
