@@ -33,7 +33,7 @@
                 <p class="text-[10px] uppercase tracking-[0.4em] text-stone-400 mb-1">Wedding Management</p>
                 <h1 class="font-serif text-3xl text-stone-green">Dashboard Admin</h1>
             </div>
-            <!-- Bagian Logo Diperbarui: Mengganti teks FA dengan logo.png -->
+            <!-- Bagian Logo: Menggunakan logo.png -->
             <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center card-shadow border border-stone-200 overflow-hidden">
                 <img src="logo.png" alt="Logo Fadil Aisyah" class="w-10 h-10 object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                 <span class="text-stone-green text-xl font-bold hidden">FA</span>
@@ -41,7 +41,7 @@
         </header>
 
         <!-- Statistik Cepat -->
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+        <div class="grid grid-cols-2 gap-4 mb-8">
             <div class="bg-white p-5 rounded-[2rem] card-shadow border border-stone-100 text-center">
                 <p class="text-[9px] font-bold uppercase tracking-widest text-stone-400 mb-1">Total Tamu</p>
                 <p id="totalTamu" class="text-2xl font-serif text-stone-green">--</p>
@@ -49,10 +49,6 @@
             <div class="bg-white p-5 rounded-[2rem] card-shadow border border-stone-100 text-center">
                 <p class="text-[9px] font-bold uppercase tracking-widest text-stone-400 mb-1">Hadir (Scan)</p>
                 <p id="totalHadir" class="text-2xl font-serif text-stone-green">--</p>
-            </div>
-            <div class="hidden md:block bg-white p-5 rounded-[2rem] card-shadow border border-stone-100 text-center">
-                <p class="text-[9px] font-bold uppercase tracking-widest text-stone-400 mb-1">Ucapan & Doa</p>
-                <p id="totalUcapan" class="text-2xl font-serif text-stone-green">--</p>
             </div>
         </div>
 
@@ -174,8 +170,6 @@
                 
                 document.getElementById('totalTamu').innerText = listTamu.length;
                 document.getElementById('totalHadir').innerText = listAbsen.length;
-                
-                document.getElementById('totalUcapan').innerText = Math.floor(listAbsen.length * 0.8) + 5;
 
             } catch (e) {
                 console.error("Gagal sinkron stats:", e);
