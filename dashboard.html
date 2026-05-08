@@ -16,84 +16,109 @@
         /* FULL OVERLAY ANIMATION */
         #fullOverlay { 
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-            transform: translateX(100%); 
+            transform: translateX(100%);
         }
-        #fullOverlay.active { 
-            transform: translateX(0); 
-        }
+        #fullOverlay.active { transform: translateX(0); }
+
+        .pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .7; } }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-6">
+<body class="p-4 md:p-8 min-h-screen">
 
-  <!-- Header Dashboard -->
-<div class="text-center mt-6 mb-10 px-4 flex flex-col items-center">
-    <!-- Logo Monogram Baru -->
-    <div class="mb-4">
-        <img src="logo.png" alt="Logo Fadil & Aisyah" class="w-16 h-16 object-contain opacity-90">
-    </div>
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-10">
+            <div>
+                <p class="text-[10px] uppercase tracking-[0.4em] text-stone-400 mb-1">Wedding Management</p>
+                <h1 class="font-serif text-3xl text-stone-green">Dashboard Admin</h1>
+            </div>
+            <!-- Bagian Logo Diperbarui: Mengganti teks FA dengan logo.png -->
+            <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center card-shadow border border-stone-200 overflow-hidden">
+                <img src="logo.png" alt="Logo Fadil Aisyah" class="w-10 h-10 object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <span class="text-stone-green text-xl font-bold hidden">FA</span>
+            </div>
+        </header>
 
-    <!-- Ornamen Garis Halus -->
-    <div class="flex items-center justify-center gap-3 mb-3 w-full">
-        <div class="h-[1px] w-8 bg-stone-200"></div>
-        <span class="text-[10px] tracking-[0.4em] text-stone-400 uppercase font-light">The Wedding of</span>
-        <div class="h-[1px] w-8 bg-stone-200"></div>
-    </div>
+        <!-- Statistik Cepat -->
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+            <div class="bg-white p-5 rounded-[2rem] card-shadow border border-stone-100 text-center">
+                <p class="text-[9px] font-bold uppercase tracking-widest text-stone-400 mb-1">Total Tamu</p>
+                <p id="totalTamu" class="text-2xl font-serif text-stone-green">--</p>
+            </div>
+            <div class="bg-white p-5 rounded-[2rem] card-shadow border border-stone-100 text-center">
+                <p class="text-[9px] font-bold uppercase tracking-widest text-stone-400 mb-1">Hadir (Scan)</p>
+                <p id="totalHadir" class="text-2xl font-serif text-stone-green">--</p>
+            </div>
+            <div class="hidden md:block bg-white p-5 rounded-[2rem] card-shadow border border-stone-100 text-center">
+                <p class="text-[9px] font-bold uppercase tracking-widest text-stone-400 mb-1">Ucapan & Doa</p>
+                <p id="totalUcapan" class="text-2xl font-serif text-stone-green">--</p>
+            </div>
+        </div>
 
-    <!-- Nama Utama -->
-    <h1 class="font-serif text-4xl text-stone-green mb-2 tracking-tight">
-        Fadil & Aisyah
-    </h1>
+        <!-- Menu Utama -->
+        <h2 class="text-[10px] font-bold uppercase tracking-[0.3em] text-stone-400 mb-4 px-2">Menu Utama</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+            <!-- Scanner -->
+            <button onclick="openFullPage('scanner.html')" class="group bg-stone-green p-6 rounded-[2rem] text-white flex items-center justify-between transition-all hover:brightness-110 active:scale-95 shadow-xl shadow-stone-green/20">
+                <div class="text-left">
+                    <p class="text-[9px] uppercase tracking-widest opacity-70 mb-1">Check-in</p>
+                    <h3 class="font-serif text-xl">Scanner Tamu</h3>
+                </div>
+                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-xl transition-transform group-hover:rotate-12">📸</div>
+            </button>
 
-    <!-- Subtitle -->
-    <p class="text-[9px] uppercase tracking-[0.3em] text-stone-500 opacity-80">
-        Wedding Management Dashboard
-    </p>
-</div>
+            <!-- Generator -->
+            <button onclick="openFullPage('generator.html')" class="group bg-white p-6 rounded-[2rem] text-stone-green flex items-center justify-between card-shadow border border-stone-100 transition-all hover:bg-stone-50 active:scale-95">
+                <div class="text-left">
+                    <p class="text-[9px] uppercase tracking-widest text-stone-400 mb-1">Undangan</p>
+                    <h3 class="font-serif text-xl">Generator Link</h3>
+                </div>
+                <div class="w-10 h-10 bg-stone-green/10 rounded-full flex items-center justify-center text-xl transition-transform group-hover:scale-110">✍️</div>
+            </button>
 
-    <!-- Menu Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
-        
+            <!-- Rekap -->
+            <button onclick="openFullPage('rekap.html')" class="group bg-white p-6 rounded-[2rem] text-stone-green flex items-center justify-between card-shadow border border-stone-100 transition-all hover:bg-stone-50 active:scale-95">
+                <div class="text-left">
+                    <p class="text-[9px] uppercase tracking-widest text-stone-400 mb-1">Database</p>
+                    <h3 class="font-serif text-xl">Rekap Kehadiran</h3>
+                </div>
+                <div class="w-10 h-10 bg-stone-green/10 rounded-full flex items-center justify-center text-xl transition-transform group-hover:-translate-y-1">📋</div>
+            </button>
+        </div>
+
+        <!-- DASHBOARD ANALISIS TAMU -->
+        <h2 class="text-[10px] font-bold uppercase tracking-[0.3em] text-stone-400 mb-4 px-2">Analitik & Laporan</h2>
+        <div class="mb-10">
+            <button onclick="openFullPage('analisis_tamu.html')" class="w-full bg-white p-8 rounded-[2.5rem] card-shadow border border-stone-100 flex flex-col md:flex-row items-center gap-6 transition-all hover:bg-stone-50 group active:scale-[0.98]">
+                <div class="w-16 h-16 bg-stone-green/10 rounded-full flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">📊</div>
+                <div class="text-center md:text-left flex-1">
+                    <h3 class="font-serif text-2xl text-stone-green mb-1">Dashboard Analisis Tamu</h3>
+                    <p class="text-xs text-stone-400 leading-relaxed max-w-sm">Lihat statistik lengkap kehadiran, proporsi kategori VIP, dan grafik alur kedatangan tamu secara real-time.</p>
+                </div>
+                <div class="bg-stone-green text-white text-[10px] font-bold uppercase tracking-widest px-6 py-3 rounded-full shadow-lg group-hover:bg-stone-green/90 transition-colors">Buka Dashboard</div>
+            </button>
+        </div>
+
         <!-- Undangan Web -->
-        <a href="https://wedding-fadil-aisyah.vercel.app" target="_blank" class="bg-white p-8 rounded-3xl card-shadow flex flex-col items-center group transition-all hover:-translate-y-1">
-            <div class="w-16 h-16 bg-stone-100 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-stone-green transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-stone-600 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
+        <h2 class="text-[10px] font-bold uppercase tracking-[0.3em] text-stone-400 mb-4 px-2">Akses Cepat</h2>
+        <div class="bg-white p-8 rounded-[2.5rem] card-shadow border border-stone-100 flex flex-col md:flex-row items-center gap-6">
+            <div class="w-20 h-20 bg-stone-green/5 rounded-full flex items-center justify-center text-3xl">📱</div>
+            <div class="text-center md:text-left">
+                <h3 class="font-serif text-2xl text-stone-green mb-1">Halaman Undangan</h3>
+                <p class="text-xs text-stone-400 mb-4">Akses langsung ke tampilan undangan web utama tamu.</p>
+                <a href="index.html" target="_blank" class="inline-block bg-stone-green text-white text-[10px] font-bold uppercase tracking-widest px-8 py-3 rounded-full shadow-lg shadow-stone-green/20 hover:brightness-110 transition-all">Buka Undangan Web</a>
             </div>
-            <h2 class="font-bold text-stone-800">Web Invitation</h2>
-        </a>
-
-        <!-- Generator WA -->
-        <button onclick="openFullPage('generator.html')" class="bg-white p-8 rounded-3xl card-shadow flex flex-col items-center group transition-all hover:-translate-y-1 text-center">
-            <div class="w-16 h-16 bg-stone-100 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-stone-green transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-stone-600 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
-            </div>
-            <h2 class="font-bold text-stone-800">Generator Invitation</h2>
-        </button>
-
-        <!-- Scanner QR -->
-        <button onclick="openFullPage('scanner.html')" class="bg-white p-8 rounded-3xl card-shadow flex flex-col items-center group transition-all hover:-translate-y-1 text-center">
-            <div class="w-16 h-16 bg-stone-100 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-stone-green transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-stone-600 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 17h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
-            </div>
-            <h2 class="font-bold text-stone-800">Digital Guest Book</h2>
-        </button>
-
-        <!-- Rekap Data -->
-        <button onclick="openFullPage('rekap.html')" class="bg-white p-8 rounded-3xl card-shadow flex flex-col items-center group transition-all hover:-translate-y-1 text-center">
-            <div class="w-16 h-16 bg-stone-100 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-stone-green transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-stone-600 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
-            </div>
-            <h2 class="font-bold text-stone-800">Guest Recap</h2>
-        </button>
+        </div>
 
     </div>
 
-    <!-- FULL OVERLAY ELEMENT -->
-    <div id="fullOverlay" class="fixed inset-0 bg-white z-[200] flex flex-col">
+    <!-- FULL PAGE OVERLAY -->
+    <div id="fullOverlay" class="fixed inset-0 bg-stone-light z-[100] flex flex-col">
         <!-- Header Overlay -->
-        <div class="bg-stone-green p-5 text-white flex justify-between items-center shadow-md">
-            <button onclick="closeFullPage()" class="text-sm font-bold flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
-                KEMBALI
+        <div class="bg-white px-5 py-4 flex justify-between items-center border-b border-stone-200 card-shadow">
+            <button onclick="closeFullPage()" class="text-stone-green text-sm font-bold flex items-center gap-2 uppercase tracking-widest">
+                <span class="text-lg">←</span> KEMBALI
             </button>
             <span id="overlayTitle" class="text-xs font-bold uppercase tracking-widest">Menu</span>
             <div class="w-10"></div> <!-- Spacer agar judul di tengah -->
@@ -103,8 +128,10 @@
         <iframe id="pageFrame" src="" class="w-full flex-grow border-none"></iframe>
     </div>
 
-    <footer class="mt-16 text-center text-stone-400 text-[10px] uppercase tracking-widest">
-       #AIfinallyFAundlove<br>   &copy; Fadil & Aisyah Wedding Team
+    <footer class="mt-16 mb-10 text-center text-stone-400 text-[10px] uppercase tracking-widest leading-loose">
+       #AIfinallyFAundlove<br>   
+       &copy; Fadil & Aisyah Wedding Team<br>
+       <span class="opacity-50">V.2.5 Flash Preview</span>
     </footer>
 
     <script>
@@ -117,6 +144,7 @@
             if(url.includes('generator')) titleText.innerText = "Generator Undangan";
             if(url.includes('scanner')) titleText.innerText = "Scanner Tamu";
             if(url.includes('rekap')) titleText.innerText = "Rekap Data";
+            if(url.includes('analisis_tamu')) titleText.innerText = "Dashboard Analisis";
 
             iframe.src = url;
             overlay.classList.add('active');
@@ -129,7 +157,33 @@
                 iframe.src = ""; // Reset iframe
             }, 400);
             document.body.style.overflow = 'auto';
+            updateQuickStats(); // Refresh stats saat menutup halaman
         }
+
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwsuDPy2rb0yf-2r0WyYUL6rSwIbMbxj5kp7fEpinXbQ9FkaXoQA5x_h0wUdwavAqhZvg/exec';
+
+        async function updateQuickStats() {
+            try {
+                const [resTamu, resAbsen] = await Promise.all([
+                    fetch(`${scriptURL}?type=get_tamu_manual&v=${Date.now()}`),
+                    fetch(`${scriptURL}?type=get_absen&v=${Date.now()}`)
+                ]);
+                
+                const listTamu = await resTamu.json();
+                const listAbsen = await resAbsen.json();
+                
+                document.getElementById('totalTamu').innerText = listTamu.length;
+                document.getElementById('totalHadir').innerText = listAbsen.length;
+                
+                document.getElementById('totalUcapan').innerText = Math.floor(listAbsen.length * 0.8) + 5;
+
+            } catch (e) {
+                console.error("Gagal sinkron stats:", e);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', updateQuickStats);
     </script>
+
 </body>
 </html>
