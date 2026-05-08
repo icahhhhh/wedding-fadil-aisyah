@@ -86,7 +86,7 @@
         <!-- DASHBOARD ANALISIS TAMU -->
         <h2 class="text-[10px] font-bold uppercase tracking-[0.3em] text-stone-400 mb-4 px-2">Analitik & Laporan</h2>
         <div class="mb-10">
-            <button onclick="openFullPage('analisis_tamu.html')" class="w-full bg-white p-8 rounded-[2.5rem] card-shadow border border-stone-100 flex flex-col md:flex-row items-center gap-6 transition-all hover:bg-stone-50 group active:scale-[0.98]">
+            <button onclick="openFullPage('dashboard-kehadiran-tamu.html')" class="w-full bg-white p-8 rounded-[2.5rem] card-shadow border border-stone-100 flex flex-col md:flex-row items-center gap-6 transition-all hover:bg-stone-50 group active:scale-[0.98]">
                 <div class="w-16 h-16 bg-stone-green/10 rounded-full flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">📊</div>
                 <div class="text-center md:text-left flex-1">
                     <h3 class="font-serif text-2xl text-stone-green mb-1">Dashboard Analisis Tamu</h3>
@@ -140,7 +140,7 @@
             if(url.includes('generator')) titleText.innerText = "Generator Undangan";
             if(url.includes('scanner')) titleText.innerText = "Scanner Tamu";
             if(url.includes('rekap')) titleText.innerText = "Rekap Data";
-            if(url.includes('analisis_tamu')) titleText.innerText = "Dashboard Analisis";
+            if(url.includes('dashboard-kehadiran-tamu')) titleText.innerText = "Dashboard Kehadiran Tamu";
 
             iframe.src = url;
             overlay.classList.add('active');
