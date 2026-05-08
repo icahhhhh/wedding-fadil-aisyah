@@ -7,57 +7,35 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --stone-green: #4a5d4a; 
-            --stone-light: #f4f1ee; 
-            --stone-dark: #1c1917;
-            --gold: #d4af37;
-        }
+        :root { --stone-green: #4a5d4a; --stone-light: #f4f1ee; --stone-dark: #1c1917; --gold: #d4af37; }
         body { font-family: 'Montserrat', sans-serif; background-color: var(--stone-light); color: var(--stone-dark); }
         .font-serif { font-family: 'Playfair Display', serif; }
-        
-        /* Glassmorphism Card */
         .glass-card { background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(74, 93, 74, 0.1); }
-        
-        /* Custom Input Styling */
-        #searchInput { 
-            -webkit-appearance: none; 
-            appearance: none; 
-            transition: all 0.3s ease;
-        }
-        #searchInput:focus { 
-            box-shadow: 0 0 0 4px rgba(74, 93, 74, 0.1);
-        }
-
-        /* Badge Styling */
-        .badge-vvip { background-color: #C0C0C0; color: #1c1917; }
+        #searchInput { -webkit-appearance: none; appearance: none; transition: all 0.3s ease; }
+        #searchInput:focus { box-shadow: 0 0 0 4px rgba(74, 93, 74, 0.1); }
+        .badge-vvip { background-color: #1c1917; color: white; }
         .badge-vip { background-color: var(--gold); color: white; }
         .badge-reg { background-color: var(--stone-green); color: white; }
-
-        /* Animation */
         .fade-up { animation: fadeUp 0.5s ease-out forwards; }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Hide scrollbar */
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         ::-webkit-scrollbar { width: 0px; background: transparent; }
     </style>
 </head>
 <body class="p-4 md:p-10 flex flex-col items-center min-h-screen pb-20">
 
     <div class="w-full max-w-md fade-up">
-        <!-- Header -->
+        <!-- Header with Multi-Navigation -->
         <header class="flex flex-col items-center gap-6 mb-8 px-2">
-            <!-- Navigation Row -->
-            <div class="w-full flex justify-start">
+            <div class="w-full flex justify-between items-center">
                 <a href="scanner.html" class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-5 py-2.5 rounded-full shadow-sm border border-stone-200 hover:shadow-md transition-all active:scale-95">
                     <span class="text-xs">←</span> Scanner
                 </a>
+
+                <a href="rekap.html" class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-5 py-2.5 rounded-full shadow-sm border border-stone-200 hover:shadow-md transition-all active:scale-95">
+                    Recap <span class="text-xs">→</span>
+                </a>
             </div>
 
-            <!-- Title Row -->
             <div class="text-center">
                 <p class="text-[10px] font-bold text-stone-400 uppercase tracking-[0.4em] mb-2">Receptionist Tools</p>
                 <h1 class="font-serif text-3xl text-[#4a5d4a] font-bold">Guest Book</h1>
@@ -78,14 +56,13 @@
 
         <!-- Guest List Container -->
         <div id="guestList" class="space-y-4">
-            <!-- Loading state -->
             <div class="flex flex-col items-center py-20 opacity-30">
                 <div class="w-8 h-8 border-2 border-stone-green border-t-transparent rounded-full animate-spin mb-4"></div>
                 <p class="text-[10px] font-bold uppercase tracking-widest">Loading Database...</p>
             </div>
         </div>
 
-        <!-- Empty State & Manual Add -->
+        <!-- Empty State -->
         <div id="emptySearch" class="hidden text-center py-12 px-6 glass-card rounded-[2.5rem] border-dashed border-2 border-stone-200">
             <div class="text-3xl mb-3">📖</div>
             <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-6 leading-relaxed">Name not found.<br>Register as new guest?</p>
@@ -101,51 +78,67 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwsuDPy2rb0yf-2r0WyYUL6rSwIbMbxj5kp7fEpinXbQ9FkaXoQA5x_h0wUdwavAqhZvg/exec';
         const STATUS_KEY = 'bukutamu_local_status';
-        
         let allTamu = [];
         let localStatus = JSON.parse(localStorage.getItem(STATUS_KEY)) || {};
 
+        /**
+         * Sinkronisasi Ganda: Mengambil daftar tamu DAN daftar kehadiran asli
+         */
         async function loadTamu() {
             try {
-                const response = await fetch(`${scriptURL}?type=get_tamu_manual&v=${Date.now()}`);
-                allTamu = await response.json();
+                // Mengambil dua data secara paralel untuk kecepatan
+                const [resMaster, resAbsen] = await Promise.all([
+                    fetch(`${scriptURL}?type=get_tamu_manual&v=${Date.now()}`),
+                    fetch(`${scriptURL}?type=get_absen&v=${Date.now()}`)
+                ]);
+
+                allTamu = await resMaster.json();
+                const dataAbsen = await resAbsen.json();
+
+                // Masukkan tamu yang sudah ada di rekap absen ke dalam localStatus
+                dataAbsen.forEach(item => {
+                    const key = (item.nama || "").toLowerCase().trim();
+                    if (key) localStatus[key] = true;
+                });
+
+                // Simpan status sinkronisasi ke local storage agar tidak hilang saat refresh
+                localStorage.setItem(STATUS_KEY, JSON.stringify(localStatus));
+
                 renderTamu(allTamu);
                 updateResultCount();
-            } catch (error) {
-                console.error("Fetch error:", error);
-                showToast("Connection Sync Failed");
+            } catch (error) { 
+                console.error("Gagal sinkronisasi:", error); 
+                showToast("Sync Failed"); 
             }
         }
 
         function renderTamu(data) {
             const container = document.getElementById('guestList');
             container.innerHTML = '';
-
+            
             data.forEach(tamu => {
                 const key = tamu.nama.toLowerCase().trim();
+                // Tamu dianggap hadir jika ada di localStatus (hasil klik manual atau hasil sinkron rekap)
                 const isHadir = localStatus[key] === true;
                 
                 let badgeClass = 'badge-reg';
                 if (tamu.status.includes('VVIP')) badgeClass = 'badge-vvip';
                 else if (tamu.status.includes('VIP')) badgeClass = 'badge-vip';
-
+                
                 const card = document.createElement('div');
                 card.className = "guest-card glass-card rounded-[2rem] p-6 flex justify-between items-center transition-all duration-300";
                 if(isHadir) card.classList.add('opacity-60', 'grayscale');
-
+                
                 card.innerHTML = `
                     <div class="flex-1 pr-4">
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="${badgeClass} px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-widest">${tamu.status}</span>
-                        </div>
+                        <div class="flex items-center gap-2 mb-1"><span class="${badgeClass} px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-widest">${tamu.status}</span></div>
                         <h3 class="text-sm font-bold text-stone-dark uppercase tracking-tight">${tamu.nama}</h3>
                     </div>
                     <button onclick="markHadir('${escHtml(tamu.nama)}', '${tamu.status}')" 
                             class="flex-shrink-0 min-w-[100px] py-3 px-4 rounded-xl text-[9px] font-bold uppercase tracking-widest transition-all active:scale-95 
-                            ${isHadir ? 'bg-stone-100 text-stone-400 border border-transparent cursor-not-allowed' : 'bg-white text-stone-green border border-stone-green shadow-sm hover:bg-stone-50'}">
+                            ${isHadir ? 'bg-stone-100 text-stone-400 cursor-not-allowed' : 'bg-white text-stone-green border border-stone-green hover:bg-stone-50'}">
                         ${isHadir ? 'PRESENT' : 'CHECK-IN'}
-                    </button>
-                `;
+                    </button>`;
                 container.appendChild(card);
             });
         }
@@ -155,13 +148,15 @@
             if (localStatus[key]) return;
 
             localStatus[key] = true;
-            saveLocal();
-            
+            localStorage.setItem(STATUS_KEY, JSON.stringify(localStatus));
             showToast(`${nama} Checked-in`);
-            
-            const finalURL = `${scriptURL}?type=absen&nama=${encodeURIComponent(nama)}&status=${encodeURIComponent(status)}&kode=MANUAL`;
-            fetch(finalURL, { method: 'GET', mode: 'no-cors' });
 
+            // Kirim data ke Google Sheets
+            fetch(`${scriptURL}?type=absen&nama=${encodeURIComponent(nama)}&status=${encodeURIComponent(status)}&kode=MANUAL`, { method: 'GET', mode: 'no-cors' });
+            
+            // Hapus cache rekap agar rekap terpaksa mengambil data terbaru saat dibuka
+            localStorage.removeItem('rekap_tamu'); 
+            
             renderTamu(allTamu);
             filterTamu(document.getElementById('searchInput').value);
         }
@@ -169,61 +164,30 @@
         function filterTamu(query) {
             query = query.toLowerCase().trim();
             const cards = document.querySelectorAll('.guest-card');
-            let visibleCount = 0;
-
+            let visible = 0;
             cards.forEach(card => {
                 const name = card.querySelector('h3').textContent.toLowerCase();
-                if (name.includes(query)) {
-                    card.classList.remove('hidden');
-                    visibleCount++;
-                } else {
-                    card.classList.add('hidden');
-                }
+                if (name.includes(query)) { card.classList.remove('hidden'); visible++; } else { card.classList.add('hidden'); }
             });
-
-            const emptyBox = document.getElementById('emptySearch');
-            if (visibleCount === 0 && query !== "") {
-                emptyBox.classList.remove('hidden');
-                document.getElementById('guestList').classList.add('hidden');
-            } else {
-                emptyBox.classList.add('hidden');
-                document.getElementById('guestList').classList.remove('hidden');
-            }
-            updateResultCount(query ? visibleCount : null);
+            document.getElementById('emptySearch').classList.toggle('hidden', visible > 0 || !query);
+            updateResultCount(query ? visible : null);
         }
 
         function simpanTamuManual() {
-            const namaTamu = document.getElementById('searchInput').value.trim();
-            if (!namaTamu) return;
-
-            const confirmAdd = confirm(`Register "${namaTamu}" as a guest?`);
-            if (confirmAdd) {
-                markHadir(namaTamu, 'Reguler');
-                document.getElementById('searchInput').value = '';
-                filterTamu('');
-                showToast("Guest Added Successfully");
-            }
+            const nama = document.getElementById('searchInput').value.trim();
+            if (nama && confirm(`Register "${nama}"?`)) { markHadir(nama, 'Reguler'); document.getElementById('searchInput').value = ''; filterTamu(''); }
         }
 
         function updateResultCount(count) {
-            const el = document.getElementById('resultCount');
-            el.textContent = count != null 
-                ? `${count} Guest(s) Found`
-                : `${allTamu.length} Registered Guests`;
+            document.getElementById('resultCount').textContent = count != null ? `${count} Guest(s) Found` : `${allTamu.length} Registered Guests`;
         }
 
-        function saveLocal() { localStorage.setItem(STATUS_KEY, JSON.stringify(localStatus)); }
         function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-
+        
         function showToast(msg) {
             const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.style.opacity = "1";
-            t.style.transform = "translate(-50%, 0)";
-            setTimeout(() => {
-                t.style.opacity = "0";
-                t.style.transform = "translate(-50%, 1rem)";
-            }, 3000);
+            t.textContent = msg; t.style.opacity = "1"; t.style.transform = "translate(-50%, 0)";
+            setTimeout(() => { t.style.opacity = "0"; t.style.transform = "translate(-50%, 1rem)"; }, 3000);
         }
 
         document.addEventListener('DOMContentLoaded', loadTamu);
