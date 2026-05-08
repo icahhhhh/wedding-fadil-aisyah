@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisis Kehadiran Tamu | Fadil & Aisyah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        stone: { green: '#4a5d4a', light: '#f4f1ee', dark: '#1c1917', border: '#e0e2db' },
+                        gold: '#d4af37'
+                    },
+                    fontFamily: { serif: ['"Playfair Display"', 'serif'], sans: ['Montserrat', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f4f1ee; color: #1c1917; }
+        .glass-card { background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(74, 93, 74, 0.1); backdrop-filter: blur(8px); }
+        .chart-container { position: relative; width: 100%; max-width: 800px; margin: 0 auto; height: 300px; max-height: 400px; }
+        @media (min-width: 768px) { .chart-container { height: 350px; } }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen">
+
+<!-- Chosen Palette: Stone Green Harmony (Primary: #4a5d4a, Accent: #d4af37, BG: #f4f1ee) -->
+<!-- Application Structure Plan: Dashboard ini menggunakan pendekatan arsitektur informasi "Top-Down". Dimulai dengan ringkasan eksekutif (KPIs) untuk pemahaman instan, diikuti oleh visualisasi analitis (Charts) untuk melihat pola, dan diakhiri dengan tabel data detail (Drill-down). Struktur ini dipilih agar admin dapat dengan cepat memantau kapasitas ruangan sebelum melihat detail nama tamu secara spesifik. Data ditarik secara paralel dari dua endpoint Apps Script yang berbeda (get_tamu_manual dan get_absen) kemudian digabungkan berdasarkan kunci nama tamu di sisi klien. -->
+<!-- Visualization & Content Choices: 
+1. Ringkasan KPI -> Goal: Info Cepat -> Metode: Kartu Statistik Interaktif -> Justification: Memberikan angka krusial (Total, Hadir, VIP) dalam satu lirikan.
+2. Komposisi Kategori -> Goal: Bandingkan Proporsi -> Metode: Donut Chart (Chart.js) -> Justification: Efektif menunjukkan distribusi VIP vs Reguler.
+3. Alur Kedatangan -> Goal: Deteksi Tren Waktu -> Metode: Bar Chart (Chart.js) -> Justification: Menunjukkan jam sibuk (peak hours) kehadiran tamu.
+4. Daftar Rinci -> Goal: Organisasi Detail -> Metode: Tabel dengan Filter Interaktif -> Justification: Memungkinkan pencarian spesifik tamu dengan status kehadiran visual.
+CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16">
+    
+    <!-- HEADER SECTION -->
+    <header class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div>
+            <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-stone-500 mb-2">Laporan Analisis Acara</p>
+            <h1 class="font-serif text-3xl md:text-4xl text-stone-green">Analisis Kehadiran Tamu</h1>
+            <p class="mt-2 text-xs text-stone-600 max-w-xl leading-relaxed">
+                Halaman ini mengintegrasikan data tamu terdaftar dari Buku Tamu Manual dengan rekaman kehadiran dari Scanner. Gunakan visualisasi di bawah untuk memantau trafik tamu secara efisien.
+            </p>
+        </div>
+        <button onclick="fetchAllData()" class="flex items-center gap-2 bg-stone-green text-white px-5 py-3 rounded-2xl shadow-lg hover:shadow-xl transition-all active:scale-95">
+            <span id="refreshIcon" class="text-sm">&#8635;</span>
+            <span class="text-[10px] font-bold uppercase tracking-widest">Sinkronisasi Data</span>
+        </button>
+    </header>
+
+    <!-- KPI SECTION -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="glass-card rounded-[2rem] p-6 text-center border border-stone-border">
+            <p class="text-[9px] font-bold uppercase tracking-widest text-stone-400 mb-2">Terdaftar</p>
+            <p class="text-3xl font-serif text-stone-dark" id="kpi-total">0</p>
+        </div>
+        <div class="glass-card rounded-[2rem] p-6 text-center border border-stone-border">
+            <p class="text-[9px] font-bold uppercase tracking-widest text-stone-400 mb-2">Kehadiran</p>
+            <p class="text-3xl font-serif text-stone-green" id="kpi-hadir">0</p>
+        </div>
+        <div class="glass-card rounded-[2rem] p-6 text-center border border-stone-border">
+            <p class="text-[9px] font-bold uppercase tracking-widest text-stone-400 mb-2">VIP Hadir</p>
+            <p class="text-3xl font-serif text-gold" id="kpi-vip">0</p>
+        </div>
+        <div class="glass-card rounded-[2rem] p-6 text-center border border-stone-border">
+            <p class="text-[9px] font-bold uppercase tracking-widest text-stone-400 mb-2">Tingkat Absensi</p>
+            <p class="text-3xl font-serif text-stone-dark" id="kpi-rate">0%</p>
+        </div>
+    </section>
+
+    <!-- CHARTS SECTION -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div class="glass-card rounded-[2.5rem] p-8">
+            <div class="mb-6">
+                <h2 class="font-serif text-lg text-stone-green">Kategori Undangan</h2>
+                <p class="text-[10px] text-stone-400 uppercase tracking-widest mt-1">Distribusi VIP vs Reguler</p>
+            </div>
+            <div class="chart-container">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-[2.5rem] p-8">
+            <div class="mb-6">
+                <h2 class="font-serif text-lg text-stone-green">Alur Kedatangan</h2>
+                <p class="text-[10px] text-stone-400 uppercase tracking-widest mt-1">Tren Presensi per Interval Waktu</p>
+            </div>
+            <div class="chart-container">
+                <canvas id="timeChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- DATA TABLE SECTION -->
+    <section class="glass-card rounded-[2.5rem] p-6 md:p-10">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+                <h2 class="font-serif text-xl text-stone-green">Eksplorasi Detail Tamu</h2>
+                <p class="text-xs text-stone-500 mt-1 italic">Menyinkronkan data Buku Tamu dan Scanner...</p>
+            </div>
+            <div class="flex gap-2 p-1 bg-stone-100 rounded-xl border border-stone-200">
+                <button onclick="renderTable('semua')" id="btn-semua" class="filter-btn px-4 py-2 rounded-lg text-[9px] font-bold uppercase tracking-widest bg-white shadow-sm text-stone-green transition-all">Semua</button>
+                <button onclick="renderTable('hadir')" id="btn-hadir" class="filter-btn px-4 py-2 rounded-lg text-[9px] font-bold uppercase tracking-widest text-stone-400 transition-all">Hadir</button>
+                <button onclick="renderTable('belum')" id="btn-belum" class="filter-btn px-4 py-2 rounded-lg text-[9px] font-bold uppercase tracking-widest text-stone-400 transition-all">Belum Datang</button>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="border-b border-stone-200">
+                        <th class="py-4 px-3 text-[10px] font-bold uppercase tracking-widest text-stone-400">Nama Tamu</th>
+                        <th class="py-4 px-3 text-[10px] font-bold uppercase tracking-widest text-stone-400">Status</th>
+                        <th class="py-4 px-3 text-[10px] font-bold uppercase tracking-widest text-stone-400">Kehadiran</th>
+                        <th class="py-4 px-3 text-[10px] font-bold uppercase tracking-widest text-stone-400">Jam Scan</th>
+                    </tr>
+                </thead>
+                <tbody id="guestBody" class="text-sm">
+                    <tr><td colspan="4" class="py-10 text-center text-stone-300">Memuat data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</div>
+
+<!-- Loading Overlay -->
+<div id="loader" class="fixed inset-0 bg-stone-light/80 backdrop-blur-md z-50 flex flex-col items-center justify-center transition-opacity duration-500">
+    <div class="w-12 h-12 border-4 border-stone-green/20 border-t-stone-green rounded-full pulse mb-4"></div>
+    <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-stone-green">Sinkronisasi Basis Data</p>
+</div>
+
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwsuDPy2rb0yf-2r0WyYUL6rSwIbMbxj5kp7fEpinXbQ9FkaXoQA5x_h0wUdwavAqhZvg/exec';
+    
+    let allGuests = []; // Gabungan dari buku tamu dan rekap kehadiran
+    let categoryChartInstance = null;
+    let timeChartInstance = null;
+    let currentFilter = 'semua';
+
+    // Inisialisasi Chart.js defaults
+    Chart.defaults.font.family = "'Montserrat', sans-serif";
+    Chart.defaults.color = '#78716c';
+
+    async function fetchAllData() {
+        document.getElementById('loader').style.opacity = '1';
+        document.getElementById('loader').style.pointerEvents = 'auto';
+        document.getElementById('refreshIcon').classList.add('pulse');
+
+        try {
+            // Paralel Fetch untuk efisiensi
+            const [resTamu, resAbsen] = await Promise.all([
+                fetch(`${scriptURL}?type=get_tamu_manual&v=${Date.now()}`),
+                fetch(`${scriptURL}?type=get_absen&v=${Date.now()}`)
+            ]);
+
+            const listTamu = await resTamu.json();
+            const listAbsen = await resAbsen.json();
+
+            // Mapping Absensi untuk lookup cepat
+            const absenMap = new Map();
+            listAbsen.forEach(item => {
+                const key = (item.nama || "").trim().toLowerCase();
+                absenMap.set(key, item.waktu);
+            });
+
+            // Penggabungan Data
+            allGuests = listTamu.map(tamu => {
+                const key = (tamu.nama || "").trim().toLowerCase();
+                return {
+                    nama: tamu.nama,
+                    status: (tamu.status || 'Reguler'),
+                    hadir: absenMap.has(key),
+                    waktu: absenMap.get(key) || '-'
+                };
+            });
+
+            updateUI();
+            
+        } catch (error) {
+            console.error("Gagal mengambil data:", error);
+            alert("Terjadi kesalahan koneksi. Pastikan internet aktif.");
+        } finally {
+            document.getElementById('loader').style.opacity = '0';
+            document.getElementById('loader').style.pointerEvents = 'none';
+            document.getElementById('refreshIcon').classList.remove('pulse');
+        }
+    }
+
+    function updateUI() {
+        const total = allGuests.length;
+        const hadir = allGuests.filter(g => g.hadir).length;
+        const vipHadir = allGuests.filter(g => g.hadir && (g.status.includes('VIP'))).length;
+        const rate = total > 0 ? Math.round((hadir / total) * 100) : 0;
+
+        document.getElementById('kpi-total').innerText = total;
+        document.getElementById('kpi-hadir').innerText = hadir;
+        document.getElementById('kpi-vip').innerText = vipHadir;
+        document.getElementById('kpi-rate').innerText = rate + '%';
+
+        renderCharts(allGuests);
+        renderTable(currentFilter);
+    }
+
+    function renderCharts(data) {
+        // --- 1. Category Chart (Donut) ---
+        const catCounts = { VVIP: 0, VIP: 0, Reguler: 0 };
+        data.forEach(g => {
+            if (g.status.includes('VVIP')) catCounts.VVIP++;
+            else if (g.status.includes('VIP')) catCounts.VIP++;
+            else catCounts.Reguler++;
+        });
+
+        const ctxCat = document.getElementById('categoryChart').getContext('2d');
+        if (categoryChartInstance) categoryChartInstance.destroy();
+        
+        categoryChartInstance = new Chart(ctxCat, {
+            type: 'doughnut',
+            data: {
+                labels: ['VVIP', 'VIP', 'Reguler'],
+                datasets: [{
+                    data: [catCounts.VVIP, catCounts.VIP, catCounts.Reguler],
+                    backgroundColor: ['#1c1917', '#d4af37', '#4a5d4a'],
+                    borderWidth: 0,
+                    hoverOffset: 15
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, boxWidth: 8 } }
+                }
+            }
+        });
+
+        // --- 2. Time Chart (Bar) ---
+        const hourData = { "09-10": 0, "10-11": 0, "11-12": 0, "12-13": 0, "13+": 0 };
+        data.filter(g => g.hadir && g.waktu !== '-').forEach(g => {
+            const h = parseInt(g.waktu.split(':')[0]);
+            if (h < 10) hourData["09-10"]++;
+            else if (h === 10) hourData["10-11"]++;
+            else if (h === 11) hourData["11-12"]++;
+            else if (h === 12) hourData["12-13"]++;
+            else hourData["13+"]++;
+        });
+
+        const ctxTime = document.getElementById('timeChart').getContext('2d');
+        if (timeChartInstance) timeChartInstance.destroy();
+
+        timeChartInstance = new Chart(ctxTime, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(hourData),
+                datasets: [{
+                    label: 'Kedatangan',
+                    data: Object.values(hourData),
+                    backgroundColor: '#4a5d4a',
+                    borderRadius: 8,
+                    barPercentage: 0.6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#eee' }, ticks: { stepSize: 1 } },
+                    x: { grid: { display: false } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    function renderTable(filter) {
+        currentFilter = filter;
+        const body = document.getElementById('guestBody');
+        body.innerHTML = '';
+
+        // Update UI Button
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('bg-white', 'shadow-sm', 'text-stone-green');
+            btn.classList.add('text-stone-400');
+        });
+        document.getElementById(`btn-${filter}`).classList.add('bg-white', 'shadow-sm', 'text-stone-green');
+
+        let displayData = allGuests;
+        if (filter === 'hadir') displayData = allGuests.filter(g => g.hadir);
+        if (filter === 'belum') displayData = allGuests.filter(g => !g.hadir);
+
+        if (displayData.length === 0) {
+            body.innerHTML = '<tr><td colspan="4" class="py-10 text-center text-stone-300 italic">Tidak ada data untuk filter ini.</td></tr>';
+            return;
+        }
+
+        displayData.forEach(g => {
+            let badgeClass = 'text-stone-400 bg-stone-100';
+            if (g.status.includes('VVIP')) badgeClass = 'text-stone-light bg-stone-dark';
+            else if (g.status.includes('VIP')) badgeClass = 'text-white bg-gold';
+            
+            const tr = document.createElement('tr');
+            tr.className = "border-b border-stone-100 hover:bg-stone-50/50 transition-colors";
+            tr.innerHTML = `
+                <td class="py-4 px-3 font-semibold text-stone-800">${g.nama}</td>
+                <td class="py-4 px-3"><span class="px-2 py-1 rounded text-[9px] font-bold uppercase tracking-widest ${badgeClass}">${g.status}</span></td>
+                <td class="py-4 px-3 text-xs font-bold ${g.hadir ? 'text-green-600' : 'text-stone-300'}">${g.hadir ? '&#10003; HADIR' : '&#9472;'}</td>
+                <td class="py-4 px-3 text-xs font-mono text-stone-400">${g.waktu}</td>
+            `;
+            body.appendChild(tr);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchAllData);
+</script>
+
+</body>
+</html>
