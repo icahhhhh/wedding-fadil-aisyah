@@ -2,316 +2,313 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator VIP | Fadil & Aisyah</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Generator Undangan | Fadil & Aisyah</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        stone: {
+                            green: '#4a5d4a',
+                            light: '#f4f1ee',
+                            dark: '#1c1917',
+                            border: '#e0e2db'
+                        },
+                        gold: '#d4af37'
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['Montserrat', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root { --primary: #5c6351; --accent: #8c947e; --bg: #f4f5f0; --text: #333; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 15px; }
-        .container { background: white; max-width: 100%; margin: 0 auto; padding: 25px 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e0e2db; box-sizing: border-box; }
-        h1 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--primary); text-align: center; margin: 0 0 5px 0; }
-        .subtitle { text-align: center; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 30px; }
-        .input-section { margin-bottom: 20px; }
-        label { display: block; font-size: 0.7rem; font-weight: bold; margin-bottom: 6px; color: var(--primary); text-transform: uppercase; }
-        input, textarea { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 8px; background: #fafafa; font-family: inherit; font-size: 16px; box-sizing: border-box; outline: none; }
-        button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 8px; letter-spacing: 1px; cursor: pointer; font-weight: bold; font-size: 1rem; }
-        .guest-card { display: flex; flex-direction: column; gap: 10px; padding: 15px; background: #fff; border: 1px solid #eee; border-radius: 8px; margin-top: 15px; }
-        .guest-name { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--primary); }
-        .vip-badge { background: #d4a373; color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px; }
-        .btn-wa { background: #25D366; color: white; text-decoration: none; padding: 12px; text-align: center; font-size: 0.9rem; font-weight: bold; border-radius: 6px; display: block; }
-        .vip-option { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--primary); margin-top: 5px; }
-        .vip-option input { width: auto; }
+        body { background-color: #f4f1ee; color: #1c1917; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(74, 93, 74, 0.1); }
+        
+        .fade-up { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-        /* === DUPLIKAT STYLES === */
-        .duplicate-warning {
-            background: #fff3cd;
-            border: 1px solid #ffc107;
-            border-radius: 8px;
-            padding: 12px 15px;
-            margin-top: 15px;
-            font-size: 0.8rem;
-            color: #856404;
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f4f1ee; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        textarea { 
+            background-color: #f9f8f6 !important; 
+            border: 1px solid #e5e7eb !important;
+            transition: all 0.2s ease;
         }
-        .duplicate-warning strong { display: block; margin-bottom: 6px; font-size: 0.85rem; }
-        .duplicate-warning ul { margin: 0; padding-left: 18px; }
-        .card-duplicate {
-            border: 2px solid #ffc107 !important;
-            background: #fffdf0 !important;
-            position: relative;
+        textarea:focus { 
+            border-color: #4a5d4a !important; 
+            background-color: #ffffff !important;
+            box-shadow: 0 0 0 4px rgba(74, 93, 74, 0.05);
         }
-        .badge-duplicate {
-            background: #ffc107;
-            color: #333;
-            font-size: 0.6rem;
-            font-weight: bold;
-            padding: 2px 7px;
-            border-radius: 4px;
-            margin-left: 6px;
-            vertical-align: middle;
-        }
-        .card-sent-before {
-            border: 2px solid #e74c3c !important;
-            background: #fff8f8 !important;
-        }
-        .badge-sent {
-            background: #e74c3c;
-            color: white;
-            font-size: 0.6rem;
-            font-weight: bold;
-            padding: 2px 7px;
-            border-radius: 4px;
-            margin-left: 6px;
-            vertical-align: middle;
-        }
-        .overlay-sent {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255,255,255,0.55);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: bold;
-            color: #e74c3c;
-            pointer-events: none;
-            letter-spacing: 1px;
-        }
-        .btn-force {
-            background: #e74c3c !important;
-            font-size: 0.65rem !important;
-            padding: 4px 8px !important;
-            width: auto !important;
-            border-radius: 4px;
-            margin-top: 4px;
-            cursor: pointer;
-            color: white;
-            border: none;
-        }
-        #loadingCheck {
-            text-align: center;
-            padding: 10px;
-            color: var(--accent);
-            font-size: 0.75rem;
-            display: none;
+
+        .select-status {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234a5d4a'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1em;
         }
     </style>
 </head>
-<body>
+<body class="font-sans antialiased min-h-screen p-4 md:p-10 flex flex-col items-center">
 
-<div class="container">
-    <div style="text-align: right; margin-bottom: 20px;">
-        <a href="rekap generator.html" style="text-decoration: none; font-size: 0.7rem; color: var(--primary); border: 1px solid var(--primary); padding: 5px 10px; border-radius: 4px;">
-            LIHAT REKAP TERKIRIM →
+<div class="w-full max-w-md">
+    <!-- Header -->
+    <header class="mb-8 flex justify-between items-end px-2">
+        <div>
+            <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-stone-500 mb-1">Tools Admin</p>
+            <h1 class="font-serif text-3xl text-stone-green font-bold">Generator</h1>
+        </div>
+        <a href="rekap generator.html" class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-4 py-2.5 rounded-full shadow-sm border border-stone-border hover:shadow-md transition-all active:scale-95">
+            &#9782; Rekap
         </a>
-    </div>
-    <h1>Fadil & Aisyah</h1>
-    <div class="subtitle">Invitation Generator VIP</div>
+    </header>
 
-    <div class="input-section">
-        <label>URL Undangan Utama</label>
-        <input type="text" id="baseUrl" value="https://wedding-fadil-aisyah.vercel.app">
-    </div>
+    <!-- Main Input Form -->
+    <main class="glass-card rounded-[2.5rem] p-8 md:p-10 shadow-xl shadow-stone-green/5 mb-8">
+        <div class="space-y-6">
+            <div class="fade-up">
+                <label class="block text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-3 ml-1">Daftar Nama Tamu</label>
+                <textarea id="bulkNames" rows="8" placeholder="Masukkan nama tamu per baris...&#10;Contoh:&#10;Bpk. Junaidi&#10;Siska & Partner" 
+                    class="w-full px-5 py-4 rounded-3xl outline-none text-sm font-medium text-stone-dark resize-none custom-scrollbar shadow-inner"></textarea>
+                <div class="flex items-center gap-2 mt-3 ml-1">
+                    <div id="syncIndicator" class="w-1.5 h-1.5 bg-stone-400 rounded-full"></div>
+                    <p id="syncText" class="text-[9px] text-stone-400 font-medium leading-relaxed uppercase tracking-wider">Menyinkronkan data...</p>
+                </div>
+            </div>
 
-    <div class="input-section">
-        <label>Daftar Tamu (Nama, NomorWA)</label>
-        <textarea id="dataInput" rows="5" placeholder="Icah, 6285653320232&#10;Budi, 6281234567890"></textarea>
-    </div>
+            <button onclick="processGeneration()" id="btnGenerate" class="w-full bg-stone-green text-white font-bold py-5 rounded-[1.5rem] shadow-xl shadow-stone-green/20 text-[11px] uppercase tracking-[0.2em] mt-4 hover:brightness-110 active:scale-[0.97] transition-all flex justify-center items-center gap-3">
+                Buat Link Undangan
+            </button>
+        </div>
+    </main>
 
-    <button onclick="generateLinks()">GENERATE LIST</button>
-    <div id="loadingCheck">⏳ Mengecek data duplikat dari Sheets...</div>
-    <div id="resultList"></div>
+    <!-- Result Area -->
+    <section id="resultBox" class="hidden space-y-4">
+        <div class="flex justify-between items-center px-4 mb-2">
+            <h3 class="text-[10px] font-bold uppercase tracking-[0.3em] text-stone-400">Hasil Generator</h3>
+        </div>
+        
+        <div id="bulkList" class="space-y-4">
+            <!-- Items injected here -->
+        </div>
+    </section>
 </div>
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-stone-dark/95 text-white px-8 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-[0.2em] opacity-0 transition-all transform translate-y-4 pointer-events-none z-50 shadow-2xl backdrop-blur-md"></div>
 
 <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbwsuDPy2rb0yf-2r0WyYUL6rSwIbMbxj5kp7fEpinXbQ9FkaXoQA5x_h0wUdwavAqhZvg/exec';
+    const baseUrl = "https://wedding-fadil-aisyah.vercel.app/";
+    let generatedItems = [];
+    let existingNames = new Set(); 
 
-    // Cache list nama yang sudah pernah dikirim (dari Sheets)
-    let namaYangSudahDikirim = [];
-
-    // Ambil daftar nama terkirim dari Sheets
-    async function fetchNamaTerkirim() {
+    async function fetchExistingData() {
         try {
-            const res = await fetch(`${scriptURL}?type=get_list`);
-            const data = await res.json();
-            // Normalisasi: lowercase + trim untuk perbandingan
-            namaYangSudahDikirim = data.map(item => item.nama.trim().toLowerCase());
+            const response = await fetch(`${scriptURL}?type=get_list&v=${Date.now()}`);
+            const data = await response.json();
+            if (Array.isArray(data)) {
+                existingNames = new Set(data.map(item => (item.nama || "").trim().toLowerCase()));
+                document.getElementById('syncIndicator').classList.replace('bg-stone-400', 'bg-green-500');
+                document.getElementById('syncText').innerText = "Data tersinkronisasi";
+            }
         } catch (e) {
-            namaYangSudahDikirim = [];
+            console.error("Gagal sinkron data awal:", e);
+            document.getElementById('syncText').innerText = "Gagal cek duplikat";
         }
     }
 
-    async function generateLinks() {
-        const url = document.getElementById('baseUrl').value.trim();
-        const input = document.getElementById('dataInput').value.trim();
-        const container = document.getElementById('resultList');
-        const loadingEl = document.getElementById('loadingCheck');
+    document.addEventListener('DOMContentLoaded', fetchExistingData);
 
-        if (!input) return alert("Masukkan daftar tamu!");
+    async function processGeneration() {
+        const bulkText = document.getElementById('bulkNames').value.trim();
+        if (!bulkText) return showToast("⚠️ Masukkan Daftar Nama");
 
-        container.innerHTML = '';
-        loadingEl.style.display = 'block';
+        const names = bulkText.split('\n').map(n => n.trim()).filter(n => n !== "");
+        const btn = document.getElementById('btnGenerate');
+        
+        btn.disabled = true;
+        btn.innerText = "Processing...";
+        
+        generatedItems = names.map((name, index) => ({
+            id: index,
+            name: name,
+            status: 'Reguler',
+            wa: '' 
+        }));
 
-        // Ambil data terkirim dari Sheets dulu
-        await fetchNamaTerkirim();
-        loadingEl.style.display = 'none';
+        renderBulkList();
+        
+        document.getElementById('resultBox').classList.remove('hidden');
+        document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth' });
+        
+        btn.disabled = false;
+        btn.innerText = "Buat Link Undangan";
+        showToast(`✨ ${names.length} Nama Berhasil Dimuat`);
+    }
 
-        const lines = input.split('\n').filter(l => l.trim() !== '');
+    function renderBulkList() {
+        const listContainer = document.getElementById('bulkList');
+        listContainer.innerHTML = '';
 
-        // === CEK DUPLIKAT DALAM INPUT SENDIRI ===
-        const namaList = [];
-        const duplikatDalamInput = [];
-        lines.forEach(line => {
-            const nama = (line.split(',')[0] || '').trim().toLowerCase();
-            if (nama) {
-                if (namaList.includes(nama)) {
-                    if (!duplikatDalamInput.includes(nama)) duplikatDalamInput.push(nama);
-                } else {
-                    namaList.push(nama);
-                }
-            }
-        });
-
-        // Tampilkan warning duplikat dalam input
-        if (duplikatDalamInput.length > 0) {
-            container.innerHTML += `
-                <div class="duplicate-warning">
-                    <strong>⚠️ Nama duplikat ditemukan dalam daftar input:</strong>
-                    <ul>${duplikatDalamInput.map(n => `<li><b>${n}</b></li>`).join('')}</ul>
-                    <span style="font-size:0.75rem;">Kartu duplikat ditandai kuning. Kirim hanya satu.</span>
-                </div>`;
-        }
-
-        let html = '';
-        const namaCountDalamInput = {};
-        lines.forEach(line => {
-            const nama = (line.split(',')[0] || '').trim().toLowerCase();
-            if (nama) namaCountDalamInput[nama] = (namaCountDalamInput[nama] || 0) + 1;
-        });
-
-        lines.forEach((line, index) => {
-            const parts = line.split(',');
-            const nama = parts[0] ? parts[0].trim() : "";
-            if (nama === "") return;
-
-            let rawWa = parts[1] ? parts[1].trim().replace(/\D/g, '') : "";
-            if (rawWa.startsWith('0')) { rawWa = '62' + rawWa.substring(1); }
-
-            const namaLower = nama.toLowerCase();
-            const isDuplikatInput = namaCountDalamInput[namaLower] > 1;
-            const isSudahDikirim = namaYangSudahDikirim.includes(namaLower);
-
-            let cardClass = '';
-            let badge = '';
-            let overlayHTML = '';
-            let warningBtnHTML = '';
-
-            if (isSudahDikirim) {
-                cardClass = 'card-sent-before';
-                badge = `<span class="badge-sent">SUDAH DIKIRIM</span>`;
-                overlayHTML = `<div class="overlay-sent">✓ Sudah pernah dikirim</div>`;
-                warningBtnHTML = `<div style="margin-top:4px;">
-                    <button class="btn-force" onclick="forceKirim('${nama}', '${rawWa}', ${index}, 'wa')">⚠️ Kirim Ulang WA</button>
-                    <button class="btn-force" onclick="forceKirim('${nama}', '${rawWa}', ${index}, 'salin')" style="background:#7f8c8d!important;margin-left:4px;">Salin Ulang</button>
-                </div>`;
-            } else if (isDuplikatInput) {
-                cardClass = 'card-duplicate';
-                badge = `<span class="badge-duplicate">DUPLIKAT</span>`;
-            }
-
-            html += `
-                <div class="guest-card ${cardClass}" id="card-${index}" style="display:flex; flex-direction:row; justify-content:space-between; align-items:center; padding:15px; border-bottom:1px solid #eee; position:relative;">
-                    ${overlayHTML}
-                    <div style="flex:1;">
-                        <div class="guest-name" style="font-size:1.1rem; font-weight:bold; color:var(--primary);">
-                            ${nama}${badge}
-                        </div>
-                        <div class="vip-option" style="margin-top:4px;">
-                            <input type="checkbox" id="vip-${index}">
-                            <label for="vip-${index}" style="font-size:0.7rem; color:#888;">Set VIP</label>
-                        </div>
-                        ${warningBtnHTML}
+        generatedItems.forEach((item) => {
+            const link = `${baseUrl}?to=${encodeURIComponent(item.name)}&s=${item.status}`;
+            const isAlreadySent = existingNames.has(item.name.toLowerCase());
+            
+            const card = document.createElement('div');
+            card.className = "glass-card rounded-[2rem] p-6 shadow-sm fade-up flex flex-col gap-4";
+            card.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div class="flex-1 pr-4">
+                        <p class="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Nama Tamu</p>
+                        <p class="text-sm font-bold text-stone-dark flex items-center gap-2">
+                            ${item.name}
+                            ${isAlreadySent ? '<span class="bg-red-100 text-red-600 text-[8px] px-2 py-0.5 rounded-full uppercase font-bold">Sudah Terkirim</span>' : ''}
+                        </p>
                     </div>
-                    ${!isSudahDikirim ? `
-                    <div style="display:flex; gap:10px;">
-                        <button onclick="prosesKirim('${nama}', '${rawWa}', ${index}, 'wa')" style="background:#25D366; border:none; padding:8px; border-radius:8px; cursor:pointer; width:40px; height:40px; display:flex; align-items:center; justify-content:center;">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                        </button>
-                        <button onclick="prosesKirim('${nama}', '${rawWa}', ${index}, 'salin')" style="background:#95a5a6; border:none; padding:8px; border-radius:8px; cursor:pointer; width:40px; height:40px; display:flex; align-items:center; justify-content:center;">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                        </button>
-                        <button onclick="prosesKirim('${nama}', '${rawWa}', ${index}, 'share')" style="background:#3498db; border:none; padding:8px; border-radius:8px; cursor:pointer; width:40px; height:40px; display:flex; align-items:center; justify-content:center;">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>
-                        </button>
-                    </div>` : ''}
+                    <div class="w-32 flex-shrink-0">
+                        <p class="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1 text-right">Kategori</p>
+                        <select onchange="updateItemStatus(${item.id}, this.value)" 
+                                class="select-status w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-1.5 text-[10px] font-bold text-stone-green outline-none cursor-pointer"
+                                ${isAlreadySent ? 'disabled' : ''}>
+                            <option value="Reguler" ${item.status === 'Reguler' ? 'selected' : ''}>Reguler</option>
+                            <option value="VIP" ${item.status === 'VIP' ? 'selected' : ''}>VIP</option>
+                            <option value="VVIP" ${item.status === 'VVIP' ? 'selected' : ''}>VVIP</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-stone-50 border border-stone-100 p-3 rounded-xl">
+                    <p class="text-[8px] font-mono text-stone-400 truncate mb-1">${link}</p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="handleAction('salin', '${link}', '${item.name}', '${item.status}')" 
+                            class="bg-white border border-stone-border text-stone-green py-2.5 rounded-xl text-[9px] font-bold uppercase tracking-widest shadow-sm active:scale-95 transition-all">
+                            ${isAlreadySent ? 'Salin Ulang' : 'Salin'}
+                    </button>
+                    <button onclick="handleAction('wa', '${link}', '${item.name}', '${item.status}')" 
+                            class="bg-stone-green text-white py-2.5 rounded-xl text-[9px] font-bold uppercase tracking-widest shadow-lg shadow-stone-green/10 active:scale-95 transition-all flex justify-center items-center gap-1.5">
+                        <span class="text-xs">💬</span> ${isAlreadySent ? 'WA Lagi' : 'Kirim WA'}
+                    </button>
+                    <button onclick="handleAction('share', '${link}', '${item.name}', '${item.status}')" 
+                            class="bg-stone-dark text-white py-2.5 rounded-xl text-[9px] font-bold uppercase tracking-widest shadow-lg active:scale-95 transition-all flex justify-center items-center gap-1.5">
+                        <span class="text-xs">📸</span> Share IG
+                    </button>
                 </div>
             `;
+            listContainer.appendChild(card);
         });
-
-        container.innerHTML += html;
     }
 
-    // Kirim normal (cek duplikat sebelum proses)
-    async function prosesKirim(nama, wa, index, aksi) {
-        const namaLower = nama.toLowerCase();
-
-        // Double-check: apakah nama sudah ada di Sheets?
-        if (namaYangSudahDikirim.includes(namaLower)) {
-            const konfirmasi = confirm(`⚠️ "${nama}" sudah pernah dikirim undangan sebelumnya!\n\nApakah kamu tetap ingin mengirim ulang?`);
-            if (!konfirmasi) return;
-        }
-
-        await eksekusiKirim(nama, wa, index, aksi);
+    function updateItemStatus(id, newStatus) {
+        generatedItems[id].status = newStatus;
+        renderBulkList(); 
+        showToast(`Kategori ${generatedItems[id].name} -> ${newStatus}`);
     }
 
-    // Kirim paksa (dari tombol merah di kartu sudah terkirim)
-    async function forceKirim(nama, wa, index, aksi) {
-        const konfirmasi = confirm(`⚠️ "${nama}" sudah pernah dikirim.\n\nYakin kirim ulang?`);
-        if (!konfirmasi) return;
-        await eksekusiKirim(nama, wa, index, aksi);
-    }
+    async function handleAction(type, link, name, status) {
+        const isResend = existingNames.has(name.toLowerCase());
+        const message = getInvitationMessage(name, link);
 
-    // Logika pengiriman inti
-    async function eksekusiKirim(nama, wa, index, aksi) {
-        const isVIP = document.getElementById(`vip-${index}`) ? document.getElementById(`vip-${index}`).checked : false;
-        const statusTamu = isVIP ? "VIP" : "Reguler";
-        const urlBase = document.getElementById('baseUrl').value.trim();
-
-        const linkPersonal = `${urlBase}?to=${encodeURIComponent(nama).replace(/%20/g, '+')}&s=${statusTamu}`;
-
-        const message = `Assalamu'alaikum Warahmatullahi Wabarakatuh\n\nKepada Yth.\nBapak/Ibu/Saudara/i\n*${nama}*\n___\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri hari bahagia kami:\n\n✨ THE WEDDING OF FADIL & AISYAH ✨\n\nKehadiran Anda adalah kado terindah bagi kami. Mengingat keterbatasan jarak dan waktu, izinkan e-invitation ini menjadi jembatan silaturahmi sebagai pengganti undangan resmi kami.\n\nSilakan akses tautan di bawah ini untuk detail acara, lokasi, dan waktu:\n${linkPersonal}\n\nMerupakan suatu kehormatan apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu bagi perjalanan ibadah panjang kami.\n\nTerima kasih atas doa dan perhatiannya.\n\nWassalamu'alaikum Warahmatullahi Wabarakatuh\n\nHormat kami,\nAisyah & Fadil\n#AIfinallyFAundlove\n\n____\n\nSpread your happiness with us`;
-
-        if (aksi === 'wa') {
-            const waUrl = wa ? `https://api.whatsapp.com/send?phone=${wa}&text=${encodeURIComponent(message)}` : `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+        if (type === 'salin') {
+            const el = document.createElement('textarea');
+            el.value = message;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showToast(isResend ? "📋 Pesan Disalin Ulang" : "📋 Pesan Undangan Tersalin");
+        } else if (type === 'wa') {
+            const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
             window.open(waUrl, '_blank');
-        } else if (aksi === 'salin') {
-            try {
-                await navigator.clipboard.writeText(message);
-                alert("Pesan berhasil disalin untuk " + nama);
-            } catch (err) {
-                alert("Gagal menyalin teks.");
-            }
-        } else if (aksi === 'share') {
+            showToast(isResend ? "✨ Mengirim Ulang WA..." : "✨ Membuka WhatsApp...");
+        } else if (type === 'share') {
             if (navigator.share) {
-                navigator.share({ title: 'Undangan Pernikahan', text: message }).catch(() => {});
+                navigator.share({
+                    title: 'Undangan Pernikahan Fadil & Aisyah',
+                    text: message
+                }).then(() => {
+                    showToast("📤 Menu Berbagi Dibuka");
+                }).catch((err) => {
+                    console.log("Batal berbagi:", err);
+                });
             } else {
-                alert("Browser tidak mendukung fitur share. Silakan salin pesan manual.");
+                const el = document.createElement('textarea');
+                el.value = message;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+                showToast("⚠️ Browser tdk dukung share. Pesan disalin!");
             }
         }
 
-        // Simpan ke Sheets
-        const finalURL = `${scriptURL}?type=add_list&nama=${encodeURIComponent(nama)}&wa=${encodeURIComponent(wa || "Manual")}&status=${statusTamu}`;
-        fetch(finalURL, { method: 'GET', mode: 'no-cors' });
-
-        // Tambahkan ke cache lokal supaya sesi ini langsung tahu
-        if (!namaYangSudahDikirim.includes(nama.toLowerCase())) {
-            namaYangSudahDikirim.push(nama.toLowerCase());
+        // HANYA Rekap jika ini pengiriman pertama (belum ada di existingNames)
+        if (!isResend) {
+            await syncToSheets(name, status);
         }
+    }
 
-        // Efek visual
-        const card = document.getElementById(`card-${index}`);
-        if (card) card.style.opacity = "0.5";
+    async function syncToSheets(name, status, wa = "Manual") {
+        const finalURL = `${scriptURL}?type=add_list&nama=${encodeURIComponent(name)}&wa=${encodeURIComponent(wa)}&status=${status}`;
+        try {
+            await fetch(finalURL, { method: 'GET', mode: 'no-cors' });
+            existingNames.add(name.toLowerCase());
+            renderBulkList();
+        } catch (e) {
+            console.error("Gagal sinkron rekap:", e);
+        }
+    }
+
+    function getInvitationMessage(name, link) {
+        return `Assalamu'alaikum Warahmatullahi Wabarakatuh
+Kepada Yth. Bapak/Ibu/Saudara/i
+*${name}*
+
+---- 
+
+Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri hari bahagia kami: 
+🕊️ THE WEDDING OF FADIL & AISYAH 🕊️
+
+Kehadiran Anda adalah kado terindah bagi kami. Mengingat keterbatasan jarak dan waktu, izinkan e-invitation ini menjadi jembatan silaturahmi sebagai pengganti undangan resmi kami. Silakan akses tautan di bawah ini untuk detail acara, lokasi, dan waktu: ${link} 
+
+Merupakan suatu kehormatan apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu bagi perjalanan ibadah panjang kami. 
+
+Terima kasih atas doa dan perhatiannya. 
+Wassalamu'alaikum Warahmatullahi Wabarakatuh
+
+Hormat kami, 
+Aisyah & Fadil 
+#AIfinallyFAundlove 
+
+---- 
+Spread your happiness with us`;
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.style.opacity = "1";
+        t.style.transform = "translate(-50%, 0)";
+        setTimeout(() => {
+            t.style.opacity = "0";
+            t.style.transform = "translate(-50%, 1rem)";
+        }, 3000);
     }
 </script>
+
 </body>
 </html>
