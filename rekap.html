@@ -1,144 +1,191 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rekap Tamu - Fadil & Aisyah</title>
+    <title>Attendance Summary | Fadil & Aisyah</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
-    body { font-family: 'Montserrat', sans-serif; background-color: #f4f1ee; }
-    .bg-stone-green { background-color: #4a5d4a; }
-    /* Warna khusus untuk label VIP */
-    .badge-vvip { background-color: #C0C0C0; color: #333; padding: 2px 8px; border-radius: 50px; font-size: 10px; font-weight: bold; } /* Silver untuk VVIP */
-    .badge-vip { background-color: #d4af37; color: white; padding: 2px 8px; border-radius: 50px; font-size: 10px; font-weight: bold; } /* Emas untuk VIP */
-    .badge-reg { background-color: #11734b; color: whitesmoke; padding: 2px 8px; border-radius: 50px; font-size: 10px; font-weight: bold; }
-     </style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #f4f1ee; color: #1c1917; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        
+        /* Stone Theme Colors */
+        .bg-stone-green { background-color: #4a5d4a; }
+        .text-stone-green { color: #4a5d4a; }
+
+        /* Custom Badge Styling */
+        .badge-vvip { background-color: #C0C0C0; color: #1c1917; }
+        .badge-vip { background-color: #d4af37; color: white; }
+        .badge-reg { background-color: #4a5d4a; color: white; }
+
+        /* Animation */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+
+        /* Hide scrollbar */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        
+        .card-shadow { box-shadow: 0 20px 50px rgba(74, 93, 74, 0.08); }
+
+        .loading-spin {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
 </head>
-<body class="min-h-screen pb-10">
+<body class="p-4 md:p-10 flex flex-col items-center min-h-screen pb-20">
 
-    <div class="w-full bg-stone-green p-6 text-white text-center shadow-lg sticky top-0 z-50">
-    <div class="flex justify-between items-center max-w-2xl mx-auto">
-        <a href="scanner.html" class="text-white text-sm">← Kembali</a>
-        <h1 class="text-lg font-bold tracking-widest uppercase">Rekap Tamu</h1>
-             <button onclick="loadRekap()" class="text-white opacity-70 hover:opacity-100">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
+    <div class="w-full max-w-2xl fade-in">
+        <!-- Header -->
+        <header class="flex justify-between items-end mb-10 px-2">
+            <div>
+                <p class="text-[10px] font-bold text-stone-400 uppercase tracking-[0.4em] mb-2">Real-Time Report</p>
+                <h1 class="font-serif text-3xl text-[#4a5d4a] font-bold">Attendance Log</h1>
+            </div>
+            <button onclick="loadRekap()" id="refreshBtn" class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-5 py-3 rounded-full shadow-sm border border-stone-100 hover:shadow-md transition-all active:scale-95 group">
+                <svg id="refreshIcon" class="w-3 h-3 transition-transform group-active:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Refresh
             </button>
-         </div>
-    </div>
+        </header>
 
-    <div class="max-w-2xl mx-auto p-4">
-        <div class="bg-white rounded-3xl p-6 shadow-sm border border-stone-200 mb-6 flex justify-between items-center">
-             <div>
-                <p class="text-xs text-gray-500 uppercase tracking-widest">Total Hadir</p>
-                <h2 class="text-3xl font-bold text-stone-900"><span id="count-hadir">0</span> <span class="text-sm font-normal text-gray-400">Tamu</span></h2>
-             </div>
-             <div class="p-3 bg-stone-100 rounded-2xl">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-stone-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                 </svg>
+        <!-- Stats Summary -->
+        <div class="bg-white p-6 rounded-[2rem] card-shadow border border-white mb-8 flex justify-between items-center px-10">
+            <div>
+                <p class="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Total Present</p>
+                <h3 id="countDisplay" class="text-2xl font-serif font-bold text-stone-green">0</h3>
+            </div>
+            <div class="w-12 h-12 bg-stone-100 rounded-2xl flex items-center justify-center text-xl">
+                👥
             </div>
         </div>
 
-         <div class="bg-white rounded-3xl shadow-sm border border-stone-200 overflow-hidden">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-stone-50 border-b border-stone-100">
-                        <th class="p-4 text-xs font-bold text-stone-600 uppercase">Nama Tamu</th>
-                         <th class="p-4 text-xs font-bold text-stone-600 uppercase text-center">Status</th>
-                        <th class="p-4 text-xs font-bold text-stone-600 uppercase text-right">Jam</th>
-                     </tr>
-                </thead>
-                <tbody id="rekap-list">
-                    <tr>
-                        <td colspan="3" class="p-10 text-center text-gray-400 text-sm italic">Memuat data...</td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- Table Container -->
+        <div class="bg-white rounded-[2.5rem] card-shadow border border-white overflow-hidden min-h-[300px]">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-stone-50/50 border-b border-stone-100">
+                            <th class="p-6 text-[10px] font-bold text-stone-400 uppercase tracking-widest">Guest Name</th>
+                            <th class="p-6 text-[10px] font-bold text-stone-400 uppercase tracking-widest text-center">Status</th>
+                            <th class="p-6 text-[10px] font-bold text-stone-400 uppercase tracking-widest text-right">Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rekapList" class="divide-y divide-stone-50">
+                        <!-- Initial Loading State -->
+                        <tr>
+                            <td colspan="3" class="p-20 text-center">
+                                <div class="flex flex-col items-center gap-3">
+                                    <div class="w-8 h-8 border-2 border-stone-200 border-t-stone-green rounded-full loading-spin"></div>
+                                    <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Fetching Data...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-<script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwsuDPy2rb0yf-2r0WyYUL6rSwIbMbxj5kp7fEpinXbQ9FkaXoQA5x_h0wUdwavAqhZvg/exec';
+        <!-- Footer / Back Info -->
+        <footer class="mt-8 text-center">
+            <p class="text-[9px] text-stone-400 uppercase tracking-[0.3em] font-medium italic">Data updates automatically after each successful scan</p>
+        </footer>
+    </div>
 
-     function renderTamu(data) {
-        const list = document.getElementById('rekap-list');
-        const countHadir = document.getElementById('count-hadir');
-        
-        if (!data || !Array.isArray(data)) return;
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwsuDPy2rb0yf-2r0WyYUL6rSwIbMbxj5kp7fEpinXbQ9FkaXoQA5x_h0wUdwavAqhZvg/exec';
 
-        // Menghilangkan duplikat
-        const uniqueData = data.filter((v, i, a) => 
-            a.findIndex(t => (t.nama === v.nama && t.waktu === v.waktu)) === i
-        );
-        
-        countHadir.innerText = uniqueData.length;
+        /**
+         * Renders the guest list into the table
+         */
+        function renderTamu(data) {
+            const list = document.getElementById('rekapList');
+            const countDisplay = document.getElementById('countDisplay');
+            
+            if (data && data.length > 0) {
+                countDisplay.innerText = data.length;
+                list.innerHTML = data.map((item) => {
+                    let badgeClass = 'badge-reg';
+                    let statusLabel = item.status || 'REGULAR';
+                    
+                    if (statusLabel.includes('VVIP')) badgeClass = 'badge-vvip';
+                    else if (statusLabel.includes('VIP')) badgeClass = 'badge-vip';
 
-        if (uniqueData.length > 0) {
-            list.innerHTML = uniqueData.map(item => {
-                const statusStr = (item.status || "Reguler").toUpperCase();
-                
-                // Logika Penentuan Badge
-                let badgeClass = 'badge-reg';
-                let statusText = 'REG';
-
-                if (statusStr.includes('VVIP')) {
-                    badgeClass = 'badge-vvip';
-                    statusText = 'VVIP';
-                } else if (statusStr.includes('VIP')) {
-                    badgeClass = 'badge-vip';
-                    statusText = 'VIP';
-                }
-
-                return `
-                    <tr class="border-b border-stone-50 last:border-0">
-                        <td class="p-4">
-                            <p class="text-sm font-semibold text-stone-800">${item.nama || 'Tanpa Nama'}</p>
-                        </td>
-                        <td class="p-4 text-center">
-                            <span class="${badgeClass}">${statusText}</span>
-                        </td>
-                        <td class="p-4 text-right">
-                            <p class="text-xs text-gray-500">${item.waktu || '--:--'}</p>
+                    return `
+                        <tr class="hover:bg-stone-50/50 transition-colors animate-fade-in">
+                            <td class="p-6">
+                                <p class="text-sm font-bold text-stone-800 uppercase tracking-tight">${item.nama || 'Anonymous'}</p>
+                            </td>
+                            <td class="p-6 text-center">
+                                <span class="${badgeClass} px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest shadow-sm">${statusLabel}</span>
+                            </td>
+                            <td class="p-6 text-right">
+                                <p class="text-[10px] font-bold text-stone-500 font-mono">${item.waktu || '--:--'}</p>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } else {
+                countDisplay.innerText = "0";
+                list.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="p-20 text-center">
+                            <p class="text-xs text-stone-300 font-bold uppercase tracking-widest italic">No guests have arrived yet</p>
                         </td>
                     </tr>
                 `;
-            }).join('');
-        } else {
-            list.innerHTML = '<tr><td colspan="3" class="p-10 text-center text-gray-400 text-sm italic">Belum ada tamu yang hadir.</td></tr>';
+            }
         }
-    }
 
-     function loadRekap() {
-        const finalFetchURL = `${scriptURL}?type=get_absen&v=${new Date().getTime()}`;
+        /**
+         * Fetches data from Google Apps Script with speed optimization
+         */
+        async function loadRekap() {
+            const btn = document.getElementById('refreshBtn');
+            const icon = document.getElementById('refreshIcon');
+            
+            // UI Feedback for manual refresh
+            btn.disabled = true;
+            icon.classList.add('loading-spin');
 
-         fetch(finalFetchURL, {
-             method: 'GET',
-            redirect: 'follow'
-         })
-         .then(res => res.json())
-        .then(data => {
-         // Langsung simpan dan tampilkan data dari Apps Script 
-        // karena urutannya sudah dibalik (reverse) di sana.
-            localStorage.setItem('rekap_tamu', JSON.stringify(data));
-             renderTamu(data); 
-         }) // <--- Tadi di sini kurungnya berantakan
-        .catch(err => {
-             console.error("Gagal memuat data:", err);
-             const cache = localStorage.getItem('rekap_tamu');
-             if (cache) renderTamu(JSON.parse(cache));
-         });
-     }
+            const finalFetchURL = `${scriptURL}?type=get_absen&v=${Date.now()}`;
 
-    // Inisialisasi saat halaman dimuat
-     document.addEventListener('DOMContentLoaded', () => {
-         const cache = localStorage.getItem('rekap_tamu');
-         if (cache) {
-        renderTamu(JSON.parse(cache));
+            try {
+                const response = await fetch(finalFetchURL, {
+                    method: 'GET',
+                    redirect: 'follow'
+                });
+                const data = await response.json();
+                
+                // Cache results for instant loading next time
+                localStorage.setItem('rekap_tamu', JSON.stringify(data));
+                renderTamu(data);
+            } catch (err) {
+                console.error("Failed to load data:", err);
+                // Fallback to cache if request fails
+                const cache = localStorage.getItem('rekap_tamu');
+                if (cache) renderTamu(JSON.parse(cache));
+            } finally {
+                // Re-enable UI
+                setTimeout(() => {
+                    btn.disabled = false;
+                    icon.classList.remove('loading-spin');
+                }, 500);
+            }
         }
-         loadRekap();
-     });
-</script>
+
+        /**
+         * Speed Optimization: Load from cache first then revalidate
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            const cache = localStorage.getItem('rekap_tamu');
+            if (cache) {
+                // Instant render from local storage
+                renderTamu(JSON.parse(cache));
+            }
+            // Fetch fresh data in the background
+            loadRekap();
+        });
+    </script>
 </body>
 </html>
