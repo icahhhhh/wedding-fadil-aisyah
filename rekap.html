@@ -10,20 +10,20 @@
         body { font-family: 'Montserrat', sans-serif; background-color: #f4f1ee; color: #1c1917; }
         .font-serif { font-family: 'Playfair Display', serif; }
         
-        /* Stone Theme Colors */
+        /* Warna Tema Stone */
         .bg-stone-green { background-color: #4a5d4a; }
         .text-stone-green { color: #4a5d4a; }
 
-        /* Custom Badge Styling */
+        /* Gaya Lencana Kustom */
         .badge-vvip { background-color: #C0C0C0; color: #1c1917; }
         .badge-vip { background-color: #d4af37; color: white; }
         .badge-reg { background-color: #4a5d4a; color: white; }
 
-        /* Animation */
+        /* Animasi */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
 
-        /* Hide scrollbar */
+        /* Sembunyikan scrollbar */
         ::-webkit-scrollbar { width: 0px; background: transparent; }
         
         .card-shadow { box-shadow: 0 20px 50px rgba(74, 93, 74, 0.08); }
@@ -43,13 +43,20 @@
                 <p class="text-[10px] font-bold text-stone-400 uppercase tracking-[0.4em] mb-2">Real-Time Report</p>
                 <h1 class="font-serif text-3xl text-[#4a5d4a] font-bold">Attendance Log</h1>
             </div>
-            <button onclick="loadRekap()" id="refreshBtn" class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-5 py-3 rounded-full shadow-sm border border-stone-100 hover:shadow-md transition-all active:scale-95 group">
-                <svg id="refreshIcon" class="w-3 h-3 transition-transform group-active:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                Refresh
-            </button>
+            <div class="flex gap-2">
+                <!-- Tombol Kembali ke Scanner -->
+                <a href="scanner.html" class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-5 py-3 rounded-full shadow-sm border border-stone-100 hover:shadow-md transition-all active:scale-95">
+                    <span class="text-xs">←</span> Scanner
+                </a>
+                <!-- Tombol Refresh -->
+                <button onclick="loadRekap()" id="refreshBtn" class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-5 py-3 rounded-full shadow-sm border border-stone-100 hover:shadow-md transition-all active:scale-95 group">
+                    <svg id="refreshIcon" class="w-3 h-3 transition-transform group-active:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Refresh
+                </button>
+            </div>
         </header>
 
-        <!-- Stats Summary -->
+        <!-- Ringkasan Statistik -->
         <div class="bg-white p-6 rounded-[2rem] card-shadow border border-white mb-8 flex justify-between items-center px-10">
             <div>
                 <p class="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Total Present</p>
@@ -60,7 +67,7 @@
             </div>
         </div>
 
-        <!-- Table Container -->
+        <!-- Wadah Tabel -->
         <div class="bg-white rounded-[2.5rem] card-shadow border border-white overflow-hidden min-h-[300px]">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
@@ -72,7 +79,7 @@
                         </tr>
                     </thead>
                     <tbody id="rekapList" class="divide-y divide-stone-50">
-                        <!-- Initial Loading State -->
+                        <!-- Status Pemuatan Awal -->
                         <tr>
                             <td colspan="3" class="p-20 text-center">
                                 <div class="flex flex-col items-center gap-3">
@@ -86,7 +93,7 @@
             </div>
         </div>
 
-        <!-- Footer / Back Info -->
+        <!-- Info Kaki Halaman -->
         <footer class="mt-8 text-center">
             <p class="text-[9px] text-stone-400 uppercase tracking-[0.3em] font-medium italic">Data updates automatically after each successful scan</p>
         </footer>
@@ -96,7 +103,7 @@
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwsuDPy2rb0yf-2r0WyYUL6rSwIbMbxj5kp7fEpinXbQ9FkaXoQA5x_h0wUdwavAqhZvg/exec';
 
         /**
-         * Renders the guest list into the table
+         * Merender daftar tamu ke dalam tabel
          */
         function renderTamu(data) {
             const list = document.getElementById('rekapList');
@@ -138,13 +145,13 @@
         }
 
         /**
-         * Fetches data from Google Apps Script with speed optimization
+         * Mengambil data dari Google Apps Script dengan optimasi kecepatan
          */
         async function loadRekap() {
             const btn = document.getElementById('refreshBtn');
             const icon = document.getElementById('refreshIcon');
             
-            // UI Feedback for manual refresh
+            // Umpan balik UI untuk penyegaran manual
             btn.disabled = true;
             icon.classList.add('loading-spin');
 
@@ -157,16 +164,16 @@
                 });
                 const data = await response.json();
                 
-                // Cache results for instant loading next time
+                // Simpan hasil cache untuk pemuatan instan berikutnya
                 localStorage.setItem('rekap_tamu', JSON.stringify(data));
                 renderTamu(data);
             } catch (err) {
-                console.error("Failed to load data:", err);
-                // Fallback to cache if request fails
+                console.error("Gagal memuat data:", err);
+                // Kembali ke cache jika permintaan gagal
                 const cache = localStorage.getItem('rekap_tamu');
                 if (cache) renderTamu(JSON.parse(cache));
             } finally {
-                // Re-enable UI
+                // Aktifkan kembali UI
                 setTimeout(() => {
                     btn.disabled = false;
                     icon.classList.remove('loading-spin');
@@ -175,15 +182,15 @@
         }
 
         /**
-         * Speed Optimization: Load from cache first then revalidate
+         * Optimasi Kecepatan: Muat dari cache terlebih dahulu baru validasi ulang
          */
         document.addEventListener('DOMContentLoaded', () => {
             const cache = localStorage.getItem('rekap_tamu');
             if (cache) {
-                // Instant render from local storage
+                // Render instan dari penyimpanan lokal
                 renderTamu(JSON.parse(cache));
             }
-            // Fetch fresh data in the background
+            // Ambil data segar di latar belakang
             loadRekap();
         });
     </script>
