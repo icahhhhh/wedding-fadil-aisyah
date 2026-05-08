@@ -13,15 +13,37 @@
         .bg-stone-green { background-color: #4a5d4a; }
         .text-stone-green { color: #4a5d4a; }
         
-        /* FULL OVERLAY ANIMATION */
+        /* FULL OVERLAY ANIMATION - Optimized for speed */
         #fullOverlay { 
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
             transform: translateX(100%);
+            will-change: transform;
         }
         #fullOverlay.active { transform: translateX(0); }
 
-        .pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        .pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .7; } }
+
+        /* Loader inside iframe */
+        .iframe-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: -1;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(74, 93, 74, 0.1);
+            border-top-color: #4a5d4a;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="p-4 md:p-8 min-h-screen">
@@ -33,7 +55,7 @@
                 <p class="text-[10px] uppercase tracking-[0.4em] text-stone-400 mb-1">Wedding Management</p>
                 <h1 class="font-serif text-3xl text-stone-green">Dashboard Admin</h1>
             </div>
-            <!-- Bagian Logo: Menggunakan logo.png -->
+            <!-- Bagian Logo -->
             <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center card-shadow border border-stone-200 overflow-hidden">
                 <img src="logo.png" alt="Logo Fadil Aisyah" class="w-10 h-10 object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                 <span class="text-stone-green text-xl font-bold hidden">FA</span>
@@ -112,16 +134,22 @@
     <!-- FULL PAGE OVERLAY -->
     <div id="fullOverlay" class="fixed inset-0 bg-stone-light z-[100] flex flex-col">
         <!-- Header Overlay -->
-        <div class="bg-white px-5 py-4 flex justify-between items-center border-b border-stone-200 card-shadow">
+        <div class="bg-white px-5 py-4 flex justify-between items-center border-b border-stone-200 card-shadow z-10">
             <button onclick="closeFullPage()" class="text-stone-green text-sm font-bold flex items-center gap-2 uppercase tracking-widest">
                 <span class="text-lg">←</span> KEMBALI
             </button>
             <span id="overlayTitle" class="text-xs font-bold uppercase tracking-widest">Menu</span>
-            <div class="w-10"></div> <!-- Spacer agar judul di tengah -->
+            <div class="w-10"></div>
         </div>
         
+        <!-- Loading State inside Overlay -->
+        <div class="iframe-loader">
+            <div class="spinner"></div>
+            <p class="text-[10px] text-stone-400 uppercase tracking-widest mt-4">Memuat Konten...</p>
+        </div>
+
         <!-- Iframe Content -->
-        <iframe id="pageFrame" src="" class="w-full flex-grow border-none"></iframe>
+        <iframe id="pageFrame" src="" class="w-full flex-grow border-none bg-transparent opacity-0 transition-opacity duration-200"></iframe>
     </div>
 
     <footer class="mt-16 mb-10 text-center text-stone-400 text-[10px] uppercase tracking-widest leading-loose">
@@ -136,24 +164,37 @@
         const titleText = document.getElementById('overlayTitle');
 
         function openFullPage(url) {
-            // Set judul header overlay
+            // Set judul
             if(url.includes('generator')) titleText.innerText = "Generator Undangan";
-            if(url.includes('scanner')) titleText.innerText = "Scanner Tamu";
-            if(url.includes('rekap')) titleText.innerText = "Rekap Data";
-            if(url.includes('dashboard-kehadiran-tamu')) titleText.innerText = "Dashboard Kehadiran Tamu";
+            else if(url.includes('scanner')) titleText.innerText = "Scanner Tamu";
+            else if(url.includes('rekap')) titleText.innerText = "Rekap Data";
+            else if(url.includes('dashboard-kehadiran-tamu')) titleText.innerText = "Dashboard Analisis";
+            else titleText.innerText = "Menu";
 
-            iframe.src = url;
+            // Efek Instant: Tampilkan overlay dulu, baru set src
             overlay.classList.add('active');
             document.body.style.overflow = 'hidden';
+            
+            // Berikan sedikit jeda sebelum set src agar animasi slide tidak patah-patah
+            setTimeout(() => {
+                iframe.style.opacity = '0';
+                iframe.src = url;
+            }, 150);
         }
+
+        // Tampilkan konten dengan smooth saat sudah terload sepenuhnya
+        iframe.onload = function() {
+            iframe.style.opacity = '1';
+        };
 
         function closeFullPage() {
             overlay.classList.remove('active');
+            iframe.style.opacity = '0';
             setTimeout(() => {
-                iframe.src = ""; // Reset iframe
-            }, 400);
+                iframe.src = ""; // Reset iframe saat benar-benar tertutup
+            }, 300);
             document.body.style.overflow = 'auto';
-            updateQuickStats(); // Refresh stats saat menutup halaman
+            updateQuickStats();
         }
 
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwsuDPy2rb0yf-2r0WyYUL6rSwIbMbxj5kp7fEpinXbQ9FkaXoQA5x_h0wUdwavAqhZvg/exec';
@@ -170,7 +211,6 @@
                 
                 document.getElementById('totalTamu').innerText = listTamu.length;
                 document.getElementById('totalHadir').innerText = listAbsen.length;
-
             } catch (e) {
                 console.error("Gagal sinkron stats:", e);
             }
