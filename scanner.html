@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Guest Check-in Scanner Fadil & Aisyah</title>
 
     <!-- Open Graph Meta Tags untuk Preview Link -->
@@ -10,7 +10,6 @@
     <meta property="og:description" content="Scan QR Codes for Guest Check-in">
     <meta property="og:image" content="logo.jpg">
     <meta property="og:type" content="website">
-
 
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,7 +19,6 @@
         body { font-family: 'Montserrat', sans-serif; background-color: #f4f1ee; color: #1c1917; }
         .font-serif { font-family: 'Playfair Display', serif; }
         
-        /* Camera Area Wrapper */
         .camera-section {
             position: relative;
             width: 100%;
@@ -32,20 +30,9 @@
             flex-direction: column;
         }
 
-        #reader { 
-            width: 100% !important; 
-            border: none !important; 
-            height: 500px !important;
-            background: #fff;
-        }
+        #reader { width: 100% !important; border: none !important; height: 500px !important; background: #fff; }
+        #reader video { object-fit: cover !important; width: 100% !important; height: 100% !important; }
 
-        #reader video { 
-            object-fit: cover !important; 
-            width: 100% !important; 
-            height: 100% !important; 
-        }
-
-        /* White Controls Section Below Camera */
         .controls-section {
             background: #fff;
             padding: 24px;
@@ -59,34 +46,20 @@
             min-height: 80px;
         }
 
-        /* Overlay limited to camera area */
         #resultOverlay {
-            position: absolute; 
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 100; 
-            display: none;
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center;
-            text-align: center; 
-            padding: 24px; 
-            animation: overlayIn 0.3s ease-out;
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 100; display: none; flex-direction: column; 
+            align-items: center; justify-content: center;
+            text-align: center; padding: 24px; animation: overlayIn 0.3s ease-out;
         }
 
         @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Setup UI limited to camera area */
         #setupUI {
-            position: absolute; 
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 40; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center;
-            background: #fff; 
-            padding: 30px; 
-            text-align: center;
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 40; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center;
+            background: #fff; padding: 30px; text-align: center;
         }
 
         .btn-primary {
@@ -105,15 +78,12 @@
             background-color: #ef4444; color: white;
             padding: 12px 32px; border-radius: 50px;
             text-transform: uppercase; font-size: 10px; font-weight: 700;
-            display: none;
-            transition: all 0.2s;
+            display: none; transition: all 0.2s;
         }
-        .btn-stop:hover { background-color: #dc2626; }
 
-        /* Status Theme Colors */
-        .status-reguler { background-color: #22c55e !important; color: white; }
+        .status-reguler { background-color: #4a5d4a !important; color: white; }
         .status-vip { background-color: #d4af37 !important; color: white; }
-        .status-vvip { background-color: #94a3b8 !important; color: white; }
+        .status-vvip { background-color: #1c1917 !important; color: white; }
         .status-error { background-color: #ef4444 !important; color: white; }
 
         .hw-indicator { transition: all 0.3s; }
@@ -126,59 +96,54 @@
         <!-- Header -->
         <header class="text-center mb-8">
             <p class="text-[10px] font-bold text-stone-400 uppercase tracking-[0.4em] mb-1">Receptionist Desk</p>
-            <h1 class="font-serif text-3xl text-[#4a5d4a] font-bold">Guest Check-in Scanner</h1>
+            <h1 class="font-serif text-3xl text-[#4a5d4a] font-bold">Check-in Scanner</h1>
         </header>
 
         <!-- Main Card Wrapper -->
         <div class="shadow-2xl rounded-[32px] overflow-hidden mb-8">
-            <!-- Top Section: Camera -->
             <div class="camera-section">
-                <!-- Camera Setup UI -->
                 <div id="setupUI">
                     <div class="w-20 h-20 bg-stone-100 rounded-full flex items-center justify-center text-stone-400 mb-6">
                         <span class="text-3xl">📷</span>
                     </div>
-                    <h3 class="text-sm font-bold text-stone-green uppercase tracking-widest mb-6">Select Camera</h3>
+                    <h3 class="text-sm font-bold text-stone-green uppercase tracking-widest mb-6">Pilih Kamera</h3>
                     <select id="cameraSelect" class="w-full mb-6 p-4 rounded-xl border border-stone-200 text-xs font-semibold outline-none bg-stone-50">
-                        <option value="">Loading cameras...</option>
+                        <option value="">Memuat kamera...</option>
                     </select>
-                    <button id="startBtn" class="btn-primary w-full shadow-lg mb-4">Start Camera Scan</button>
+                    <button id="startBtn" class="btn-primary w-full shadow-lg mb-4">Mulai Scan Kamera</button>
                     
                     <div class="flex items-center gap-4 w-full my-4">
                         <hr class="flex-grow border-stone-200">
-                        <span class="text-[9px] font-bold text-stone-300 uppercase tracking-widest">Or</span>
+                        <span class="text-[9px] font-bold text-stone-300 uppercase tracking-widest">ATAU</span>
                         <hr class="flex-grow border-stone-200">
                     </div>
 
                     <label for="fileInput" class="btn-secondary w-full text-center cursor-pointer flex items-center justify-center gap-2">
-                        <span>🖼️ Scan an Image File</span>
+                        <span>🖼️ Scan dari File Gambar</span>
                         <input type="file" id="fileInput" accept="image/*" class="hidden">
                     </label>
                 </div>
 
-                <!-- Actual Camera View -->
                 <div id="reader"></div>
 
-                <!-- Result Overlay (Covers only Camera) -->
                 <div id="resultOverlay">
                     <div id="iconBox" class="w-24 h-24 rounded-full flex items-center justify-center mb-8 border-4 border-white/50 bg-white/20">
                         <span id="resultIcon" class="text-5xl font-bold">✓</span>
                     </div>
                     <div class="space-y-2">
-                        <p class="text-[11px] font-bold uppercase tracking-[0.4em] opacity-80">Welcome,</p>
-                        <h2 id="resName" class="text-3xl font-serif font-bold px-4 leading-tight text-white tracking-tight uppercase">-- Guest Name --</h2>
+                        <p class="text-[11px] font-bold uppercase tracking-[0.4em] opacity-80 text-white">Selamat Datang,</p>
+                        <h2 id="resName" class="text-3xl font-serif font-bold px-4 leading-tight text-white tracking-tight uppercase">-- Nama Tamu --</h2>
                     </div>
                     <div class="mt-8 space-y-3">
-                        <p class="text-[11px] font-bold uppercase tracking-[0.4em] opacity-80">Category</p>
-                        <span id="resStatus" class="px-10 py-3 rounded-full text-sm font-black uppercase tracking-[0.2em] bg-white/20 border border-white/40 inline-block">-- Status --</span>
+                        <p class="text-[11px] font-bold uppercase tracking-[0.4em] opacity-80 text-white">Kategori</p>
+                        <span id="resStatus" class="px-10 py-3 rounded-full text-sm font-black uppercase tracking-[0.2em] bg-white/20 border border-white/40 inline-block text-white">-- Status --</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Bottom Section: Controls (The "White Part") -->
             <div class="controls-section">
-                <button id="stopBtn" class="btn-stop shadow-md">Stop Scanning</button>
-                <div id="idleMsg" class="text-[10px] text-stone-400 font-bold tracking-widest text-center">
+                <button id="stopBtn" class="btn-stop shadow-md">Berhenti Scan</button>
+                <div id="idleMsg" class="text-[10px] text-stone-400 font-bold tracking-widest text-center uppercase">
                     #AIfinallyFaundlove
                 </div>
             </div>
@@ -186,21 +151,19 @@
 
         <!-- Connection Status & Navigation -->
         <div class="flex flex-col items-center gap-8 w-full mt-4">
-            <!-- Hardware Indicator -->
             <div class="flex items-center gap-3 bg-white px-6 py-3 rounded-full border border-stone-100 shadow-sm">
                 <div id="hwIndicator" class="w-2.5 h-2.5 bg-stone-300 rounded-full hw-indicator"></div>
-                <span class="text-[10px] font-bold text-[#4a5d4a] uppercase tracking-widest">HC-P10 Scanner Connected</span>
+                <span class="text-[10px] font-bold text-[#4a5d4a] uppercase tracking-widest">Hardware Scanner Terhubung</span>
             </div>
 
-            <!-- Navigation Grid -->
             <div class="w-full grid grid-cols-2 gap-4">
                 <a href="rekap.html" class="flex flex-col items-center justify-center gap-3 bg-white p-6 rounded-[2rem] border border-stone-50 shadow-sm hover:bg-stone-50 transition-all active:scale-95 group">
                     <div class="text-xl group-hover:scale-110 transition-transform">📋</div>
-                    <span class="text-[9px] font-bold text-center text-[#4a5d4a] uppercase tracking-widest">Attendance Summary</span>
+                    <span class="text-[9px] font-bold text-[#4a5d4a] uppercase tracking-widest">Rekap Kehadiran</span>
                 </a>
                 <a href="bukutamu.html" class="flex flex-col items-center justify-center gap-2 bg-white p-4 rounded-[1.5rem] border border-stone-50 shadow-sm hover:bg-stone-50 transition-all active:scale-95 group">
                     <span class="text-xl group-hover:scale-110 transition-transform">📔</span>
-                    <span class="text-[9px] font-bold text-center text-[#4a5d4a] uppercase tracking-widest">Guest Book</span>
+                    <span class="text-[9px] font-bold text-[#4a5d4a] uppercase tracking-widest">Buku Tamu</span>
                 </a>
             </div>
         </div>
@@ -210,6 +173,33 @@
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwsuDPy2rb0yf-2r0WyYUL6rSwIbMbxj5kp7fEpinXbQ9FkaXoQA5x_h0wUdwavAqhZvg/exec';
         let isProcessing = false;
         let html5QrCode;
+
+        /**
+         * FUNGSI VOICE OUTPUT (GREETING)
+         * Mengucapkan selamat datang menggunakan Web Speech API.
+         */
+        function speakWelcome(name, category) {
+            // Cek apakah browser mendukung Web Speech API
+            if ('speechSynthesis' in window) {
+                // Hentikan suara yang sedang berjalan jika ada scan cepat
+                window.speechSynthesis.cancel();
+
+                const message = new SpeechSynthesisUtterance();
+                
+                // Menyiapkan kalimat sapaan
+                let greeting = `Selamat datang, ${name}. Selamat menikmati acara!`;
+                if (category.includes("VIP") || category.includes("VVIP")) {
+                    greeting = `Selamat datang, tamu kehormatan, ${name}`;
+                }
+
+                message.text = greeting;
+                message.lang = 'id-ID'; // Menggunakan Bahasa Indonesia
+                message.rate = 1.0;     // Kecepatan sedikit melambat agar terdengar elegan
+                message.pitch = 1.0;    // Nada suara normal
+
+                window.speechSynthesis.speak(message);
+            }
+        }
 
         function playBeep(freq, duration) {
             try {
@@ -237,7 +227,6 @@
         const fileInput = document.getElementById('fileInput');
         const idleMsg = document.getElementById('idleMsg');
 
-        // Initialize Camera List
         async function initCameraList() {
             try {
                 const cameras = await Html5Qrcode.getCameras();
@@ -253,56 +242,36 @@
                     cameraSelect.innerHTML = '<option value="">No cameras found</option>';
                 }
             } catch (err) {
-                cameraSelect.innerHTML = '<option value="">Camera permission denied</option>';
+                cameraSelect.innerHTML = '<option value="">Permission denied</option>';
             }
         }
 
-        // Start Camera
         startBtn.addEventListener('click', () => {
             const cameraId = cameraSelect.value;
             if (!cameraId) return;
-
             setupUI.style.display = 'none';
             stopBtn.style.display = 'block';
             idleMsg.style.display = 'none';
             html5QrCode = new Html5Qrcode("reader");
-            
-            const config = { 
-                fps: 30, 
-                qrbox: (w, h) => ({ width: w * 0.7, height: w * 0.7 }),
-                aspectRatio: 1.0
-            };
-
-            html5QrCode.start(cameraId, config, onScanSuccess).catch(err => {
-                alert("Failed to start camera: " + err);
+            html5QrCode.start(cameraId, { fps: 30, qrbox: (w, h) => ({ width: w * 0.7, height: w * 0.7 }), aspectRatio: 1.0 }, onScanSuccess).catch(err => {
+                alert("Error: " + err);
                 setupUI.style.display = 'flex';
                 stopBtn.style.display = 'none';
-                idleMsg.style.display = 'block';
             });
         });
 
-        // Scan File
         fileInput.addEventListener('change', e => {
             if (e.target.files.length === 0) return;
-            const imageFile = e.target.files[0];
             if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
-
-            html5QrCode.scanFile(imageFile, true)
-                .then(decodedText => onScanSuccess(decodedText))
-                .catch(err => onScanFailure("Invalid QR Code in file."));
+            html5QrCode.scanFile(e.target.files[0], true).then(decodedText => onScanSuccess(decodedText)).catch(() => onScanFailure());
         });
 
-        // Stop Camera
         stopBtn.addEventListener('click', async () => {
             if (html5QrCode) {
-                try {
-                    await html5QrCode.stop();
-                    setupUI.style.display = 'flex';
-                    stopBtn.style.display = 'none';
-                    idleMsg.style.display = 'block';
-                } catch (err) {
-                    console.error("Failed to stop camera", err);
-                }
+                await html5QrCode.stop();
+                setupUI.style.display = 'flex';
+                stopBtn.style.display = 'none';
+                idleMsg.style.display = 'block';
             }
         });
 
@@ -310,15 +279,13 @@
             if (isProcessing) return;
             isProcessing = true;
 
-            let name = "", status = "REGULER", kode = "-";
+            let name = "", status = "REGULER", kode = "QR";
             if (decodedText.includes('|')) {
                 const parts = decodedText.split('|');
                 name = parts[0];
                 status = (parts[1] || "REGULER").toUpperCase();
-                kode = parts[2] || "-";
-            } else {
-                name = decodedText;
-            }
+                kode = parts[2] || "QR";
+            } else { name = decodedText; }
 
             overlay.className = "";
             overlay.style.display = "flex";
@@ -331,9 +298,16 @@
             resName.innerText = name;
             resStatus.innerText = status;
 
+            // Membunyikan suara beep
             playBeep(800, 0.2);
+            
+            // --- PEMANGGILAN VOICE OUTPUT DISINI ---
+            speakWelcome(name, status);
+
             fetch(`${scriptURL}?type=absen&nama=${encodeURIComponent(name)}&status=${encodeURIComponent(status)}&kode=${encodeURIComponent(kode)}`)
                 .catch(e => console.error(e));
+
+            localStorage.removeItem('rekap_tamu');
 
             setTimeout(() => { 
                 overlay.style.display = "none"; 
@@ -342,6 +316,8 @@
         }
 
         function onScanFailure(msg) {
+            if (isProcessing) return;
+            isProcessing = true;
             overlay.className = "status-error";
             overlay.style.display = "flex";
             resIcon.innerText = "!";
