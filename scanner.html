@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Guest Check-in Scanner Fadil & Aisyah</title>
+    <title>Guest Check-in Scanner | Fadil & Aisyah</title>
 
-    <!-- Open Graph Meta Tags untuk Preview Link -->
+    <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="Guest Check-in Scanner Fadil & Aisyah">
-    <meta property="og:description" content="Scan QR Codes for Guest Check-in">
+    <meta property="og:description" content="QR Code Check-in System">
     <meta property="og:image" content="logo.jpg">
     <meta property="og:type" content="website">
 
@@ -95,7 +95,7 @@
     <div class="w-full max-w-md">
         <!-- Header -->
         <header class="text-center mb-8">
-            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-[0.4em] mb-1">Receptionist Desk</p>
+            <p class="text-[10px] font-bold text-stone-500 uppercase tracking-[0.4em] mb-1">Receptionist Desk</p>
             <h1 class="font-serif text-3xl text-[#4a5d4a] font-bold">Check-in Scanner</h1>
         </header>
 
@@ -106,20 +106,20 @@
                     <div class="w-20 h-20 bg-stone-100 rounded-full flex items-center justify-center text-stone-400 mb-6">
                         <span class="text-3xl">📷</span>
                     </div>
-                    <h3 class="text-sm font-bold text-stone-green uppercase tracking-widest mb-6">Pilih Kamera</h3>
+                    <h3 class="text-sm font-bold text-stone-green uppercase tracking-widest mb-6">Select Camera</h3>
                     <select id="cameraSelect" class="w-full mb-6 p-4 rounded-xl border border-stone-200 text-xs font-semibold outline-none bg-stone-50">
-                        <option value="">Memuat kamera...</option>
+                        <option value="">Loading cameras...</option>
                     </select>
-                    <button id="startBtn" class="btn-primary w-full shadow-lg mb-4">Mulai Scan Kamera</button>
+                    <button id="startBtn" class="btn-primary w-full shadow-lg mb-4">Start Camera Scan</button>
                     
                     <div class="flex items-center gap-4 w-full my-4">
                         <hr class="flex-grow border-stone-200">
-                        <span class="text-[9px] font-bold text-stone-300 uppercase tracking-widest">ATAU</span>
+                        <span class="text-[9px] font-bold text-stone-300 uppercase tracking-widest">OR</span>
                         <hr class="flex-grow border-stone-200">
                     </div>
 
                     <label for="fileInput" class="btn-secondary w-full text-center cursor-pointer flex items-center justify-center gap-2">
-                        <span>🖼️ Scan dari File Gambar</span>
+                        <span>🖼️ Scan from Image File</span>
                         <input type="file" id="fileInput" accept="image/*" class="hidden">
                     </label>
                 </div>
@@ -131,18 +131,18 @@
                         <span id="resultIcon" class="text-5xl font-bold">✓</span>
                     </div>
                     <div class="space-y-2">
-                        <p class="text-[11px] font-bold uppercase tracking-[0.4em] opacity-80 text-white">Selamat Datang,</p>
-                        <h2 id="resName" class="text-3xl font-serif font-bold px-4 leading-tight text-white tracking-tight uppercase">-- Nama Tamu --</h2>
+                        <p class="text-[11px] font-bold uppercase tracking-[0.4em] opacity-80 text-white">Welcome,</p>
+                        <h2 id="resName" class="text-3xl font-serif font-bold px-4 leading-tight text-white tracking-tight uppercase">-- Guest Name --</h2>
                     </div>
                     <div class="mt-8 space-y-3">
-                        <p class="text-[11px] font-bold uppercase tracking-[0.4em] opacity-80 text-white">Kategori</p>
+                        <p class="text-[11px] font-bold uppercase tracking-[0.4em] opacity-80 text-white">Category</p>
                         <span id="resStatus" class="px-10 py-3 rounded-full text-sm font-black uppercase tracking-[0.2em] bg-white/20 border border-white/40 inline-block text-white">-- Status --</span>
                     </div>
                 </div>
             </div>
 
             <div class="controls-section">
-                <button id="stopBtn" class="btn-stop shadow-md">Berhenti Scan</button>
+                <button id="stopBtn" class="btn-stop shadow-md">Stop Scanning</button>
                 <div id="idleMsg" class="text-[10px] text-stone-400 font-bold tracking-widest text-center uppercase">
                     #AIfinallyFaundlove
                 </div>
@@ -153,17 +153,17 @@
         <div class="flex flex-col items-center gap-8 w-full mt-4">
             <div class="flex items-center gap-3 bg-white px-6 py-3 rounded-full border border-stone-100 shadow-sm">
                 <div id="hwIndicator" class="w-2.5 h-2.5 bg-stone-300 rounded-full hw-indicator"></div>
-                <span class="text-[10px] font-bold text-[#4a5d4a] uppercase tracking-widest">Hardware Scanner Terhubung</span>
+                <span class="text-[10px] font-bold text-[#4a5d4a] uppercase tracking-widest">Hardware Scanner Connected</span>
             </div>
 
             <div class="w-full grid grid-cols-2 gap-4">
                 <a href="rekap.html" class="flex flex-col items-center justify-center gap-3 bg-white p-6 rounded-[2rem] border border-stone-50 shadow-sm hover:bg-stone-50 transition-all active:scale-95 group">
                     <div class="text-xl group-hover:scale-110 transition-transform">📋</div>
-                    <span class="text-[9px] font-bold text-[#4a5d4a] uppercase tracking-widest">Rekap Kehadiran</span>
+                    <span class="text-[9px] font-bold text-[#4a5d4a] uppercase tracking-widest">Attendance Recap</span>
                 </a>
                 <a href="bukutamu.html" class="flex flex-col items-center justify-center gap-2 bg-white p-4 rounded-[1.5rem] border border-stone-50 shadow-sm hover:bg-stone-50 transition-all active:scale-95 group">
                     <span class="text-xl group-hover:scale-110 transition-transform">📔</span>
-                    <span class="text-[9px] font-bold text-[#4a5d4a] uppercase tracking-widest">Buku Tamu</span>
+                    <span class="text-[9px] font-bold text-[#4a5d4a] uppercase tracking-widest">Guest Book</span>
                 </a>
             </div>
         </div>
@@ -175,29 +175,49 @@
         let html5QrCode;
 
         /**
-         * FUNGSI VOICE OUTPUT (GREETING)
-         * Mengucapkan selamat datang menggunakan Web Speech API.
+         * VOICE OUTPUT FUNCTION (GREETING)
+         * Greets the guest using Web Speech API in English.
+         * Adjusted for a feminine tone and optimal mobile playback.
          */
         function speakWelcome(name, category) {
-            // Cek apakah browser mendukung Web Speech API
             if ('speechSynthesis' in window) {
-                // Hentikan suara yang sedang berjalan jika ada scan cepat
+                // Cancel ongoing speech to prevent overlapping
                 window.speechSynthesis.cancel();
 
                 const message = new SpeechSynthesisUtterance();
                 
-                // Menyiapkan kalimat sapaan
-                let greeting = `Selamat datang, ${name}. Selamat menikmati acara!`;
+                // Prepare greeting message
+                let greeting = `Selamat datang, ${name}.`;
                 if (category.includes("VIP") || category.includes("VVIP")) {
-                    greeting = `Selamat datang, tamu kehormatan, ${name}`;
+                    greeting = `Selamat datang, Tamu kehormatan, ${name}.`;
                 }
 
                 message.text = greeting;
-                message.lang = 'id-ID'; // Menggunakan Bahasa Indonesia
-                message.rate = 1.0;     // Kecepatan sedikit melambat agar terdengar elegan
-                message.pitch = 1.0;    // Nada suara normal
+                message.lang = 'id'; // Using Indonesian
+                message.rate = 1.0;     // Slightly slower for clarity
+                message.pitch = 1.0;    // Increased pitch for a feminine tone
+
+                // Attempt to find a female voice if available
+                const voices = window.speechSynthesis.getVoices();
+                const femaleVoice = voices.find(voice => 
+                    voice.lang.includes('id') && 
+                    (voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('woman') || voice.name.toLowerCase().includes('samantha') || voice.name.toLowerCase().includes('google us english'))
+                );
+                if (femaleVoice) message.voice = femaleVoice;
 
                 window.speechSynthesis.speak(message);
+            }
+        }
+
+        /**
+         * AUDIO UNLOCK FUNCTION (MOBILE OPTIMIZATION)
+         * Required to enable sound on Chrome Android / Safari iOS.
+         */
+        function unlockVoice() {
+            if ('speechSynthesis' in window) {
+                const dummy = new SpeechSynthesisUtterance('');
+                dummy.volume = 0; 
+                window.speechSynthesis.speak(dummy);
             }
         }
 
@@ -247,6 +267,9 @@
         }
 
         startBtn.addEventListener('click', () => {
+            // Unlock audio on user interaction
+            unlockVoice();
+
             const cameraId = cameraSelect.value;
             if (!cameraId) return;
             setupUI.style.display = 'none';
@@ -261,6 +284,7 @@
         });
 
         fileInput.addEventListener('change', e => {
+            unlockVoice();
             if (e.target.files.length === 0) return;
             if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
             html5QrCode.scanFile(e.target.files[0], true).then(decodedText => onScanSuccess(decodedText)).catch(() => onScanFailure());
@@ -279,11 +303,11 @@
             if (isProcessing) return;
             isProcessing = true;
 
-            let name = "", status = "REGULER", kode = "QR";
+            let name = "", status = "REGULAR", kode = "QR";
             if (decodedText.includes('|')) {
                 const parts = decodedText.split('|');
                 name = parts[0];
-                status = (parts[1] || "REGULER").toUpperCase();
+                status = (parts[1] || "REGULAR").toUpperCase();
                 kode = parts[2] || "QR";
             } else { name = decodedText; }
 
@@ -298,10 +322,8 @@
             resName.innerText = name;
             resStatus.innerText = status;
 
-            // Membunyikan suara beep
+            // Audio Feedback
             playBeep(800, 0.2);
-            
-            // --- PEMANGGILAN VOICE OUTPUT DISINI ---
             speakWelcome(name, status);
 
             fetch(`${scriptURL}?type=absen&nama=${encodeURIComponent(name)}&status=${encodeURIComponent(status)}&kode=${encodeURIComponent(kode)}`)
@@ -331,6 +353,8 @@
         let buffer = "";
         let lastTime = Date.now();
         window.addEventListener('keydown', (e) => {
+            unlockVoice();
+            
             const now = Date.now();
             const indicator = document.getElementById('hwIndicator');
             if (now - lastTime > 100) buffer = ""; 
@@ -346,6 +370,11 @@
             }
             lastTime = now;
         });
+
+        // Ensure voices are loaded for voice selection
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+            window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+        }
 
         document.addEventListener('DOMContentLoaded', initCameraList);
     </script>
