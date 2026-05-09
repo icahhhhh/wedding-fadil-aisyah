@@ -88,7 +88,6 @@
         <p>Total Terkirim</p>
     </div>
 
-    <!-- Perbaikan: Menambahkan id="statusMessage" agar terbaca oleh JavaScript -->
     <div id="statusMessage" class="loading">Memuat data dari database...</div>
     
     <div style="overflow-x: auto;">
@@ -107,24 +106,22 @@
 </div>
 
 <script>
+    // URL Deployment terbaru yang Anda berikan
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyE6E3w8NHNkclZ3Afv4sBHwl4Ozlf4W13xosUKMKk6CtBQzracQXnNpHDeu1GcIuub8g/exec';
 
     async function loadRekap() {
-        // Mendapatkan referensi elemen
         const statusMessage = document.getElementById('statusMessage');
         const tableEl = document.getElementById('rekapTable');
         const bodyEl = document.getElementById('rekapBody');
         const statTotal = document.getElementById('statTotal');
 
         try {
-            // Melakukan fetch data
             const response = await fetch(`${scriptURL}?type=get_rekap_generator&v=${Date.now()}`);
             
-            if (!response.ok) throw new Error("Gagal terhubung ke server (Network Error)");
+            if (!response.ok) throw new Error("Gagal terhubung ke server");
             
             let rawData = await response.json();
 
-            // Normalisasi data agar selalu berbentuk array
             let dataArray = [];
             if (Array.isArray(rawData)) {
                 dataArray = rawData;
@@ -140,19 +137,17 @@
             statTotal.innerText = uniqueData.length;
 
             if (uniqueData.length === 0) {
-                statusMessage.innerHTML = "Belum ada data terkirim.<br><small>Pastikan Anda sudah membuat link undangan di halaman Generator.</small>";
+                statusMessage.innerHTML = "Belum ada data terkirim.";
                 return;
             }
 
-            // Membalikkan urutan agar yang terbaru di atas
-            uniqueData.reverse();
-
-            // Sembunyikan pesan loading dan tampilkan tabel
+            // Data sudah dibalik (reverse) di Apps Script, 
+            // Jadi di sini tidak perlu .reverse() lagi agar tidak terbalik dua kali.
+            
             statusMessage.style.display = 'none';
             tableEl.style.display = 'table';
             bodyEl.innerHTML = '';
 
-            // Render baris tabel
             uniqueData.forEach((item, index) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -173,25 +168,12 @@
 
         } catch (error) {
             console.error('Error:', error);
-            // Menampilkan pesan error jika terjadi kegagalan
             if (statusMessage) {
-                statusMessage.style.display = 'block';
-                statusMessage.innerHTML = `
-                    <div style="color:#ef4444; font-weight: bold;">Terjadi Kesalahan</div>
-                    <div style="font-size: 0.75rem; margin-top: 10px;">
-                        Penyebab: ${error.message}<br>
-                        <br>
-                        <b>Cara Perbaikan:</b><br>
-                        1. Pastikan link <i>scriptURL</i> sudah benar.<br>
-                        2. Pastikan Apps Script sudah di-Deploy sebagai 'Web App'.<br>
-                        3. Setel 'Who has access' ke 'Anyone'.
-                    </div>
-                `;
+                statusMessage.innerHTML = `<div style="color:#ef4444;">Error: ${error.message}</div>`;
             }
         }
     }
 
-    // Jalankan fungsi saat DOM selesai dimuat
     document.addEventListener('DOMContentLoaded', loadRekap);
 </script>
 
