@@ -916,7 +916,7 @@
         <div data-aos="fade-up" data-aos-delay="400" class="mb-1">
             <div class="mb-1">
                 <p id="lang-to" class="text-xs italic opacity-70 mb-2">To our dear guests:</p>
-                <h2 id="guest-name" class="text-2xl font-serif italic tracking-wide">[Nama Tamu]</h2>
+                <h2 id="guest-name" class="text-2xl font-serif italic tracking-wide"></h2>
             </div>
             
             <button id="btn-open" onclick="openInvitation()" class="btn-open uppercase text-sm">
@@ -1823,9 +1823,7 @@
         });
 
        // 9. Utility Functions
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwsuDPy2rb0yf-2r0WyYUL6rSwIbMbxj5kp7fEpinXbQ9FkaXoQA5x_h0wUdwavAqhZvg/exec';
-
-        // Fungsi Copy Number
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyE6E3w8NHNkclZ3Afv4sBHwl4Ozlf4W13xosUKMKk6CtBQzracQXnNpHDeu1GcIuub8g/exec';
         function copyNumber(text, btn) {
             navigator.clipboard.writeText(text).then(() => {
                 const originalText = btn.innerText;
