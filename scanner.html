@@ -159,7 +159,7 @@
             <div class="w-full grid grid-cols-2 gap-4">
                 <a href="rekap.html" class="flex flex-col items-center justify-center gap-3 bg-white p-6 rounded-[2rem] border border-stone-50 shadow-sm hover:bg-stone-50 transition-all active:scale-95 group">
                     <div class="text-xl group-hover:scale-110 transition-transform">📋</div>
-                    <span class="text-[9px] font-bold text-[#4a5d4a] uppercase tracking-widest">Attendance Recap</span>
+                    <span class="text-[9px] font-bold text-[#4a5d4a] uppercase tracking-widest">Attendance Summary</span>
                 </a>
                 <a href="bukutamu.html" class="flex flex-col items-center justify-center gap-2 bg-white p-4 rounded-[1.5rem] border border-stone-50 shadow-sm hover:bg-stone-50 transition-all active:scale-95 group">
                     <span class="text-xl group-hover:scale-110 transition-transform">📔</span>
@@ -170,58 +170,64 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyE6E3w8NHNkclZ3Afv4sBHwl4Ozlf4W13xosUKMKk6CtBQzracQXnNpHDeu1GcIuub8g/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwsuDPy2rb0yf-2r0WyYUL6rSwIbMbxj5kp7fEpinXbQ9FkaXoQA5x_h0wUdwavAqhZvg/exec';
         let isProcessing = false;
         let html5QrCode;
 
+          /**
+         * Fungsi pengecekan apakah nama tamu termasuk kategori anonim/kosong.
+         * Menambahkan deteksi spesifik untuk teks "[Nama Tamu]"
+         */
+        function checkIsAnonymous(name) {
+            if (!name) return true;
+            const cleaned = name.trim().toLowerCase();
+            return cleaned === "" || 
+                   cleaned === "tanpa nama" || 
+                   cleaned === "[nama tamu]" || 
+                   cleaned === "guest" || 
+                   cleaned === "guest name" || 
+                   cleaned === "-- guest name --" ||
+                   cleaned === "anonymous";
+        }
+
         /**
-         * VOICE OUTPUT FUNCTION (GREETING)
-         * Greets the guest using Web Speech API in English.
-         * Adjusted for a feminine tone and optimal mobile playback.
+         * FUNGSI SUARA SAPAAN (BAHASA INDONESIA)
          */
         function speakWelcome(name, category) {
             if ('speechSynthesis' in window) {
-                // Cancel ongoing speech to prevent overlapping
                 window.speechSynthesis.cancel();
 
                 const message = new SpeechSynthesisUtterance();
+                const isAnonymous = checkIsAnonymous(name);
                 
-                // Prepare greeting message
-                let greeting = `Selamat datang, ${name}.`;
-                if (category.includes("VIP") || category.includes("VVIP")) {
-                    greeting = `Selamat datang, Tamu kehormatan, ${name}.`;
+                let greeting = "";
+                if (isAnonymous) {
+                    // Jika tanpa nama, hanya ucapkan salam umum
+                    greeting = "Selamat datang. Selamat menikmati acara!";
+                } else {
+                    greeting = `Selamat datang, ${name}.`;
+                    if (category.includes("VIP") || category.includes("VVIP")) {
+                        greeting = `Selamat datang, tamu kehormatan, ${name}`;
+                    }
                 }
 
                 message.text = greeting;
-                message.lang = 'id'; // Using Indonesian
-                message.rate = 1.0;     // Slightly slower for clarity
-                message.pitch = 1.0;    // Increased pitch for a feminine tone
+                message.lang = 'id-ID'; 
+                message.rate = 1.0;     
+                message.pitch = 1.0;    
 
-                // Attempt to find a female voice for Indonesian
+                // Mencari suara perempuan Bahasa Indonesia
                 const voices = window.speechSynthesis.getVoices();
-                const femaleVoice = voices.find(voice => 
+                const idVoice = voices.find(voice => 
                     voice.lang.includes('id') && 
-                    (
-                        voice.name.toLowerCase().includes('female') || 
-                        voice.name.toLowerCase().includes('woman') || 
-                        voice.name.toLowerCase().includes('gadis') || 
-                        voice.name.toLowerCase().includes('indonesia') ||
-                        voice.name.toLowerCase().includes('google bahasa indonesia')
-                    )
+                    (voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('wanita') || voice.name.toLowerCase().includes('gadis') || voice.name.toLowerCase().includes('google bahasa indonesia'))
                 );
-
-                if (femaleVoice) {
-                    message.voice = femaleVoice;
-                }
+                if (idVoice) message.voice = idVoice;
 
                 window.speechSynthesis.speak(message);
             }
         }
 
-        /**
-         * AUDIO UNLOCK FUNCTION (MOBILE OPTIMIZATION)
-         * Required to enable sound on Chrome Android / Safari iOS.
-         */
         function unlockVoice() {
             if ('speechSynthesis' in window) {
                 const dummy = new SpeechSynthesisUtterance('');
@@ -276,9 +282,7 @@
         }
 
         startBtn.addEventListener('click', () => {
-            // Unlock audio on user interaction
             unlockVoice();
-
             const cameraId = cameraSelect.value;
             if (!cameraId) return;
             setupUI.style.display = 'none';
@@ -315,10 +319,16 @@
             let name = "", status = "REGULAR", kode = "QR";
             if (decodedText.includes('|')) {
                 const parts = decodedText.split('|');
-                name = parts[0];
+                name = parts[0] ? parts[0].trim() : "";
                 status = (parts[1] || "REGULAR").toUpperCase();
                 kode = parts[2] || "QR";
-            } else { name = decodedText; }
+            } else { 
+                name = decodedText ? decodedText.trim() : ""; 
+            }
+
+            // --- NORMALISASI NAMA UNTUK DISPLAY ---
+            const isAnonymous = !name || name === "" || name.toLowerCase() === "tanpa nama";
+            const displayName = isAnonymous ? "GUEST" : name;
 
             overlay.className = "";
             overlay.style.display = "flex";
@@ -328,14 +338,13 @@
             else if (status.includes('VIP')) overlay.classList.add('status-vip');
             else overlay.classList.add('status-reguler');
 
-            resName.innerText = name;
+            resName.innerText = displayName;
             resStatus.innerText = status;
 
-            // Audio Feedback
             playBeep(800, 0.2);
             speakWelcome(name, status);
 
-            fetch(`${scriptURL}?type=absen&nama=${encodeURIComponent(name)}&status=${encodeURIComponent(status)}&kode=${encodeURIComponent(kode)}`)
+            fetch(`${scriptURL}?type=absen&nama=${encodeURIComponent(name || "Tanpa Nama")}&status=${encodeURIComponent(status)}&kode=${encodeURIComponent(kode)}`)
                 .catch(e => console.error(e));
 
             localStorage.removeItem('rekap_tamu');
@@ -358,12 +367,10 @@
             setTimeout(() => { overlay.style.display = "none"; isProcessing = false; }, 3000);
         }
 
-        // Hardware Scanner Logic
         let buffer = "";
         let lastTime = Date.now();
         window.addEventListener('keydown', (e) => {
             unlockVoice();
-            
             const now = Date.now();
             const indicator = document.getElementById('hwIndicator');
             if (now - lastTime > 100) buffer = ""; 
@@ -380,7 +387,6 @@
             lastTime = now;
         });
 
-        // Ensure voices are loaded for voice selection
         if (window.speechSynthesis.onvoiceschanged !== undefined) {
             window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
         }
