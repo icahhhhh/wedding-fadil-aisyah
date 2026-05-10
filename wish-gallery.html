@@ -42,7 +42,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Masonry Design for Mobile & Desktop */
         .wish-columns {
             column-count: 1;
             column-gap: 1.25rem;
@@ -74,7 +73,7 @@
 <body class="font-sans antialiased min-h-screen py-8 px-4 md:py-16">
 
 <div class="max-w-6xl mx-auto fade-in">
-    <!-- Header Section -->
+    <!-- Header -->
     <header class="flex flex-col items-center mb-10 text-center">
         <p class="text-[9px] font-bold uppercase tracking-[0.5em] text-stone-400 mb-2">Guest Sentiments</p>
         <h1 class="font-serif text-3xl md:text-5xl text-stone-green font-bold">Wishes & Prayers Gallery</h1>
@@ -83,18 +82,15 @@
             A beautiful collection of messages and sincere prayers from your loved ones.
         </p>
         
-        <div class="flex gap-3 mt-8">
-            <button onclick="fetchWishes()" id="refreshBtn" class="flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-6 py-3 rounded-full custom-shadow border border-stone-border hover:shadow-md transition-all active:scale-95 group">
+        <div class="mt-8">
+            <button onclick="fetchWishes()" id="refreshBtn" class="flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-8 py-3.5 rounded-full custom-shadow border border-stone-border hover:shadow-md transition-all active:scale-95 group">
                 <svg id="refreshIcon" class="w-3.5 h-3.5 transition-transform group-active:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                 Sync Gallery
             </button>
-            <a href="dashboard.html" class="flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white bg-stone-green px-6 py-3 rounded-full shadow-lg hover:brightness-110 transition-all active:scale-95">
-                Dashboard
-            </a>
         </div>
     </header>
 
-    <!-- Stats Summary for Mobile -->
+    <!-- Stats Bar -->
     <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-10">
         <div class="glass-card rounded-2xl p-4 flex items-center gap-3 custom-shadow border border-white">
             <div class="w-10 h-10 bg-stone-green/10 rounded-xl flex items-center justify-center text-xl">✨</div>
@@ -110,7 +106,6 @@
                 <h2 id="lastUpdate" class="text-[10px] font-bold text-stone-dark">Now</h2>
             </div>
         </div>
-        <!-- Quote card - Visible on mobile spanning 2 columns -->
         <div class="flex col-span-2 md:col-span-1 glass-card rounded-2xl p-4 items-center gap-3 custom-shadow border border-white">
             <div class="w-10 h-10 bg-stone-dark/5 rounded-xl flex items-center justify-center text-xl">🕊️</div>
             <p class="text-[9px] font-medium text-stone-500 italic">"Love is patient and kind."</p>
@@ -124,7 +119,7 @@
     </div>
 
     <div id="wishContainer" class="wish-columns">
-        <!-- Cards injected here -->
+        <!-- Cards injected via JS -->
     </div>
 
     <!-- Empty State -->
@@ -139,7 +134,7 @@
     </footer>
 </div>
 
-<!-- Toast Notification -->
+<!-- Toast Notif -->
 <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-stone-dark/95 text-white px-8 py-3 rounded-full text-[9px] font-bold uppercase tracking-widest opacity-0 transition-all transform translate-y-4 pointer-events-none z-50 shadow-2xl backdrop-blur-sm"></div>
 
 <script>
@@ -189,7 +184,7 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <h4 class="text-[11px] font-bold text-stone-green uppercase tracking-wider truncate">${wish.nama}</h4>
-                                <p class="text-[8px] font-bold text-stone-300 uppercase tracking-widest">${wish.waktu || 'Just now'}</p>
+                                <p class="text-[8px] font-bold text-stone-300 uppercase tracking-widest">${wish.waktu || 'Recently'}</p>
                             </div>
                         </div>
                         
