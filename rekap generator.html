@@ -57,14 +57,14 @@
 
 <div class="max-w-4xl mx-auto fade-in">
     <!-- Header Section -->
-    <header class="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
-        <div class="text-center md:text-left">
-            <p class="text-[9px] font-bold uppercase tracking-[0.4em] text-stone-400 mb-2">Invitation Logs</p>
-            <h1 class="font-serif text-3xl md:text-4xl text-stone-green font-bold">Sent Recap</h1>
+    <header class="flex flex-row justify-between items-center mb-8 gap-4">
+        <div class="text-left">
+            <p class="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.3em] md:tracking-[0.4em] text-stone-400 mb-1">Invitation Logs</p>
+            <h1 class="font-serif text-xl md:text-4xl text-stone-green font-bold leading-tight">Sent Recap</h1>
         </div>
         
-        <a href="generator.html" class="w-full md:w-auto flex justify-center items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-8 py-4 rounded-full custom-shadow border border-stone-border hover:shadow-md transition-all active:scale-95">
-            <span class="text-xs">←</span> BACK TO GENERATOR
+        <a href="generator.html" class="flex items-center gap-2 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-stone-green bg-white px-4 md:px-8 py-3 md:py-4 rounded-full custom-shadow border border-stone-border hover:shadow-md transition-all active:scale-95 whitespace-nowrap">
+            <span class="text-xs">←</span> <span class="hidden md:inline">BACK TO </span>GENERATOR
         </a>
     </header>
 
@@ -107,9 +107,9 @@
         </div>
 
         <div id="tableWrapper" class="hidden">
-            <!-- Mobile View: Cards -->
+            <!-- Mobile View: Card Based (No Horizontal Scroll) -->
             <div class="md:hidden divide-y divide-stone-border/50" id="mobileList">
-                <!-- Mobile rows injected here -->
+                <!-- Data injected via JS -->
             </div>
 
             <!-- Desktop View: Table -->
@@ -124,7 +124,7 @@
                         </tr>
                     </thead>
                     <tbody id="rekapBody" class="divide-y divide-stone-border/50">
-                        <!-- Desktop rows injected here -->
+                        <!-- Data injected via JS -->
                     </tbody>
                 </table>
             </div>
@@ -152,7 +152,6 @@
             let rawData = await response.json();
             masterData = Array.isArray(rawData) ? rawData : (rawData.data || rawData.values || []);
 
-            // Duplicate filter by name
             masterData = masterData.filter((v, i, a) => 
                 v.nama && a.findIndex(t => t.nama.trim().toLowerCase() === v.nama.trim().toLowerCase()) === i
             );
@@ -160,7 +159,7 @@
             statTotal.innerText = masterData.length;
 
             if (masterData.length === 0) {
-                statusMessage.innerHTML = `<p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">No invitations sent yet</p>`;
+                statusMessage.innerHTML = `<p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest p-10">No invitations sent yet</p>`;
                 return;
             }
 
@@ -199,17 +198,17 @@
                     <div class="text-[9px] font-semibold text-stone-400 mt-1 uppercase tracking-wider">${time}</div>
                 </td>
                 <td class="py-6 px-4">
-                    <span class="text-[10px] text-stone-green font-mono font-bold bg-stone-light/50 px-2 py-1 rounded">${whatsapp}</span>
+                    <span class="text-[10px] text-stone-green font-mono font-bold bg-stone-light/50 px-2 py-1 rounded inline-block">${whatsapp}</span>
                 </td>
                 <td class="py-6 px-8 text-center">
-                    <span class="${badgeClass} px-4 py-1.5 rounded-full text-[8px] font-bold text-white uppercase tracking-[0.2em] shadow-sm">
+                    <span class="${badgeClass} px-4 py-1.5 rounded-full text-[8px] font-bold text-white uppercase tracking-[0.2em] shadow-sm whitespace-nowrap">
                         ${item.status || 'REG'}
                     </span>
                 </td>
             `;
             desktopBody.appendChild(tr);
 
-            // Mobile Row (Card Style)
+            // Mobile Card
             const mobileDiv = document.createElement('div');
             mobileDiv.className = "row-item p-6 transition-all";
             mobileDiv.innerHTML = `
