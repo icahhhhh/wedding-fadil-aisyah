@@ -202,8 +202,13 @@
                 
                 let greeting = "";
                 if (isAnonymous) {
-                    // Jika tanpa nama, hanya ucapkan salam umum
-                    greeting = "Selamat datang. Selamat menikmati acara!";
+                    // Jika tanpa nama tapi VIP/VVIP
+                    if (category.includes("VIP") || category.includes("VVIP")) {
+                        greeting = "Selamat datang, tamu kehormatan. Selamat menikmati acara!";
+                    } else {
+                        // Jika tanpa nama dan reguler
+                        greeting = "Selamat datang. Selamat menikmati acara!";
+                    }
                 } else {
                     greeting = `Selamat datang, ${name}.`;
                     if (category.includes("VIP") || category.includes("VVIP")) {
